@@ -2,7 +2,7 @@
 
 ## Installation
 
-```
+```bash
 {
     git clone https://github.com/danymat/champagne.git ~/.config/nvim 
     nvim -c "autocmd User PackerComplete quitall"
@@ -12,7 +12,7 @@
 
 Want to try out on a small docker container before deciding ?
 
-```
+```bash
 docker run -w /root -it --rm alpine:edge sh -uelic '
     apk add git nodejs neovim ripgrep alpine-sdk --update
     git clone https://github.com/danymat/champagne ~/.config/nvim
@@ -23,7 +23,7 @@ docker run -w /root -it --rm alpine:edge sh -uelic '
 
 ## Update
 
-```
+```bash
 {
     git -C ~/.config/nvim/ fetch
     nvim -c "autocmd User PackerComplete quitall" -c "PackerSync"
