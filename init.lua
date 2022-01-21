@@ -1,7 +1,7 @@
 require('impatient')
 require('globals')
 require('configuration')
-require('plugins')
-require('keybinds')
-
+require('configs.lsp')
+-- require('plugins')
 require('packer_compiled')
+require('keybinds')

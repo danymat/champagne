@@ -16,7 +16,10 @@ require("neorg").setup({
 			config = {
 				workspaces = {
 					gtd = "~/Documents/000 Meta/00.03 gtd",
+					work = "~/Documents/000 Meta/00.04 work/",
 					insa = "~/Documents/101 Personnel/40-49 Insa/46 5A/101.46.00 Notes",
+					hack = "~/Documents/000 Meta/00.05 hack",
+					neorg = "~/Developer/dev-notes",
 				},
 			},
 		},
@@ -24,10 +27,22 @@ require("neorg").setup({
 		["core.gtd.base"] = {
 			config = {
 				workspace = "gtd",
-				exclude = { "gtd.norg", "neogen.norg", "kenaos.norg"},
+				-- workspace = "test",
+				exclude = { "gtd.norg", "neogen.norg", "kenaos.norg", "neorg.norg", "Praline&Pandas.norg" },
+				-- custom_tag_completion = true,
 			},
 		},
-		-- ["core.integrations.pandoc"] = {},
+		["external.integrations.gtd-things"] = {
+			config = {
+				things_db_path = "/Users/danielmathiot/Library/Group Containers/JLMPQHK86H.com.culturedcode.ThingsMac.beta/Things Database.thingsdatabase/main.sqlite",
+				waiting_for_tag = "En attente",
+			},
+		},
+		["core.presenter"] = {
+			config = {
+				zen_mode = "truezen",
+			},
+		},
 
 		["core.integrations.telescope"] = {},
 		["core.norg.completion"] = {
@@ -35,6 +50,8 @@ require("neorg").setup({
 				engine = "nvim-cmp",
 			},
 		},
+		-- ["core.zettelkasten"] = {},
+		["core.norg.journal"] = {},
 		["core.norg.qol.toc"] = {},
 	},
 	-- logger = {
