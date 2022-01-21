@@ -96,7 +96,6 @@ return require("packer").startup({
 			},
 		})
 
-
 		use({ "onsails/lspkind-nvim" })
 
 		use({ "L3MON4D3/LuaSnip" })
@@ -206,6 +205,8 @@ return require("packer").startup({
 			end,
 			after = "rose-pine",
 		})
+
+		use({ "sindrets/diffview.nvim", cmd = "DiffviewOpen" })
 
 		if packer_bootstrap then
 			require("packer").sync()
