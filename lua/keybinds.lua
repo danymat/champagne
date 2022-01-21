@@ -1,10 +1,10 @@
 local map = function(mode, lhs, rhs, opts)
 	if type(mode) == "table" then
 		for _, m in ipairs(mode) do
-			vim.api.nvim_set_keymap(m, lhs, rhs, opts or { silent = true })
+			vim.api.nvim_set_keymap(m, lhs, rhs, opts or { silent = true, noremap = true })
 		end
 	else
-		vim.api.nvim_set_keymap(mode, lhs, rhs, opts or { silent = true })
+		vim.api.nvim_set_keymap(mode, lhs, rhs, opts or { silent = true, noremap = true })
 	end
 end
 -- LOL STILL USING ARROWS?
@@ -72,7 +72,7 @@ map("v", "≠", "<C-d>")
 -- thanks to theprimeagen for this (https://www.youtube.com/watch?v=Q5eDxR7bU2k)
 map("n", "n", "nzzzv")
 map("n", "N", "Nzzzv")
-map("n", "J", "mzJ`z", { noremap = true })
+map("n", "J", "mzJ`z")
 map("i", ",", ",<c-g>u")
 map("i", "!", "!<c-g>u")
 map("i", ".", ".<c-g>u")
@@ -170,6 +170,6 @@ map("n", "<Leader>bç", ":BufferLineGoToBuffer 9<CR>")
 -- A multiline tabout setup could look like this
 ok, _ = Prequire("tabout")
 if ok then
-	map("i", "<C-l>", "<Plug>(TaboutMulti)<CR>", { silent = true })
-	map("i", "<C-h>", "<Plug>(TaboutBackMulti)<CR>", { silent = true })
+	map("i", "<C-l>", "<Plug>(TaboutMulti)", { silent = true })
+	map("i", "<C-h>", "<Plug>(TaboutBackMulti)", { silent = true })
 end

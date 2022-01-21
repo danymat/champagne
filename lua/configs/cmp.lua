@@ -111,7 +111,7 @@ cmp.setup({
 				fallback()
 			end
 		end, {
-			"i",
+            "i",
 			"s",
 		}),
 		["<C-h>"] = cmp.mapping(function(fallback)

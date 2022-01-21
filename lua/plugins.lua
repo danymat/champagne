@@ -68,7 +68,9 @@ return require("packer").startup({
 		use({
 			"windwp/nvim-autopairs",
 			event = "BufRead",
-			config = Wrequire("configs.nvim-autopairs"),
+			config = function()
+				require("configs.nvim-autopairs")
+			end,
 		})
 
 		use({
@@ -87,13 +89,13 @@ return require("packer").startup({
 			"hrsh7th/nvim-cmp",
 			event = { "InsertEnter", "CmdlineEnter" },
 			config = Wrequire("configs.cmp"),
-			module = "cmp",
 			after = {
 				"LuaSnip",
 				"neogen",
 				"lspkind-nvim",
 			},
 		})
+
 
 		use({ "onsails/lspkind-nvim" })
 
