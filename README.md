@@ -4,7 +4,7 @@
 
 ```
 {
-    git clone https://github.com/NvChad/NvChad ~/.config/nvim
+    git clone https://github.com/danymat/champagne.git ~/.config/nvim 
     nvim -c "autocmd User PackerComplete quitall" -c "PackerSync"
     nvim
 }
