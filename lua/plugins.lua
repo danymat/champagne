@@ -22,6 +22,8 @@ return require("packer").startup({
 	function(use)
 		use("wbthomason/packer.nvim")
 
+		use("lewis6991/impatient.nvim")
+
 		-- Themes and UI
 		use({ "preservim/nerdtree", cmd = "NERDTreeFocus" })
 
@@ -36,7 +38,6 @@ return require("packer").startup({
 
 		use({
 			"nacro90/numb.nvim",
-			event = "BufRead",
 			config = Wrequire("configs.numb"),
 		})
 
@@ -53,7 +54,6 @@ return require("packer").startup({
 
 		use({
 			"folke/todo-comments.nvim",
-			event = "BufRead",
 			requires = "nvim-lua/plenary.nvim",
 			config = Wrequire("configs.todo-comments"),
 		})
@@ -63,19 +63,14 @@ return require("packer").startup({
 			config = Wrequire("configs.toggleterm"),
 		})
 
-		use({ "Pocco81/TrueZen.nvim", event = "BufRead" })
-
 		use({
 			"rcarriga/nvim-notify",
 			config = Wrequire("configs.nvim-notify"),
 		})
 
-		-- Mappings
 		use({
 			"windwp/nvim-autopairs",
-			event = "BufRead",
 			config = Wrequire("configs.nvim-autopairs"),
-			after = "nvim-cmp",
 		})
 
 		use({
@@ -87,7 +82,6 @@ return require("packer").startup({
 		use("tpope/vim-surround")
 		use("tpope/vim-repeat")
 
-		-- Completion
 		use({
 			-- "Iron-E/nvim-cmp",
 			-- branch = "feat/completion-menu-borders",
@@ -147,20 +141,18 @@ return require("packer").startup({
 			config = Wrequire("configs.tailwindcss-colors"),
 		})
 
-		-- Misc
-		use("lewis6991/impatient.nvim")
 
 		use({
 			"numToStr/Comment.nvim",
-			event = "BufRead",
-			config = Wrequire("configs.comment-nvim"),
+			config = function()
+				require("configs.comment-nvim")
+			end,
 		})
 
 		use({
 			"lewis6991/gitsigns.nvim",
 			config = Wrequire("configs.gitsigns"),
 			requires = "nvim-lua/plenary.nvim",
-			event = "BufRead",
 		})
 
 		use({
