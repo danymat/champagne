@@ -13,9 +13,3 @@ for _, module in ipairs(core) do
 		error("Error loading " .. module .. "\n\n" .. err)
 	end
 end
--- require('plugins')
--- require('impatient')
--- require('globals')
--- require('configuration')
--- require('configs.lsp')
--- require('keybinds')

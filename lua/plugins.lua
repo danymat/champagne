@@ -23,6 +23,7 @@ return require("packer").startup({
 		use("wbthomason/packer.nvim")
 
 		use("lewis6991/impatient.nvim")
+		use("nvim-lua/plenary.nvim")
 
 		-- Themes and UI
 		use({ "preservim/nerdtree", cmd = "NERDTreeFocus" })
@@ -38,6 +39,7 @@ return require("packer").startup({
 
 		use({
 			"nacro90/numb.nvim",
+			event = "BufRead",
 			config = Wrequire("configs.numb"),
 		})
 
@@ -54,7 +56,6 @@ return require("packer").startup({
 
 		use({
 			"folke/todo-comments.nvim",
-			requires = "nvim-lua/plenary.nvim",
 			config = Wrequire("configs.todo-comments"),
 		})
 
@@ -141,7 +142,6 @@ return require("packer").startup({
 			config = Wrequire("configs.tailwindcss-colors"),
 		})
 
-
 		use({
 			"numToStr/Comment.nvim",
 			config = function()
@@ -152,14 +152,12 @@ return require("packer").startup({
 		use({
 			"lewis6991/gitsigns.nvim",
 			config = Wrequire("configs.gitsigns"),
-			requires = "nvim-lua/plenary.nvim",
 		})
 
 		use({
 			"nvim-telescope/telescope.nvim",
 			config = Wrequire("configs.telescope_config"),
 			requires = {
-				"nvim-lua/plenary.nvim",
 				"nvim-lua/popup.nvim",
 				"nvim-telescope/telescope-project.nvim",
 				"nvim-telescope/telescope-file-browser.nvim",
@@ -190,7 +188,6 @@ return require("packer").startup({
 			"nvim-neorg/neorg",
 			config = Wrequire("configs.neorg"),
 			requires = {
-				"nvim-lua/plenary.nvim",
 				"nvim-neorg/neorg-telescope",
 				"danymat/neorg-gtd-things",
 			},

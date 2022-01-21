@@ -72,7 +72,7 @@ map("v", "≠", "<C-d>")
 -- thanks to theprimeagen for this (https://www.youtube.com/watch?v=Q5eDxR7bU2k)
 map("n", "n", "nzzzv")
 map("n", "N", "Nzzzv")
-map("n", "J", "mzJ`z")
+map("n", "J", "mzJ`z", { noremap = true })
 map("i", ",", ",<c-g>u")
 map("i", "!", "!<c-g>u")
 map("i", ".", ".<c-g>u")
@@ -80,7 +80,7 @@ map("i", "?", "?<c-g>u")
 map("n", "<C-u>", "<C-u>zzzv")
 map("n", "<C-d>", "<C-d>zzzv")
 map("v", "<Leader>p", '"_dP')
-map("n", "<C-j>", "i<CR><Esc>J") -- Inverse of join-line
+map("n", "<C-j>", "i<CR ><Esc>J") -- Inverse of join-line
 
 -- Nerdtree
 map("n", "<Leader>t", ":NERDTreeFocus<CR>")
