@@ -215,7 +215,7 @@ return require("packer").startup({
 		use({
 			"akinsho/bufferline.nvim",
 			config = Wrequire("configs.bufferline"),
-			requires = "rose-pine",
+			after = "rose-pine",
 		})
 
 		if packer_bootstrap then
