@@ -1,10 +1,3 @@
-local wrap = function(function_pointer, ...)
-	local params = { ... }
-
-	return function()
-		return function_pointer(unpack(params))
-	end
-end
 
 -- LOL STILL USING ARROWS?
 vim.keymap.set({ "i", "n" }, "<Up>", "<Nop>")
@@ -19,21 +12,21 @@ if ok then
 	vim.keymap.set(
 		"n",
 		"<C-f>",
-		wrap(require("telescope.builtin").find_files, { hidden = true, file_ignore_patterns = { "^.git/" } })
+		Wrap(require("telescope.builtin").find_files, { hidden = true, file_ignore_patterns = { "^.git/" } })
 	)
 	vim.keymap.set("n", "<Leader>ff", ":Telescope live_grep<CR>")
 	vim.keymap.set("n", "<Leader>fz", ":Telescope current_buffer_fuzzy_find<CR>")
-	vim.keymap.set("n", "<Leader>o", wrap(require("telescope.builtin").oldfiles))
-	vim.keymap.set("n", "<Leader>p", wrap(require("telescope").extensions.project.project, { display_type = "full" }))
-	vim.keymap.set("n", "<Leader>?", wrap(require("telescope.builtin").help_tags))
+	vim.keymap.set("n", "<Leader>o", Wrap(require("telescope.builtin").oldfiles))
+	vim.keymap.set("n", "<Leader>p", Wrap(require("telescope").extensions.project.project, { display_type = "full" }))
+	vim.keymap.set("n", "<Leader>?", Wrap(require("telescope.builtin").help_tags))
 
 	-- Zettelkasten
-	vim.keymap.set("n", "<Leader>§§", wrap(require("configs.telescope").open_starting_files))
-	vim.keymap.set("n", "<Leader>zi", wrap(require("configs.telescope").search_zettelkasten_in_files))
-	vim.keymap.set("n", "<Leader>zl", wrap(require("configs.telescope").find_link))
-	vim.keymap.set("n", "<Leader>zk", wrap(require("configs.telescope").search_zettelkasten))
+	vim.keymap.set("n", "<Leader>§§", Wrap(require("configs.telescope").open_starting_files))
+	vim.keymap.set("n", "<Leader>zi", Wrap(require("configs.telescope").search_zettelkasten_in_files))
+	vim.keymap.set("n", "<Leader>zl", Wrap(require("configs.telescope").find_link))
+	vim.keymap.set("n", "<Leader>zk", Wrap(require("configs.telescope").search_zettelkasten))
 
-	vim.keymap.set("n", "<Leader>ev", wrap(require("configs.telescope").search_dotfiles))
+	vim.keymap.set("n", "<Leader>ev", Wrap(require("configs.telescope").search_dotfiles))
 	vim.keymap.set("n", "<Leader>aa", function()
 		require("telescope.builtin").lsp_code_actions(require("telescope.themes").get_cursor({}))
 	end)
@@ -84,10 +77,10 @@ vim.keymap.set("n", "<Leader>t", ":NERDTreeFocus<CR>")
 
 -- Neogen
 local ok, neogen = Prequire("neogen")
-vim.keymap.set("n", "<Leader>nf", wrap(neogen.generate))
-vim.keymap.set("n", "<Leader>nc", wrap(neogen.generate, { type = "class" }))
-vim.keymap.set("n", "<Leader>nt", wrap(neogen.generate, { type = "type" }))
-vim.keymap.set("n", "<Leader>ez", wrap(R, "neogen", { setup = require("configs.neogen") }))
+vim.keymap.set("n", "<Leader>nf", Wrap(neogen.generate))
+vim.keymap.set("n", "<Leader>nc", Wrap(neogen.generate, { type = "class" }))
+vim.keymap.set("n", "<Leader>nt", Wrap(neogen.generate, { type = "type" }))
+vim.keymap.set("n", "<Leader>ez", Wrap(R, "neogen", { setup = require("configs.neogen") }))
 if ok then
 	-- Keybinds for toggleterm.lua
 	local ok, toggleterm = Prequire("neogen")
@@ -110,8 +103,8 @@ end
 -- ]])
 --
 -- vim.keymap.set("n", "<Leader>zn", ":NewZettel ")
--- vim.keymap.set("n", "<Leader>@", wrap(require("configs.telescope").paste_file_name))
--- vim.keymap.set("n", "<Leader>z&", wrap(require("lspconfig").zk.index))
+-- vim.keymap.set("n", "<Leader>@", Wrap(require("configs.telescope").paste_file_name))
+-- vim.keymap.set("n", "<Leader>z&", Wrap(require("lspconfig").zk.index))
 
 -- This is the greatest thing ever for azerty keyboards
 -- https://superuser.com/questions/1044018/how-to-swap-the-numbers-row-on-azerty-keyboards-in-vim-only-while-being-in-norma

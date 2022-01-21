@@ -22,3 +22,12 @@ Prequire = function(module)
 	local ok, mod = pcall(require, module)
 	return ok, mod
 end
+
+Wrap = function(function_pointer, ...)
+	local params = { ... }
+
+	return function()
+		return function_pointer(unpack(params))
+	end
+end
+

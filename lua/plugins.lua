@@ -14,12 +14,17 @@ if fn.empty(fn.glob(install_path)) > 0 then
 end
 vim.cmd([[packadd packer.nvim]])
 
+Wrequire = function(module)
+	require(module)
+end
+
 return require("packer").startup({
 	function(use)
 		use("wbthomason/packer.nvim")
 
 		-- Themes and UI
 		use({ "preservim/nerdtree", cmd = "NERDTreeFocus" })
+
 		use({
 			"szw/vim-maximizer",
 			cmd = "MaximizerToggle",
@@ -27,61 +32,40 @@ return require("packer").startup({
 		use({
 			"lukas-reineke/indent-blankline.nvim",
 			event = "BufRead",
-			config = function()
-				require("indent_blankline").setup({
-					show_current_context = true,
-				})
-			end,
+			config = Wrequire("configs.indent_blankline"),
 		})
+
 		use({
 			"nacro90/numb.nvim",
 			event = "BufRead",
-			config = [[ require("numb").setup() ]],
+			config = Wrequire("configs.numb"),
 		})
+
 		use({
 			"~/Developer/neovim",
 			as = "rose-pine",
-			config = [[ require('configs.rose-pine') ]],
+			config = Wrequire("configs.rose-pine"),
 		})
 		use({
 			"nvim-lualine/lualine.nvim",
-			config = function()
-				require("lualine").setup({
-					options = { theme = "rose-pine" },
-					-- options = { theme = "catppuccin" },
-				})
-			end,
+			config = Wrequire("configs.lualine"),
 			requires = { "kyazdani42/nvim-web-devicons", opt = true },
 		})
+
 		use({
 			"folke/todo-comments.nvim",
 			event = "BufRead",
 			requires = "nvim-lua/plenary.nvim",
-			config = [[ require("todo-comments").setup {} ]],
+			config = Wrequire("configs.todo-comments"),
 		})
+
 		use({
 			"akinsho/toggleterm.nvim",
-			config = function()
-				require("toggleterm").setup({
-					direction = "float",
-					size = 90,
-					persists = true,
-					float_opts = {
-						-- The border key is *almost* the same as 'nvim_win_open'
-						-- see :h nvim_win_open for details on borders however
-						-- the 'curved' border is a custom border type
-						-- not natively supported but implemented in this plugin.
-						border = "rounded",
-						winblend = 3,
-						highlights = {
-							border = "Normal",
-							background = "Normal",
-						},
-					},
-				})
-			end,
+			config = Wrequire("configs.toggleterm"),
 		})
+
 		use({ "Pocco81/TrueZen.nvim", event = "BufRead" })
+
 		use({
 			"rcarriga/nvim-notify",
 			config = function()
@@ -93,31 +77,27 @@ return require("packer").startup({
 		use({
 			"windwp/nvim-autopairs",
 			event = "BufRead",
-			config = [[ require('configs.nvim-autopairs') ]],
+			config = Wrequire("configs.nvim-autopairs"),
 			after = "nvim-cmp",
 		})
 		use({
 			"~/Developer/neogen",
 			event = "BufRead",
 			module = "neogen",
-			config = function()
-				local setup = require("configs.neogen")
-				require("neogen").setup(setup)
-			end,
+			config = Wrequire("configs.neogen"),
 			requires = "nvim-treesitter/nvim-treesitter",
 		})
+
 		use("tpope/vim-surround")
 		use("tpope/vim-repeat")
 
 		-- Completion
 		use({
 			-- "Iron-E/nvim-cmp",
+			-- branch = "feat/completion-menu-borders",
 			"hrsh7th/nvim-cmp",
 			event = { "InsertEnter", "CmdlineEnter" },
-			-- branch = "feat/completion-menu-borders",
-			config = function()
-				require("configs.cmp")
-			end,
+			config = Wrequire("configs.cmp"),
 			module = "cmp",
 			requires = {
 				"hrsh7th/cmp-buffer",
@@ -132,13 +112,11 @@ return require("packer").startup({
 			after = "neogen",
 		})
 
-		-- LSP
 		use({
 			"neovim/nvim-lspconfig",
-			config = function()
-				require("configs.lsp")
-			end,
+			config = Wrequire("configs.lsp"),
 		})
+
 		use({
 			"folke/lua-dev.nvim",
 			"ray-x/lsp_signature.nvim",
@@ -148,85 +126,51 @@ return require("packer").startup({
 		use({
 			"themaxmarchuk/tailwindcss-colors.nvim",
 			config = function()
-				-- pass config options here (or nothing to use defaults)
 				require("tailwindcss-colors").setup()
 			end,
 		})
 
 		-- Misc
 		use("lewis6991/impatient.nvim")
-		use({ "numToStr/Comment.nvim", event = "BufRead", config = [[ require('configs.comment-nvim')]] })
+		use({
+			"numToStr/Comment.nvim",
+			event = "BufRead",
+			config = Wrequire("configs.comment-nvim"),
+		})
+
 		use({
 			"lewis6991/gitsigns.nvim",
-			config = [[ require('configs.gitsigns') ]],
+			config = Wrequire("configs.gitsigns"),
 			requires = "nvim-lua/plenary.nvim",
 			event = "BufRead",
 		})
 
-		-- TreeSitter, Telescope, Neorg
 		use({
 			"nvim-telescope/telescope.nvim",
-			config = [[ require('configs.telescope_config') ]],
+			config = Wrequire("configs.telescope_config"),
 			requires = {
 				{ "nvim-lua/plenary.nvim", after = "telescope.nvim" },
 				{ "nvim-lua/popup.nvim", after = "telescope.nvim" },
-				{
-					"nvim-telescope/telescope-project.nvim",
-					after = "telescope.nvim",
-					config = function()
-						require("telescope").load_extension("project")
-					end,
-				},
-				{
-					"nvim-telescope/telescope-file-browser.nvim",
-					after = "telescope.nvim",
-					config = function()
-						require("telescope").load_extension("file_browser")
-					end,
-				},
-				{
-					"nvim-telescope/telescope-ui-select.nvim",
-					after = "telescope.nvim",
-					config = function()
-						require("telescope").load_extension("ui-select")
-					end,
-				},
-				{
-					"dhruvmanila/telescope-bookmarks.nvim",
-					after = "telescope.nvim",
-					config = function()
-						require("telescope").setup({
-							extensions = {
-								bookmarks = {
-									selected_browser = "safari",
-
-									-- Or provide the plugin name which is already installed
-									-- Available: 'vim_external', 'open_browser'
-									url_open_plugin = nil,
-
-									-- Show the full path to the bookmark instead of just the bookmark name
-									full_path = true,
-								},
-							},
-						})
-						require("telescope").load_extension("bookmarks")
-					end,
-				},
+				"nvim-telescope/telescope-project.nvim",
+				"nvim-telescope/telescope-file-browser.nvim",
+				"nvim-telescope/telescope-ui-select.nvim",
+				"dhruvmanila/telescope-bookmarks.nvim",
 			},
 		})
 		use({
 			"nvim-treesitter/nvim-treesitter",
 			run = ":TSUpdate",
-			config = [[ require('configs.nvim-treesitter') ]],
+			config = Wrequire("configs.nvim-treesitter"),
 			requires = {
 				"nvim-treesitter/playground",
 				"nvim-treesitter/nvim-treesitter-textobjects",
 				"JoosepAlviste/nvim-ts-context-commentstring",
 			},
 		})
+
 		use({
 			"~/Developer/neorg",
-			config = [[ require("configs.neorg") ]],
+			config = Wrequire("configs.neorg"),
 			requires = {
 				"nvim-lua/plenary.nvim",
 				"nvim-neorg/neorg-telescope",
@@ -234,97 +178,18 @@ return require("packer").startup({
 			},
 		})
 
-		use({
-			"catppuccin/nvim",
-			as = "catppuccin",
-			branch = "experiments",
-			config = function()
-				local catppuccin = require("catppuccin")
-
-				-- configure it
-				catppuccin.setup({
-					transparent_background = false,
-					term_colors = true,
-					styles = {
-						comments = "italic",
-						functions = "italic",
-						keywords = "italic",
-						strings = "NONE",
-						variables = "NONE",
-					},
-					integrations = {
-						treesitter = true,
-						native_lsp = {
-							enabled = true,
-							virtual_text = {
-								errors = "italic",
-								hints = "italic",
-								warnings = "italic",
-								information = "italic",
-							},
-							underlines = {
-								errors = "underline",
-								hints = "underline",
-								warnings = "underline",
-								information = "underline",
-							},
-						},
-						gitsigns = true,
-						telescope = true,
-						indent_blankline = {
-							enabled = true,
-							colored_indent_levels = false,
-						},
-						markdown = true,
-					},
-				})
-			end,
-		})
-
 		use({ "davidgranstrom/nvim-markdown-preview", ft = "markdown" })
 
 		use({
 			"abecodes/tabout.nvim",
-			config = function()
-				require("tabout").setup({
-					tabkey = "",
-					backwards_tabkey = "",
-					act_as_tab = false,
-				})
-			end,
-			wants = { "nvim-treesitter" }, -- or require if not used so far
-			after = { "nvim-cmp" }, -- if a completion plugin is using tabs load it before
+			config = Wrequire("configs.tabout"),
+			require = { "nvim-treesitter" },
 		})
 
 		use({
 			"akinsho/bufferline.nvim",
-			config = function()
-				local p = require("rose-pine.palette")
-				require("bufferline").setup({
-					options = {
-						diagnostics = "nvim_lsp",
-						numbers = function(opts)
-							return string.format("%s.", opts.ordinal)
-						end,
-						show_buffer_close_icons = false,
-						show_close_icon = false,
-						offsets = {
-							{
-								filetype = "nerdtree",
-								text = function()
-									return vim.fn.getcwd()
-								end,
-								highlight = "Directory",
-								text_align = "left",
-							},
-						},
-					},
-					highlights = {
-						fill = { guibg = p.base },
-						background = { guibg = p.base, guifg = p.inactive },
-					},
-				})
-			end,
+			config = Wrequire("configs.bufferline"),
+			requires = "rose-pine",
 		})
 
 		if packer_bootstrap then

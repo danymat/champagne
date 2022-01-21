@@ -1,4 +1,4 @@
-local ok, rose_pine = Prequire("rose-pine")
+local ok, _ = Prequire("rose-pine")
 
 if not ok then
 	return

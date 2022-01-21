@@ -1,6 +1,6 @@
 local core = {
-	"plugins",
 	"globals",
+	"plugins",
 	"configuration",
 	"keybinds",
 }

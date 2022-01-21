@@ -35,5 +35,23 @@ require("telescope").setup({
 		project = {
 			hidden_files = true,
 		},
+		bookmarks = {
+			selected_browser = "safari",
+
+			-- Or provide the plugin name which is already installed
+			-- Available: 'vim_external', 'open_browser'
+			url_open_plugin = nil,
+
+			-- Show the full path to the bookmark instead of just the bookmark name
+			full_path = true,
+		},
 	},
 })
+
+local extensions = { "project", "ui-select", "file_browser", "bookmarks" }
+
+pcall(function()
+	for _, ext in ipairs(extensions) do
+		telescope.load_extension(ext)
+	end
+end)
