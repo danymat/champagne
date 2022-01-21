@@ -41,7 +41,7 @@ return require("packer").startup({
 		})
 
 		use({
-			"~/Developer/neovim",
+			"rose-pine/neovim",
 			as = "rose-pine",
 			config = Wrequire("configs.rose-pine"),
 		})
@@ -78,7 +78,7 @@ return require("packer").startup({
 			after = "nvim-cmp",
 		})
 		use({
-			"~/Developer/neogen",
+			"danymat/neogen",
 			event = "BufRead",
 			module = "neogen",
 			config = Wrequire("configs.neogen"),
@@ -103,9 +103,9 @@ return require("packer").startup({
 			},
 		})
 
-        use({ "onsails/lspkind-nvim"})
+		use({ "onsails/lspkind-nvim" })
 
-        use({ "L3MON4D3/LuaSnip"})
+		use({ "L3MON4D3/LuaSnip" })
 		use({
 			"petertriho/cmp-git",
 			after = "nvim-cmp",
@@ -181,26 +181,26 @@ return require("packer").startup({
 			config = Wrequire("configs.nvim-treesitter"),
 		})
 
-        use({
-            "nvim-treesitter/playground",
-            after = "nvim-treesitter"
-        })
-        use({
-            "nvim-treesitter/nvim-treesitter-textobjects",
-            after = "nvim-treesitter"
-        })
-        use({
-            "JoosepAlviste/nvim-ts-context-commentstring",
-            after = "nvim-treesitter"
-        })
+		use({
+			"nvim-treesitter/playground",
+			after = "nvim-treesitter",
+		})
+		use({
+			"nvim-treesitter/nvim-treesitter-textobjects",
+			after = "nvim-treesitter",
+		})
+		use({
+			"JoosepAlviste/nvim-ts-context-commentstring",
+			after = "nvim-treesitter",
+		})
 
 		use({
-			"~/Developer/neorg",
+			"nvim-neorg/neorg",
 			config = Wrequire("configs.neorg"),
 			requires = {
 				"nvim-lua/plenary.nvim",
 				"nvim-neorg/neorg-telescope",
-				"~/Developer/neorg-gtd-things",
+				"danymat/neorg-gtd-things",
 			},
 		})
 
