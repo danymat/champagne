@@ -86,15 +86,15 @@ map("n", "<C-j>", "i<CR><Esc>J") -- Inverse of join-line
 map("n", "<Leader>t", ":NERDTreeFocus<CR>")
 
 -- Neogen
-local ok, _ = Prequire("neogen")
+ok, _ = Prequire("neogen")
 if ok then
-	map("n", "<Leader>nf", ":lua Wrap(neogen.generate)<CR>")
-	map("n", "<Leader>nc", ':lua Wrap(neogen.generate, { type = "class" })<CR>')
-	map("n", "<Leader>nt", ':lua Wrap(neogen.generate, { type = "type" })<CR>')
-	map("n", "<Leader>ez", ':lua Wrap(R, "neogen", { setup = require("configs.neogen") })<CR>')
+	map("n", "<Leader>nf", ':lua require("neogen").generate()<CR>')
+	map("n", "<Leader>nc", ':lua require("neogen").generate { type = "class" }<CR>')
+	map("n", "<Leader>nt", ':lua require("neogen").generate { type = "type" }<CR>')
+	map("n", "<Leader>ez", ':lua R("neogen",{ setup = require("configs.neogen") })<CR>')
 end
 
-local ok, _ = Prequire("toggleterm")
+ok, _ = Prequire("toggleterm")
 if ok then
 	map(
 		"n",

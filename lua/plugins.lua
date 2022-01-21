@@ -77,10 +77,9 @@ return require("packer").startup({
 			config = Wrequire("configs.nvim-autopairs"),
 			after = "nvim-cmp",
 		})
+
 		use({
 			"danymat/neogen",
-			event = "BufRead",
-			module = "neogen",
 			config = Wrequire("configs.neogen"),
 			requires = "nvim-treesitter/nvim-treesitter",
 		})
@@ -145,11 +144,12 @@ return require("packer").startup({
 
 		use({
 			"themaxmarchuk/tailwindcss-colors.nvim",
-			--config = Wrequire("configs.tailwindcss-colors")
+			config = Wrequire("configs.tailwindcss-colors"),
 		})
 
 		-- Misc
 		use("lewis6991/impatient.nvim")
+
 		use({
 			"numToStr/Comment.nvim",
 			event = "BufRead",
@@ -167,8 +167,8 @@ return require("packer").startup({
 			"nvim-telescope/telescope.nvim",
 			config = Wrequire("configs.telescope_config"),
 			requires = {
-				{ "nvim-lua/plenary.nvim", after = "telescope.nvim" },
-				{ "nvim-lua/popup.nvim", after = "telescope.nvim" },
+				"nvim-lua/plenary.nvim",
+				"nvim-lua/popup.nvim",
 				"nvim-telescope/telescope-project.nvim",
 				"nvim-telescope/telescope-file-browser.nvim",
 				"nvim-telescope/telescope-ui-select.nvim",

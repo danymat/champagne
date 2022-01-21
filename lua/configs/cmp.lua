@@ -4,6 +4,10 @@ if not ok then
 	return
 end
 
+local luasnip = require("luasnip")
+local lspkind = require("lspkind")
+local neogen = require("neogen")
+
 local _, types = Prequire("cmp.types")
 local _, str = Prequire("cmp.utils.str")
 
@@ -11,7 +15,6 @@ local t = function(str)
 	return vim.api.nvim_replace_termcodes(str, true, true, true)
 end
 
-local luasnip = require("luasnip")
 
 -- Do not jump to snippet if i'm outside of it
 -- https://github.com/L3MON4D3/LuaSnip/issues/78
@@ -20,8 +23,6 @@ luasnip.config.setup({
 	delete_check_events = "TextChanged",
 })
 
-local lspkind = require("lspkind")
-local neogen = require("neogen")
 
 cmp.setup({
 	completion = { border = { "╭", "─", "╮", "│", "╯", "─", "╰", "│" }, scrollbar = "║" },
@@ -149,6 +150,7 @@ require("cmp").setup.cmdline(":", {
 })
 
 local ok, cmp_git = Prequire("cmp_git")
+
 if ok then
 	cmp_git.setup()
 end
