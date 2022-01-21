@@ -31,7 +31,6 @@ return require("packer").startup({
 		})
 		use({
 			"lukas-reineke/indent-blankline.nvim",
-			event = "BufRead",
 			config = Wrequire("configs.indent_blankline"),
 		})
 
@@ -68,9 +67,7 @@ return require("packer").startup({
 
 		use({
 			"rcarriga/nvim-notify",
-			config = function()
-				vim.notify = require("notify")
-			end,
+			config = Wrequire("configs.nvim-notify"),
 		})
 
 		-- Mappings
@@ -99,22 +96,45 @@ return require("packer").startup({
 			event = { "InsertEnter", "CmdlineEnter" },
 			config = Wrequire("configs.cmp"),
 			module = "cmp",
-			requires = {
-				"hrsh7th/cmp-buffer",
-				"hrsh7th/cmp-cmdline",
-				"hrsh7th/cmp-nvim-lsp",
-				"hrsh7th/cmp-path",
-				"saadparwaiz1/cmp_luasnip",
-				"L3MON4D3/LuaSnip",
-				"onsails/lspkind-nvim",
-				{ "petertriho/cmp-git", requires = "nvim-lua/plenary.nvim" },
+			after = {
+				"LuaSnip",
+				"neogen",
+				"lspkind-nvim",
 			},
-			after = "neogen",
+		})
+
+        use({ "onsails/lspkind-nvim"})
+
+        use({ "L3MON4D3/LuaSnip"})
+		use({
+			"petertriho/cmp-git",
+			after = "nvim-cmp",
+		})
+		use({
+			"hrsh7th/cmp-cmdline",
+			after = "nvim-cmp",
+		})
+		use({
+			"hrsh7th/cmp-path",
+			after = "nvim-cmp",
+		})
+		use({
+			"hrsh7th/cmp-nvim-lsp",
+			after = "nvim-cmp",
+		})
+		use({
+			"hrsh7th/cmp-buffer",
+			after = "nvim-cmp",
+		})
+		use({
+			"saadparwaiz1/cmp_luasnip",
+			after = "nvim-cmp",
 		})
 
 		use({
 			"neovim/nvim-lspconfig",
 			config = Wrequire("configs.lsp"),
+			after = "nvim-cmp",
 		})
 
 		use({
@@ -125,9 +145,7 @@ return require("packer").startup({
 
 		use({
 			"themaxmarchuk/tailwindcss-colors.nvim",
-			config = function()
-				require("tailwindcss-colors").setup()
-			end,
+			--config = Wrequire("configs.tailwindcss-colors")
 		})
 
 		-- Misc
@@ -161,12 +179,20 @@ return require("packer").startup({
 			"nvim-treesitter/nvim-treesitter",
 			run = ":TSUpdate",
 			config = Wrequire("configs.nvim-treesitter"),
-			requires = {
-				"nvim-treesitter/playground",
-				"nvim-treesitter/nvim-treesitter-textobjects",
-				"JoosepAlviste/nvim-ts-context-commentstring",
-			},
 		})
+
+        use({
+            "nvim-treesitter/playground",
+            after = "nvim-treesitter"
+        })
+        use({
+            "nvim-treesitter/nvim-treesitter-textobjects",
+            after = "nvim-treesitter"
+        })
+        use({
+            "JoosepAlviste/nvim-ts-context-commentstring",
+            after = "nvim-treesitter"
+        })
 
 		use({
 			"~/Developer/neorg",

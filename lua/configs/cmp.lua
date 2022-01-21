@@ -148,4 +148,7 @@ require("cmp").setup.cmdline(":", {
 	},
 })
 
-require("cmp_git").setup()
+local ok, cmp_git = Prequire("cmp_git")
+if ok then
+	cmp_git.setup()
+end

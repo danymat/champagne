@@ -36,7 +36,7 @@ require("nvim-treesitter.configs").setup({
 		enable = true,
 	},
 	-- ensure_installed = "maintained", -- one of "all", "maintained" (parsers with maintainers), or a list of languages
-	ensure_installed = { "lua" },
+	ensure_installed = { "lua", "vim"},
 	highlight = { enable = true },
 	indent = { enable = true },
 	textobjects = {
