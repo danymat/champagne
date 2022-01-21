@@ -48,15 +48,11 @@ return require("packer").startup({
 			as = "rose-pine",
 			config = Wrequire("configs.rose-pine"),
 		})
+
 		use({
 			"nvim-lualine/lualine.nvim",
 			config = Wrequire("configs.lualine"),
 			requires = { "kyazdani42/nvim-web-devicons", opt = true },
-		})
-
-		use({
-			"folke/todo-comments.nvim",
-			config = Wrequire("configs.todo-comments"),
 		})
 
 		use({
@@ -71,6 +67,7 @@ return require("packer").startup({
 
 		use({
 			"windwp/nvim-autopairs",
+			event = "BufRead",
 			config = Wrequire("configs.nvim-autopairs"),
 		})
 
@@ -80,8 +77,9 @@ return require("packer").startup({
 			requires = "nvim-treesitter/nvim-treesitter",
 		})
 
-		use("tpope/vim-surround")
-		use("tpope/vim-repeat")
+		use({ "tpope/vim-surround", event = "BufRead" })
+
+		use({ "tpope/vim-repeat", event = "BufRead" })
 
 		use({
 			-- "Iron-E/nvim-cmp",
@@ -100,6 +98,7 @@ return require("packer").startup({
 		use({ "onsails/lspkind-nvim" })
 
 		use({ "L3MON4D3/LuaSnip" })
+
 		use({
 			"petertriho/cmp-git",
 			after = "nvim-cmp",
@@ -129,12 +128,7 @@ return require("packer").startup({
 			"neovim/nvim-lspconfig",
 			config = Wrequire("configs.lsp"),
 			after = "nvim-cmp",
-		})
-
-		use({
-			"folke/lua-dev.nvim",
-			"ray-x/lsp_signature.nvim",
-			"jose-elias-alvarez/null-ls.nvim",
+			requires = { "folke/lua-dev.nvim", "ray-x/lsp_signature.nvim", "jose-elias-alvarez/null-ls.nvim" },
 		})
 
 		use({
@@ -197,13 +191,17 @@ return require("packer").startup({
 
 		use({
 			"abecodes/tabout.nvim",
-			config = Wrequire("configs.tabout"),
+			config = function()
+				require("configs.tabout")
+			end,
 			require = { "nvim-treesitter" },
 		})
 
 		use({
 			"akinsho/bufferline.nvim",
-			config = Wrequire("configs.bufferline"),
+			config = function()
+				require("configs.bufferline")
+			end,
 			after = "rose-pine",
 		})
 

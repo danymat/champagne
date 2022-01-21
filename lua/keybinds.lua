@@ -48,7 +48,7 @@ map("t", "<Esc><Esc>", "<C-\\><C-n>")
 
 -- Dotfiles
 map("n", "<Leader>sv", ":source ~/.config/nvim/init.lua<CR>")
-map("n", "<Leader>so", ":source %<CR>")
+map("n", "<Leader>so", ":source %<CR>", {})
 
 -- Window management
 map("n", "<Leader>j", ":wincmd j<CR>")
@@ -168,5 +168,8 @@ map("n", "<Leader>bç", ":BufferLineGoToBuffer 9<CR>")
 --[[ map("n", "<Leader>bé", ":blast<CR>") ]]
 
 -- A multiline tabout setup could look like this
-map("i", "<C-l>", "<Plug>(TaboutMulti)", { silent = true })
-map("i", "<C-h>", "<Plug>(TaboutBackMulti)", { silent = true })
+ok, _ = Prequire("tabout")
+if ok then
+	map("i", "<C-l>", "<Plug>(TaboutMulti)<CR>", { silent = true })
+	map("i", "<C-h>", "<Plug>(TaboutBackMulti)<CR>", { silent = true })
+end
