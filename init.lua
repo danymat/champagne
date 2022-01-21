@@ -1,7 +1,21 @@
-require('impatient')
-require('globals')
-require('configuration')
-require('configs.lsp')
+local core = {
+	"plugins",
+	"globals",
+	"configuration",
+	"keybinds",
+}
+
+pcall(require, "impatient")
+
+for _, module in ipairs(core) do
+	local ok, err = pcall(require, module)
+	if not ok then
+		error("Error loading " .. module .. "\n\n" .. err)
+	end
+end
 -- require('plugins')
-require('packer_compiled')
-require('keybinds')
+-- require('impatient')
+-- require('globals')
+-- require('configuration')
+-- require('configs.lsp')
+-- require('keybinds')

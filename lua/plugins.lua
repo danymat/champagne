@@ -1,6 +1,7 @@
 -- Install packer if not found
 local fn = vim.fn
 local install_path = fn.stdpath("data") .. "/site/pack/packer/start/packer.nvim"
+local packer_bootstrap
 if fn.empty(fn.glob(install_path)) > 0 then
 	packer_bootstrap = fn.system({
 		"git",
@@ -11,9 +12,9 @@ if fn.empty(fn.glob(install_path)) > 0 then
 		install_path,
 	})
 end
+vim.cmd([[packadd packer.nvim]])
 
-local packer = require("packer")
-packer.startup({
+return require("packer").startup({
 	function(use)
 		use("wbthomason/packer.nvim")
 
@@ -134,6 +135,11 @@ packer.startup({
 		-- LSP
 		use({
 			"neovim/nvim-lspconfig",
+			config = function()
+				require("configs.lsp")
+			end,
+		})
+		use({
 			"folke/lua-dev.nvim",
 			"ray-x/lsp_signature.nvim",
 			"jose-elias-alvarez/null-ls.nvim",
@@ -315,7 +321,7 @@ packer.startup({
 					},
 					highlights = {
 						fill = { guibg = p.base },
-						background = { guibg = p.base, guifg = p.inactive},
+						background = { guibg = p.base, guifg = p.inactive },
 					},
 				})
 			end,
@@ -325,5 +331,4 @@ packer.startup({
 			require("packer").sync()
 		end
 	end,
-
 })

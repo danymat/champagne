@@ -1,3 +1,9 @@
+local ok, telescope = Prequire("telescope")
+
+if not ok then
+	return
+end
+
 local M = {}
 
 M.search_dotfiles = function()
@@ -69,7 +75,7 @@ M.paste_file_name = function()
 	end
 	local text = "# " .. file:sub(1, -4)
 	local cursor = vim.api.nvim_win_get_cursor(0)
-	vim.api.nvim_buf_set_lines(0, cursor[1] -1 , cursor[1]-1, false, { text })
-    vim.api.nvim_feedkeys("i", "n", false)
+	vim.api.nvim_buf_set_lines(0, cursor[1] - 1, cursor[1] - 1, false, { text })
+	vim.api.nvim_feedkeys("i", "n", false)
 end
 return M

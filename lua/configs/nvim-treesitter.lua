@@ -1,3 +1,9 @@
+local ok, treesitter = Prequire("nvim-treesitter")
+
+if not ok then
+	return
+end
+
 local parser_configs = require("nvim-treesitter.parsers").get_parser_configs()
 parser_configs.norg_table = {
 	install_info = {
@@ -29,7 +35,8 @@ require("nvim-treesitter.configs").setup({
 	context_commentstring = {
 		enable = true,
 	},
-	ensure_installed = "maintained", -- one of "all", "maintained" (parsers with maintainers), or a list of languages
+	-- ensure_installed = "maintained", -- one of "all", "maintained" (parsers with maintainers), or a list of languages
+	ensure_installed = { "lua" },
 	highlight = { enable = true },
 	indent = { enable = true },
 	textobjects = {

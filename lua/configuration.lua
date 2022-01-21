@@ -1,4 +1,5 @@
 vim.g.mapleader = " "
+
 -- Disabled defaults
 vim.g.loaded_gzip = 1
 vim.g.loaded_zip = 1

@@ -1,5 +1,9 @@
 -- Map keybinds
-local nvim_lsp = require("lspconfig")
+local ok, nvim_lsp = Prequire("lspconfig")
+
+if not ok then
+	return
+end
 
 local on_attach = function(_, bufnr)
 	local function buf_set_keymap(...)

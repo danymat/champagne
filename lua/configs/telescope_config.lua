@@ -1,3 +1,9 @@
+local ok, telescope = Prequire("telescope")
+
+if not ok then
+	return
+end
+
 local actions = require("telescope.actions")
 require("telescope").setup({
 	defaults = require("telescope.themes").get_ivy({

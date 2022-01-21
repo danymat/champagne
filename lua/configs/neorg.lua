@@ -1,4 +1,10 @@
-require("neorg").setup({
+local ok, neorg = Prequire("neorg")
+
+if not ok then
+	return
+end
+
+neorg.setup({
 	load = {
 		["core.defaults"] = {},
 		["core.keybinds"] = {

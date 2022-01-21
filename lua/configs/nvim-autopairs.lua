@@ -1,4 +1,10 @@
-require("nvim-autopairs").setup({
+local ok, autopairs = Prequire("nvim-autopairs")
+
+if not ok then
+	return
+end
+
+autopairs.setup({
 	fast_wrap = { map = "€" },
 })
 local cmp_autopairs = require("nvim-autopairs.completion.cmp")

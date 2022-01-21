@@ -1,6 +1,11 @@
-local cmp = require("cmp")
-local types = require("cmp.types")
-local str = require("cmp.utils.str")
+local ok, cmp = Prequire("cmp")
+
+if not ok then
+	return
+end
+
+local _, types = Prequire("cmp.types")
+local _, str = Prequire("cmp.utils.str")
 
 local t = function(str)
 	return vim.api.nvim_replace_termcodes(str, true, true, true)
@@ -144,4 +149,3 @@ require("cmp").setup.cmdline(":", {
 })
 
 require("cmp_git").setup()
-

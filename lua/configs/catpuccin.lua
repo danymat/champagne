@@ -1,4 +1,8 @@
-local catppuccin = require("catppuccin")
+local ok, catppuccin = Prequire("catppuccin")
+
+if not ok then
+	return
+end
 
 -- configure it
 catppuccin.setup({
@@ -54,4 +58,3 @@ catppuccin.setup({
 		hop = false,
 	},
 })
-
