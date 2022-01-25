@@ -5,16 +5,17 @@ if not ok then
 	return
 end
 
+
 local on_attach = function(_, bufnr)
 	local function buf_set_keymap(...)
 		vim.api.nvim_buf_set_keymap(bufnr, ...)
 	end
 	local opts = { noremap = true, silent = true }
 	-- See `:help vim.lsp.*` for documentation on any of the below functions
-	buf_set_keymap("n", "gd", "<Cmd>lua vim.lsp.buf.definition()<CR>", opts)
+	buf_set_keymap("n", "<leader>gd", "<Cmd>lua vim.lsp.buf.definition()<CR>", opts)
 	buf_set_keymap("n", "K", "<Cmd>lua vim.lsp.buf.hover()<CR>", opts)
-	buf_set_keymap("n", "gi", "<cmd>lua vim.lsp.buf.implementation()<CR>", opts)
-	buf_set_keymap("n", "gr", "<cmd>lua vim.lsp.buf.references()<CR>", opts)
+	buf_set_keymap("n", "<Leaser>gi", "<cmd>lua vim.lsp.buf.implementation()<CR>", opts)
+	buf_set_keymap("n", "<leader>gr", "<cmd>lua vim.lsp.buf.references()<CR>", opts)
 	buf_set_keymap("n", "<leader>r", "<cmd>lua vim.lsp.buf.rename()<CR>", opts)
 	buf_set_keymap("n", "<C-k>", "<cmd>lua vim.lsp.buf.signature_help()<CR>", opts)
 	buf_set_keymap("n", "<C-b>", "<cmd>lua vim.diagnostic.goto_prev()<CR>", opts)
@@ -75,6 +76,9 @@ end
 -- Add more servers here
 local servers = {
 	-- "zettelkastenlsp",
+    "yamlls",
+	"jsonls",
+	"bashls",
 	"sumneko_lua",
 	"pyright",
 	"vuels",
@@ -151,6 +155,26 @@ for _, server in pairs(servers) do
 				require("tailwindcss-colors").buf_attach(bufnr)
 				on_attach(_, bufnr)
 			end,
+		})
+	elseif server == "yamlls" then
+		nvim_lsp[server].setup({
+			capabilities = capabilities,
+			settings = {
+				yaml = {
+					schemas = {
+                        ["https://raw.githubusercontent.com/compose-spec/compose-spec/master/schema/compose-spec.json"] = "/docker-compose.yml"
+                    }
+				},
+			},
+		})
+	elseif server == "jsonls" then
+		nvim_lsp[server].setup({
+			capabilities = capabilities,
+			settings = {
+				json = {
+					schemas = require("schemastore").json.schemas(),
+				},
+			},
 		})
 	else
 		nvim_lsp[server].setup(config)

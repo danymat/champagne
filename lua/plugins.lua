@@ -67,10 +67,10 @@ return require("packer").startup({
 
 		use({
 			"windwp/nvim-autopairs",
-			event = "BufRead",
 			config = function()
 				require("configs.nvim-autopairs")
 			end,
+            after = "nvim-cmp"
 		})
 
 		use({
@@ -129,7 +129,12 @@ return require("packer").startup({
 			"neovim/nvim-lspconfig",
 			config = Wrequire("configs.lsp"),
 			after = "nvim-cmp",
-			requires = { "folke/lua-dev.nvim", "ray-x/lsp_signature.nvim", "jose-elias-alvarez/null-ls.nvim" },
+			requires = {
+				"folke/lua-dev.nvim",
+				"ray-x/lsp_signature.nvim",
+				"jose-elias-alvarez/null-ls.nvim",
+				"b0o/schemastore.nvim",
+			},
 		})
 
 		use({
@@ -207,6 +212,10 @@ return require("packer").startup({
 		})
 
 		use({ "sindrets/diffview.nvim", cmd = "DiffviewOpen" })
+
+		use("ggandor/lightspeed.nvim")
+		use("rlane/pounce.nvim")
+		use("mfussenegger/nvim-ts-hint-textobject")
 
 		if packer_bootstrap then
 			require("packer").sync()

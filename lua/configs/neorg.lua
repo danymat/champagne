@@ -38,12 +38,12 @@ neorg.setup({
 				-- custom_tag_completion = true,
 			},
 		},
-		["external.integrations.gtd-things"] = {
-			config = {
-				things_db_path = "/Users/danielmathiot/Library/Group Containers/JLMPQHK86H.com.culturedcode.ThingsMac.beta/Things Database.thingsdatabase/main.sqlite",
-				waiting_for_tag = "En attente",
-			},
-		},
+		-- ["external.integrations.gtd-things"] = {
+		-- 	config = {
+		-- 		things_db_path = "/Users/danielmathiot/Library/Group Containers/JLMPQHK86H.com.culturedcode.ThingsMac.beta/Things Database.thingsdatabase/main.sqlite",
+		-- 		waiting_for_tag = "En attente",
+		-- 	},
+		-- },
 		["core.presenter"] = {
 			config = {
 				zen_mode = "truezen",

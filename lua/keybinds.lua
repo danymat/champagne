@@ -173,3 +173,14 @@ if ok then
 	map("i", "<C-l>", "<Plug>(TaboutMulti)", { silent = true })
 	map("i", "<C-h>", "<Plug>(TaboutBackMulti)", { silent = true })
 end
+
+ok, _ = Prequire("tsht")
+if ok then
+	map("n", "<Leader>vi", ":lua require('tsht').nodes()<CR>")
+end
+
+ok, _ = Prequire("pounce")
+if ok then
+	map("n", "/", ":Pounce<CR>")
+	map("n", "?", "/")
+end
