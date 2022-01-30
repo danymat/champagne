@@ -83,7 +83,10 @@ map("v", "<Leader>p", '"_dP')
 map("n", "<C-j>", "i<CR ><Esc>J") -- Inverse of join-line
 
 -- Nerdtree
-map("n", "<Leader>t", ":NERDTreeFocus<CR>")
+ok, _ = Prequire("nvim-tree")
+if ok then
+	map("n", "<Leader>t", ':lua require("nvim-tree").focus()<CR>')
+end
 
 -- Neogen
 ok, _ = Prequire("neogen")

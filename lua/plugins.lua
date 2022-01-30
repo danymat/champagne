@@ -26,7 +26,14 @@ return require("packer").startup({
 		use("nvim-lua/plenary.nvim")
 
 		-- Themes and UI
-		use({ "preservim/nerdtree", cmd = "NERDTreeFocus" })
+		use({
+			"kyazdani42/nvim-tree.lua",
+			config = function()
+				require("nvim-tree").setup({
+					update_cwd = true,
+				})
+			end,
+		})
 
 		use({
 			"szw/vim-maximizer",
@@ -44,7 +51,7 @@ return require("packer").startup({
 		})
 
 		use({
-			"rose-pine/neovim",
+			"~/Developer/neovim",
 			as = "rose-pine",
 			config = Wrequire("configs.rose-pine"),
 		})
@@ -70,11 +77,11 @@ return require("packer").startup({
 			config = function()
 				require("configs.nvim-autopairs")
 			end,
-            after = "nvim-cmp"
+			after = "nvim-cmp",
 		})
 
 		use({
-			"danymat/neogen",
+			"~/Developer/neogen",
 			config = Wrequire("configs.neogen"),
 			requires = "nvim-treesitter/nvim-treesitter",
 		})
@@ -84,9 +91,9 @@ return require("packer").startup({
 		use({ "tpope/vim-repeat", event = "BufRead" })
 
 		use({
-			-- "Iron-E/nvim-cmp",
-			-- branch = "feat/completion-menu-borders",
-			"hrsh7th/nvim-cmp",
+			"Iron-E/nvim-cmp",
+			branch = "feat/completion-menu-borders",
+			-- "hrsh7th/nvim-cmp",
 			event = { "InsertEnter", "CmdlineEnter" },
 			config = Wrequire("configs.cmp"),
 			after = {
@@ -185,7 +192,7 @@ return require("packer").startup({
 		})
 
 		use({
-			"nvim-neorg/neorg",
+			"~/Developer/neorg",
 			config = Wrequire("configs.neorg"),
 			requires = {
 				"nvim-neorg/neorg-telescope",
@@ -213,9 +220,16 @@ return require("packer").startup({
 
 		use({ "sindrets/diffview.nvim", cmd = "DiffviewOpen" })
 
-		use("ggandor/lightspeed.nvim")
-		use("rlane/pounce.nvim")
-		use("mfussenegger/nvim-ts-hint-textobject")
+		use({ "ggandor/lightspeed.nvim", event = "BufRead", after = "vim-repeat" })
+		use({ "rlane/pounce.nvim" })
+		use({ "mfussenegger/nvim-ts-hint-textobject" })
+
+		use({
+			"echasnovski/mini.nvim",
+			config = function()
+				require("mini.doc").setup({})
+			end,
+		})
 
 		if packer_bootstrap then
 			require("packer").sync()
