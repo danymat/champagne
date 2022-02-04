@@ -226,6 +226,15 @@ return require("packer").startup({
 			config = function()
 				require("zk").setup({
 					picker = "telescope",
+					lsp = {
+						config = {
+							on_attach = function(_, buffer)
+								P("here")
+								P(buffer)
+								vim.diagnostic.hide(nil, buffer)
+							end,
+						},
+					},
 				})
 
 				local zk = require("zk")
