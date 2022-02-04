@@ -37,7 +37,7 @@ require("nvim-treesitter.configs").setup({
 	},
 	-- ensure_installed = "maintained", -- one of "all", "maintained" (parsers with maintainers), or a list of languages
 	ensure_installed = { "lua", "vim" },
-	highlight = { enable = true },
+	highlight = { enable = true, additional_vim_regex_highlighting = { "markdown" } },
 	indent = { enable = true },
 	textobjects = {
 		select = {

@@ -29,10 +29,15 @@ if ok then
 	map("n", "<Leader>?", ':lua require("telescope.builtin").help_tags()<CR>')
 
 	-- Zettelkasten
-	map("n", "<Leader>§§", ':lua require("configs.telescope").open_starting_files()<CR>')
-	map("n", "<Leader>zi", ':lua require("configs.telescope").search_zettelkasten_in_files()<CR>')
-	map("n", "<Leader>zl", ':lua require("configs.telescope").find_link()<CR>')
-	map("n", "<Leader>zk", ':lua require("configs.telescope").search_zettelkasten()<CR>')
+	local _ok, _ = Prequire("zk.commands")
+	if _ok then
+		map("n", "<Leader>§§", ':lua require("zk.commands").get("ZkStartingPoint")()<CR>')
+		map("n", "<Leader>zk", ':lua require("zk.commands").get("ZkNotes")()<CR>')
+		map("n", "<Leader>zb", ':lua require("zk.commands").get("ZkBacklinks")()<CR>')
+		map("n", "<Leader>zi", ':lua require("zk.commands").get("ZkLinks")()<CR>')
+		map("n", "<Leader>zt", ':lua require("zk.commands").get("ZkTags")({ sort = { "note-count" }})<CR>')
+		map("n", "<Leader>zn", ':lua require("zk.commands").get("ZkNew")({ title = vim.fn.input("Title: ") })<CR>')
+	end
 
 	map("n", "<Leader>ev", ':lua require("configs.telescope").search_dotfiles()<CR>')
 	map(
@@ -40,6 +45,7 @@ if ok then
 		"<Leader>aa",
 		':lua require("telescope.builtin").lsp_code_actions(require("telescope.themes").get_cursor({}))<CR>'
 	)
+	map("n", "<C-a>", ":Telescope lsp_document_symbols symbols=function<CR>")
 end
 
 -- Terminal
@@ -85,7 +91,7 @@ map("n", "<C-j>", "i<CR ><Esc>J") -- Inverse of join-line
 -- Nerdtree
 ok, _ = Prequire("nvim-tree")
 if ok then
-	map("n", "<Leader>t", ':lua require("nvim-tree").focus()<CR>')
+	map("n", "<Leader>t", ":NvimTreeFocus<CR>")
 end
 
 -- Neogen
@@ -159,31 +165,13 @@ map("n", "<Leader>y", '"+y')
 map("n", "<Leader>bn", ":BufferLineCycleNext<CR>")
 map("n", "<Leader>bb", ":BufferLineCyclePrev<CR>")
 map("n", "<Leader>bd", ":bd<CR>")
-map("n", "<Leader>b&", ":BufferLineGoToBuffer 1<CR>")
-map("n", "<Leader>bé", ":BufferLineGoToBuffer 2<CR>")
-map("n", '<Leader>b"', ":BufferLineGoToBuffer 3<CR>")
-map("n", "<Leader>b'", ":BufferLineGoToBuffer 4<CR>")
-map("n", "<Leader>b(", ":BufferLineGoToBuffer 5<CR>")
-map("n", "<Leader>b§", ":BufferLineGoToBuffer 6<CR>")
-map("n", "<Leader>bè", ":BufferLineGoToBuffer 7<CR>")
-map("n", "<Leader>b!", ":BufferLineGoToBuffer 8<CR>")
-map("n", "<Leader>bç", ":BufferLineGoToBuffer 9<CR>")
---[[ map("n", "<Leader>bé", ":blast<CR>") ]]
-
--- A multiline tabout setup could look like this
-ok, _ = Prequire("tabout")
-if ok then
-	map("i", "<C-l>", "<Plug>(TaboutMulti)", { silent = true })
-	map("i", "<C-h>", "<Plug>(TaboutBackMulti)", { silent = true })
-end
-
-ok, _ = Prequire("tsht")
-if ok then
-	map("n", "<Leader>vi", ":lua require('tsht').nodes()<CR>")
-end
-
-ok, _ = Prequire("pounce")
-if ok then
-	map("n", "/", ":Pounce<CR>")
-	map("n", "?", "/")
-end
+map("n", "<Leader>bx", ":BufferLineCloseLeft<CR>:BufferLineCloseRight<CR>")
+map("n", "<Leader>&", ":BufferLineGoToBuffer 1<CR>")
+map("n", "<Leader>é", ":BufferLineGoToBuffer 2<CR>")
+map("n", '<Leader>"', ":BufferLineGoToBuffer 3<CR>")
+map("n", "<Leader>'", ":BufferLineGoToBuffer 4<CR>")
+map("n", "<Leader>(", ":BufferLineGoToBuffer 5<CR>")
+map("n", "<Leader>§", ":BufferLineGoToBuffer 6<CR>")
+map("n", "<Leader>è", ":BufferLineGoToBuffer 7<CR>")
+map("n", "<Leader>!", ":BufferLineGoToBuffer 8<CR>")
+map("n", "<Leader>ç", ":BufferLineGoToBuffer 9<CR>")

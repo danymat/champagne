@@ -39,33 +39,12 @@ local opts = {
 	end,
 }
 
---- Search files in ZK dir
-M.search_zettelkasten = function()
-	local options = vim.deepcopy(opts)
-	options.prompt_title = "< Zettels: files >"
-	require("telescope.builtin").find_files(options)
-end
-
 --- Open starting files in a telescope picker
 M.open_starting_files = function()
 	local options = vim.deepcopy(opts)
 	options.prompt_title = "< Zettels: §§ >"
 	options.default_text = "§§"
 	require("telescope.builtin").live_grep(options)
-end
-
---- Search zettelkasten note inside files
-M.search_zettelkasten_in_files = function()
-	local options = vim.deepcopy(opts)
-	options.prompt_title = "< Zettels: in files >"
-	require("telescope.builtin").live_grep(options)
-end
-
--- Find highlighted link (ZK prefixer) in all files
-M.find_link = function()
-	local options = vim.deepcopy(opts)
-	options.prompt_title = "< Zettels: links >"
-	require("telescope.builtin").grep_string(options)
 end
 
 M.paste_file_name = function()

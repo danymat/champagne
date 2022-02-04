@@ -25,9 +25,9 @@ return require("packer").startup({
 		use("lewis6991/impatient.nvim")
 		use("nvim-lua/plenary.nvim")
 
-		-- Themes and UI
 		use({
 			"kyazdani42/nvim-tree.lua",
+			cmd = "NvimTreeFocus",
 			config = function()
 				require("nvim-tree").setup({
 					update_cwd = true,
@@ -203,14 +203,6 @@ return require("packer").startup({
 		use({ "davidgranstrom/nvim-markdown-preview", ft = "markdown" })
 
 		use({
-			"abecodes/tabout.nvim",
-			config = function()
-				require("configs.tabout")
-			end,
-			require = { "nvim-treesitter" },
-		})
-
-		use({
 			"akinsho/bufferline.nvim",
 			config = function()
 				require("configs.bufferline")
@@ -221,13 +213,28 @@ return require("packer").startup({
 		use({ "sindrets/diffview.nvim", cmd = "DiffviewOpen" })
 
 		use({ "ggandor/lightspeed.nvim", event = "BufRead", after = "vim-repeat" })
-		use({ "rlane/pounce.nvim" })
-		use({ "mfussenegger/nvim-ts-hint-textobject" })
 
 		use({
 			"echasnovski/mini.nvim",
 			config = function()
 				require("mini.doc").setup({})
+			end,
+		})
+
+		use({
+			"mickael-menu/zk-nvim",
+			config = function()
+				require("zk").setup({
+					picker = "telescope",
+				})
+
+				local zk = require("zk")
+				local commands = require("zk.commands")
+
+				commands.add("ZkStartingPoint", function(options)
+					options = vim.tbl_extend("force", { match = "§§", exactMatch = true }, options or {})
+					zk.edit(options, { title = "§§" })
+				end)
 			end,
 		})
 

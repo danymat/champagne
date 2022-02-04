@@ -5,6 +5,23 @@ if not ok then
 	return
 end
 
+-- See https://github.com/neovim/nvim-lspconfig/blob/master/doc/server_configurations.md for more lsp servers
+-- Use these servers and default configs
+-- Add more servers here
+local servers = {
+	-- "zettelkastenlsp",
+	"yamlls",
+	"jsonls",
+	"bashls",
+	"sumneko_lua",
+	"pyright",
+	"vuels",
+	"tsserver",
+	"tailwindcss",
+	"phpactor",
+	"bashls",
+	"clangd",
+}
 
 local on_attach = function(_, bufnr)
 	local function buf_set_keymap(...)
@@ -32,64 +49,6 @@ end
 -- Add completion capabilities (completion, snippets)
 local capabilities = vim.lsp.protocol.make_client_capabilities()
 capabilities = require("cmp_nvim_lsp").update_capabilities(capabilities)
-
-local configs = require("lspconfig/configs")
-
--- Personal lsp
-if not configs.zettelkastenlsp then
-	configs.zettelkastenlsp = {
-		default_config = {
-			cmd = { "node", "/Users/danielmathiot/Developer/lsp-zettelkasten/server/out/server.js", "--stdio" },
-			filetypes = { "markdown" },
-			root_dir = function(fname)
-				return nvim_lsp.util.find_git_ancestor(fname) or vim.loop.os_homedir()
-			end,
-			settings = {},
-		},
-	}
-	nvim_lsp.zettelkastenlsp = configs.zettelkastenlsp
-end
-
-if not configs.zk then
-	configs.zk = {
-		default_config = {
-			cmd = { "zk", "lsp" },
-			filetypes = { "markdown" },
-			root_dir = function()
-				return vim.loop.cwd()
-			end,
-			settings = {},
-		},
-	}
-	configs.zk.index = function()
-		vim.lsp.buf.execute_command({
-			command = "zk.index",
-			arguments = { vim.api.nvim_buf_get_name(0) },
-		})
-		print("Re-indexed ZK")
-	end
-	nvim_lsp.zk = configs.zk
-end
-
--- See https://github.com/neovim/nvim-lspconfig/blob/master/doc/server_configurations.md for more lsp servers
--- Use these servers and default configs
--- Add more servers here
-local servers = {
-	-- "zettelkastenlsp",
-    "yamlls",
-	"jsonls",
-	"bashls",
-	"sumneko_lua",
-	"pyright",
-	"vuels",
-	"tsserver",
-	"tailwindcss",
-	"phpactor",
-	"zk",
-	"bashls",
-	"clangd",
-}
-
 local config = { on_attach = on_attach, capabilities = capabilities }
 
 --- Generates a config table for lspconfig
@@ -162,8 +121,8 @@ for _, server in pairs(servers) do
 			settings = {
 				yaml = {
 					schemas = {
-                        ["https://raw.githubusercontent.com/compose-spec/compose-spec/master/schema/compose-spec.json"] = "/docker-compose.yml"
-                    }
+						["https://raw.githubusercontent.com/compose-spec/compose-spec/master/schema/compose-spec.json"] = "/docker-compose.yml",
+					},
 				},
 			},
 		})

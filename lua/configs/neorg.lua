@@ -51,11 +51,11 @@ neorg.setup({
 		},
 
 		["core.integrations.telescope"] = {},
-		["core.norg.completion"] = {
-			config = {
-				engine = "nvim-cmp",
-			},
-		},
+		-- ["core.norg.completion"] = {
+		-- 	config = {
+		-- 		engine = "nvim-cmp",
+		-- 	},
+		-- },
 		-- ["core.zettelkasten"] = {},
 		["core.norg.journal"] = {},
 		["core.norg.qol.toc"] = {},
