@@ -39,13 +39,13 @@ if ok then
 		map("n", "<Leader>zn", ':lua require("zk.commands").get("ZkNew")({ title = vim.fn.input("Title: ") })<CR>')
 	end
 
-	map("n", "<Leader>ev", ':lua require("configs.telescope").search_dotfiles()<CR>')
+	map("n", "<Leader>ev", ':lua require("telescope.builtin").find_files { prompt_title = "nvim", cwd = "~/.config/nvim" } <CR>')
 	map(
 		"n",
 		"<Leader>aa",
 		':lua require("telescope.builtin").lsp_code_actions(require("telescope.themes").get_cursor({}))<CR>'
 	)
-	map("n", "<C-a>", ":Telescope lsp_document_symbols symbols=function<CR>")
+	map("n", "<C-a>", ":Telescope lsp_document_symbols symbols=function,class<CR>")
 end
 
 -- Terminal
@@ -88,11 +88,8 @@ map("n", "<C-d>", "<C-d>zzzv")
 map("v", "<Leader>p", '"_dP')
 map("n", "<C-j>", "i<CR ><Esc>J") -- Inverse of join-line
 
--- Nerdtree
-ok, _ = Prequire("nvim-tree")
-if ok then
-	map("n", "<Leader>t", ":NvimTreeFocus<CR>")
-end
+map("n", "<Leader>t", ":NvimTreeFocus<CR>")
+
 
 -- Neogen
 ok, _ = Prequire("neogen")

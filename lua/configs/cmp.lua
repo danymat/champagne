@@ -15,14 +15,12 @@ local t = function(str)
 	return vim.api.nvim_replace_termcodes(str, true, true, true)
 end
 
-
 -- Do not jump to snippet if i'm outside of it
 -- https://github.com/L3MON4D3/LuaSnip/issues/78
 luasnip.config.setup({
 	region_check_events = "CursorMoved",
 	delete_check_events = "TextChanged",
 })
-
 
 cmp.setup({
 	completion = { border = { "╭", "─", "╮", "│", "╯", "─", "╰", "│" }, scrollbar = "║" },
@@ -106,19 +104,19 @@ cmp.setup({
 			if luasnip.expand_or_jumpable() then
 				vim.fn.feedkeys(t("<Plug>luasnip-expand-or-jump"), "")
 			elseif neogen.jumpable() then
-				vim.fn.feedkeys(t("<cmd>lua require('neogen').jump_next()<CR>"), "")
+				neogen.jump_next()
 			else
 				fallback()
 			end
 		end, {
-            "i",
+			"i",
 			"s",
 		}),
 		["<C-h>"] = cmp.mapping(function(fallback)
 			if luasnip.jumpable(-1) then
 				vim.fn.feedkeys(t("<Plug>luasnip-jump-prev"), "")
 			elseif neogen.jumpable(-1) then
-				vim.fn.feedkeys(t("<cmd>lua require('neogen').jump_prev()<CR>"), "")
+				neogen.jump_prev()
 			else
 				fallback()
 			end

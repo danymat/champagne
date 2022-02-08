@@ -68,6 +68,6 @@ vim.o.inccommand = "nosplit" -- Update the buffer automagically as you substitut
 vim.cmd([[
 augroup highlight_yank
     autocmd!
-    autocmd TextYankPost * silent! lua require'vim.highlight'.on_yank({timeout = 60})
+    autocmd TextYankPost * silent! lua vim.highlight.on_yank({timeout = 60})
 augroup END
 ]])
