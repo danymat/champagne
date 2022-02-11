@@ -60,7 +60,6 @@ return require("packer").startup({
 
 		use({
 			"rose-pine/neovim",
-			-- "~/Developer/neovim/",
 			as = "rose-pine",
 			config = function()
 				vim.g.rose_pine_variant = "moon"
@@ -112,7 +111,7 @@ return require("packer").startup({
 		})
 
 		use({
-			"~/Developer/neogen",
+			"danymat/neogen",
 			config = function()
 				require("neogen").setup({})
 				require("neogen").get_template("python"):config({ annotation_convention = "numpydoc" })
@@ -522,8 +521,7 @@ return require("packer").startup({
 		use({ "nvim-treesitter/playground", after = "nvim-treesitter" })
 
 		use({
-			"~/Developer/neorg",
-			-- "nvim-neorg/neorg",
+			"nvim-neorg/neorg",
 			config = function()
 				require("neorg").setup({
 					load = {
