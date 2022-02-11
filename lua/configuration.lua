@@ -71,3 +71,19 @@ augroup highlight_yank
     autocmd TextYankPost * silent! lua vim.highlight.on_yank({timeout = 60})
 augroup END
 ]])
+
+-- Change icons for Lsp Diagnostic
+local signs = { Error = "", Warn = "", Info = "כֿ", Hint = "" }
+for sign, icon in pairs(signs) do
+	vim.fn.sign_define(
+		"DiagnosticSign" .. sign,
+		{ text = icon, texthl = "Diagnostic" .. sign, linehl = false, numhl = "Diagnostic" .. sign }
+	)
+end
+
+-- Make hover borders rounded
+vim.lsp.handlers["textDocument/hover"] = vim.lsp.with(vim.lsp.handlers.hover, {
+	border = "rounded",
+})
+
+vim.diagnostic.config({ virtual_text = { prefix = "◉" }, float = { border = "rounded" } })

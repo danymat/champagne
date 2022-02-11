@@ -27,7 +27,7 @@ end
 
 return require("packer").startup({
 	function(use)
-		use("~/Developer/packer.nvim")
+		use("wbthomason/packer.nvim")
 
 		use({ "lewis6991/impatient.nvim" })
 		use("nvim-lua/plenary.nvim")
@@ -60,7 +60,7 @@ return require("packer").startup({
 
 		use({
 			"rose-pine/neovim",
-            -- "~/Developer/neovim/",
+			-- "~/Developer/neovim/",
 			as = "rose-pine",
 			config = function()
 				vim.g.rose_pine_variant = "moon"
@@ -115,8 +115,10 @@ return require("packer").startup({
 			"~/Developer/neogen",
 			config = function()
 				require("neogen").setup({})
+				require("neogen").get_template("python"):config({ annotation_convention = "numpydoc" })
 			end,
 			requires = "nvim-treesitter/nvim-treesitter",
+			--tag = "*"
 		})
 
 		use({ "tpope/vim-surround", event = "BufRead" })
@@ -128,7 +130,109 @@ return require("packer").startup({
 			-- "hrsh7th/nvim-cmp",
 			branch = "feat/completion-menu-borders",
 			event = { "InsertEnter", "CmdlineEnter" },
-			config = Wrequire("configs.cmp"),
+			config = function()
+				local cmp = require("cmp")
+				local luasnip = Prequire("luasnip")
+				local lspkind = Prequire("lspkind")
+				local neogen = Prequire("neogen")
+
+				local t = function(str)
+					return vim.api.nvim_replace_termcodes(str, true, true, true)
+				end
+
+				cmp.setup({
+					completion = {
+						border = { "╭", "─", "╮", "│", "╯", "─", "╰", "│" },
+						scrollbar = "║",
+					},
+					window = {
+						documentation = { border = "rounded", scrollbar = "║" },
+						completion = { border = "rounded", scrollbar = "║" },
+					},
+					formatting = {
+						fields = { cmp.ItemField.Kind, cmp.ItemField.Abbr, cmp.ItemField.Menu },
+						format = lspkind.cmp_format({ with_text = false }),
+					},
+					snippet = {
+						expand = function(args)
+							if luasnip then
+								require("luasnip").lsp_expand(args.body)
+							end
+						end,
+					},
+
+					mapping = {
+						["<C-j>"] = cmp.mapping(
+							cmp.mapping.select_next_item({ behavior = cmp.SelectBehavior.Select }),
+							{ "i", "s", "c" }
+						),
+						["<C-k>"] = cmp.mapping(
+							cmp.mapping.select_prev_item({ behavior = cmp.SelectBehavior.Select }),
+							{ "i", "s", "c" }
+						),
+						["<Tab>"] = cmp.mapping(function(fallback)
+							-- This little snippet will confirm with tab, and if no entry is selected, will confirm the first item
+							if cmp.visible() then
+								local entry = cmp.get_selected_entry()
+								if not entry then
+									cmp.select_next_item({ behavior = cmp.SelectBehavior.Select })
+								end
+								cmp.confirm()
+							else
+								fallback()
+							end
+						end, {
+							"i",
+							"s",
+							"c",
+						}),
+						["<C-l>"] = cmp.mapping(function(fallback)
+							if luasnip and luasnip.expand_or_jumpable() then
+								vim.fn.feedkeys(t("<Plug>luasnip-expand-or-jump"), "")
+							elseif neogen and neogen.jumpable() then
+								neogen.jump_next()
+							else
+								fallback()
+							end
+						end, {
+							"i",
+							"s",
+						}),
+						["<C-h>"] = cmp.mapping(function(fallback)
+							if luasnip and luasnip.jumpable(-1) then
+								vim.fn.feedkeys(t("<Plug>luasnip-jump-prev"), "")
+							elseif neogen and neogen.jumpable(-1) then
+								neogen.jump_prev()
+							else
+								fallback()
+							end
+						end, {
+							"i",
+							"s",
+						}),
+					},
+
+					-- You should specify your *installed* sources.
+					sources = {
+						{ name = "cmp_git" },
+						{ name = "path" },
+						{ name = "luasnip" },
+						{ name = "nvim_lsp" },
+						{ name = "buffer", keyword_length = 5, max_item_count = 5 },
+						{ name = "neorg" },
+					},
+
+					experimental = {
+						ghost_text = true,
+					},
+				})
+
+				cmp.setup.cmdline(":", {
+					sources = {
+						{ name = "cmdline", keyword_length = 2 },
+					},
+				})
+			end,
 			after = {
 				"LuaSnip",
 				"neogen",
@@ -137,9 +241,25 @@ return require("packer").startup({
 		})
 
 		use({ "onsails/lspkind-nvim" })
-		use({ "L3MON4D3/LuaSnip" })
+		use({
+			"L3MON4D3/LuaSnip",
+			config = function()
+				-- Do not jump to snippet if i'm outside of it
+				-- https://github.com/L3MON4D3/LuaSnip/issues/78
+				require("luasnip").config.setup({
+					region_check_events = "CursorMoved",
+					delete_check_events = "TextChanged",
+				})
+			end,
+		})
 
-		use({ "petertriho/cmp-git", after = "nvim-cmp" })
+		use({
+			"petertriho/cmp-git",
+			after = "nvim-cmp",
+			config = function()
+				require("cmp_git").setup()
+			end,
+		})
 		use({ "hrsh7th/cmp-cmdline", after = "nvim-cmp" })
 		use({ "hrsh7th/cmp-path", after = "nvim-cmp" })
 		use({ "hrsh7th/cmp-nvim-lsp", after = "nvim-cmp" })
@@ -148,7 +268,131 @@ return require("packer").startup({
 
 		use({
 			"neovim/nvim-lspconfig",
-			config = Wrequire("configs.lsp"),
+			config = function()
+				local lspconfig = require("lspconfig")
+				local lsp_signature = Prequire("lsp_signature")
+				local cmp_nvim_lsp = Prequire("cmp_nvim_lsp")
+				local tailwindcss_colors = Prequire("tailwindcss-colors")
+				local schemastore = Prequire("schemastore")
+				local luadev = Prequire("lua-dev")
+
+				local on_attach = function(_, bufnr)
+					local function buf_set_keymap(...)
+						vim.api.nvim_buf_set_keymap(bufnr, ...)
+					end
+					local opts = { noremap = true, silent = true }
+					-- See `:help vim.lsp.*` for documentation on any of the below functions
+					buf_set_keymap("n", "<leader>gd", "<Cmd>lua vim.lsp.buf.definition()<CR>", opts)
+					buf_set_keymap("n", "K", "<Cmd>lua vim.lsp.buf.hover()<CR>", opts)
+					buf_set_keymap("n", "<Leaser>gi", "<cmd>lua vim.lsp.buf.implementation()<CR>", opts)
+					buf_set_keymap("n", "<leader>gr", "<cmd>lua vim.lsp.buf.references()<CR>", opts)
+					buf_set_keymap("n", "<leader>r", "<cmd>lua vim.lsp.buf.rename()<CR>", opts)
+					buf_set_keymap("n", "<C-k>", "<cmd>lua vim.lsp.buf.signature_help()<CR>", opts)
+					buf_set_keymap("n", "<C-b>", "<cmd>lua vim.diagnostic.goto_prev()<CR>", opts)
+					buf_set_keymap("n", "<C-n>", "<cmd>lua vim.diagnostic.goto_next()<CR>", opts)
+					buf_set_keymap("n", "<Leader>fs", ":lua vim.lsp.buf.formatting_sync()<CR>", opts)
+
+					if lsp_signature then
+						lsp_signature.on_attach({
+							bind = true,
+							hint_prefix = "🧸 ",
+							handler_opts = { border = "rounded" },
+						}, bufnr)
+					end
+				end
+
+				-- Add completion capabilities (completion, snippets)
+				local capabilities = vim.lsp.protocol.make_client_capabilities()
+				if cmp_nvim_lsp then
+					capabilities = cmp_nvim_lsp.update_capabilities(capabilities)
+				end
+				capabilities.offsetEncoding = { "utf-16" }
+				local config = { on_attach = on_attach, capabilities = capabilities }
+
+				local extend = function(lhs, rhs)
+					return vim.tbl_deep_extend("force", lhs, rhs)
+				end
+
+				-- See https://github.com/neovim/nvim-lspconfig/blob/master/doc/server_configurations.md for more lsp servers
+				lspconfig.bashls.setup(config)
+				lspconfig.pyright.setup(config)
+				lspconfig.vuels.setup(config)
+				lspconfig.tsserver.setup(config)
+				lspconfig.phpactor.setup(config)
+				lspconfig.clangd.setup(config)
+				lspconfig.yamlls.setup(extend(config, {
+					settings = {
+						yaml = {
+							schemas = {
+								["https://raw.githubusercontent.com/compose-spec/compose-spec/master/schema/compose-spec.json"] = "/docker-compose.yml",
+							},
+						},
+					},
+				}))
+				lspconfig.jsonls.setup(extend(config, {
+					settings = {
+						json = {
+							schemas = schemastore and schemastore.json.schemas(),
+						},
+					},
+				}))
+				-- lspconfig.sumneko_lua.setup(generate_sumneko_config())
+				lspconfig.sumneko_lua.setup(extend(
+					config,
+					(function()
+						local sumneko_root_path = "/opt/lua-language-server/"
+						local _config = {}
+
+						-- Configure lua language server for neovim development
+						local runtime_path = vim.split(package.path, ";")
+						table.insert(runtime_path, "lua/?.lua")
+						table.insert(runtime_path, "lua/?/init.lua")
+
+						local lua_settings = {
+							Lua = {
+								runtime = {
+									-- LuaJIT in the case of Neovim
+									version = "LuaJIT",
+									path = runtime_path,
+								},
+								diagnostics = {
+									-- Get the language server to recognize the `vim` global
+									globals = { "vim", "P", "G" },
+								},
+								telemetry = { enable = false },
+								workspace = {
+									preloadFileSize = 180,
+									-- Make the server aware of Neovim runtime files
+									library = vim.api.nvim_get_runtime_file("", true),
+								},
+							},
+						}
+						if luadev then
+							local _luadev_config = luadev.setup({
+								library = {
+									vimruntime = true,
+									types = true,
+									plugins = false,
+								},
+								lspconfig = lua_settings,
+							})
+							_config = vim.tbl_deep_extend("force", _config, _luadev_config)
+						else
+							_config = vim.tbl_deep_extend("force", _config, lua_settings)
+						end
+
+						return _config
+					end)()
+				))
+				lspconfig.tailwindcss.setup(extend(config, {
+					on_attach = function(_, bufnr)
+						if tailwindcss_colors then
+							tailwindcss_colors.buf_attach(bufnr)
+						end
+						on_attach(_, bufnr)
+					end,
+				}))
+			end,
 			after = "nvim-cmp",
 			requires = {
 				"folke/lua-dev.nvim",
@@ -156,6 +400,20 @@ return require("packer").startup({
 				"jose-elias-alvarez/null-ls.nvim",
 				"b0o/schemastore.nvim",
 			},
+		})
+
+		use({
+			"jose-elias-alvarez/null-ls.nvim",
+			config = function()
+				require("null-ls").setup({
+					debug = true,
+					sources = {
+						require("null-ls").builtins.formatting.stylua,
+						require("null-ls").builtins.formatting.prettier,
+						require("null-ls").builtins.code_actions.gitsigns,
+					},
+				})
+			end,
 		})
 
 		use({

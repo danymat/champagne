@@ -39,7 +39,11 @@ if ok then
 		map("n", "<Leader>zn", ':lua require("zk.commands").get("ZkNew")({ title = vim.fn.input("Title: ") })<CR>')
 	end
 
-	map("n", "<Leader>ev", ':lua require("telescope.builtin").find_files { prompt_title = "nvim", cwd = "~/.config/nvim" } <CR>')
+	map(
+		"n",
+		"<Leader>ev",
+		':lua require("telescope.builtin").find_files { prompt_title = "nvim", cwd = "~/.config/nvim" } <CR>'
+	)
 	map(
 		"n",
 		"<Leader>aa",
@@ -90,7 +94,6 @@ map("n", "<C-j>", "i<CR ><Esc>J") -- Inverse of join-line
 
 map("n", "<Leader>t", ":NvimTreeFocus<CR>")
 
-
 -- Neogen
 ok, _ = Prequire("neogen")
 if ok then
@@ -120,16 +123,6 @@ if ok then
 	)
 end
 
--- Zettelkasten
--- vim.cmd([[
---     let g:zettelkasten = "/Users/danielmathiot/Documents/000 Meta/00.01 Brain/"
--- command! -nargs=1 NewZettel :execute ":e" zettelkasten . strftime("%Y%m%d%H%M") . " <args>.md"
--- ]])
---
--- map("n", "<Leader>zn", ":NewZettel ")
--- map("n", "<Leader>@", Wrap(require("configs.telescope").paste_file_name))
--- map("n", "<Leader>z&", Wrap(require("lspconfig").zk.index))
-
 -- This is the greatest thing ever for azerty keyboards
 -- https://superuser.com/questions/1044018/how-to-swap-the-numbers-row-on-azerty-keyboards-in-vim-only-while-being-in-norma
 map("n", "1", "&")
@@ -158,17 +151,4 @@ map("n", "à", "0")
 map("v", "<Leader>y", '"+y')
 map("n", "<Leader>y", '"+y')
 
--- BufferLine
-map("n", "<Leader>bn", ":BufferLineCycleNext<CR>")
-map("n", "<Leader>bb", ":BufferLineCyclePrev<CR>")
 map("n", "<Leader>bd", ":bd<CR>")
-map("n", "<Leader>bx", ":BufferLineCloseLeft<CR>:BufferLineCloseRight<CR>")
-map("n", "<Leader>&", ":BufferLineGoToBuffer 1<CR>")
-map("n", "<Leader>é", ":BufferLineGoToBuffer 2<CR>")
-map("n", '<Leader>"', ":BufferLineGoToBuffer 3<CR>")
-map("n", "<Leader>'", ":BufferLineGoToBuffer 4<CR>")
-map("n", "<Leader>(", ":BufferLineGoToBuffer 5<CR>")
-map("n", "<Leader>§", ":BufferLineGoToBuffer 6<CR>")
-map("n", "<Leader>è", ":BufferLineGoToBuffer 7<CR>")
-map("n", "<Leader>!", ":BufferLineGoToBuffer 8<CR>")
-map("n", "<Leader>ç", ":BufferLineGoToBuffer 9<CR>")

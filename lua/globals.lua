@@ -20,7 +20,9 @@ end
 
 Prequire = function(module)
 	local ok, mod = pcall(require, module)
-	return ok, mod
+	if ok then
+		return mod
+	end
 end
 
 Wrap = function(function_pointer, ...)
@@ -30,4 +32,3 @@ Wrap = function(function_pointer, ...)
 		return function_pointer(unpack(params))
 	end
 end
-
