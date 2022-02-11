@@ -57,9 +57,11 @@ vim.o.incsearch = true --show search as characters entered
 
 -- Undo/Redo
 vim.o.undofile = true -- Maintain undo history between sessions
-vim.o.undodir = "/Users/danielmathiot/.vim/undodir" -- Undo directory (to create if not created)
-
---vim.o.shortmess = "filnxtToOF" .. "I" -- Do not show the intro message
+local undodir = os.getenv("HOME") .. "/.local/share/nvim/undodir"
+if not vim.fn.isdirectory(undodir) then
+    vim.fn.mkdir(undodir, "", 0700)
+end
+vim.o.undodir = undodir
 vim.o.lazyredraw = true -- Do not redraw screen while processing macros
 
 vim.o.inccommand = "nosplit" -- Update the buffer automagically as you substitute
