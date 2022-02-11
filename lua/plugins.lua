@@ -340,7 +340,7 @@ return require("packer").startup({
 				lspconfig.sumneko_lua.setup(extend(
 					config,
 					(function()
-						local sumneko_root_path = "/opt/lua-language-server/"
+						-- Local config for lua development
 						local _config = {}
 
 						-- Configure lua language server for neovim development
