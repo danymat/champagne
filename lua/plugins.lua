@@ -335,7 +335,6 @@ return require("packer").startup({
 						},
 					},
 				}))
-				-- lspconfig.sumneko_lua.setup(generate_sumneko_config())
 				lspconfig.sumneko_lua.setup(extend(
 					config,
 					(function()
@@ -479,14 +478,29 @@ return require("packer").startup({
 				})
 
 				require("telescope").load_extension("ui-select")
-				require("telescope").load_extension("project")
+				require("telescope").load_extension("fzf")
+				require("telescope").load_extension("workspaces")
 			end,
 			requires = {
 				"nvim-lua/popup.nvim",
-				"nvim-telescope/telescope-project.nvim",
 				"nvim-telescope/telescope-ui-select.nvim",
+				"nvim-telescope/telescope-fzf-native.nvim",
+				"natecraddock/workspaces.nvim",
 			},
 		})
+
+		use({
+			"natecraddock/workspaces.nvim",
+			config = function()
+				require("workspaces").setup({
+					hooks = {
+						open = { "Telescope find_files" },
+					},
+				})
+			end,
+		})
+
+		use({ "nvim-telescope/telescope-fzf-native.nvim", run = "make" })
 
 		use({
 			"nvim-treesitter/nvim-treesitter",
@@ -571,7 +585,7 @@ return require("packer").startup({
 					picker = "telescope",
 					lsp = {
 						config = {
-							on_attach = function()
+							on_attach = function(_, buffer)
 								local zk_lsp_client = require("zk.lsp").client()
 								if zk_lsp_client then
 									local zk_diagnostic_namespace = vim.lsp.diagnostic.get_namespace(zk_lsp_client.id)

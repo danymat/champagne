@@ -25,7 +25,7 @@ if ok then
 	map("n", "<Leader>ff", ":Telescope live_grep<CR>")
 	map("n", "<Leader>fz", ":Telescope current_buffer_fuzzy_find<CR>")
 	map("n", "<Leader>o", ':lua require("telescope.builtin").oldfiles()<CR>')
-	map("n", "<Leader>p", ':lua require("telescope").extensions.project.project { display_type = "full" }<CR>')
+	map("n", "<Leader>p", ':lua require("telescope").extensions.workspaces.workspaces()<CR>')
 	map("n", "<Leader>?", ':lua require("telescope.builtin").help_tags()<CR>')
 
 	-- Zettelkasten
