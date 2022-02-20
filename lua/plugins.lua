@@ -14,17 +14,6 @@ if fn.empty(fn.glob(install_path)) > 0 then
 end
 vim.cmd([[packadd packer.nvim]])
 
-vim.cmd([[
-  augroup packer_user_config
-    autocmd!
-    autocmd BufWritePost plugins.lua source <afile> | PackerCompile
-  augroup end
-]])
-
-Wrequire = function(module)
-	require(module)
-end
-
 return require("packer").startup({
 	function(use)
 		use("wbthomason/packer.nvim")
@@ -62,10 +51,21 @@ return require("packer").startup({
 			"rose-pine/neovim",
 			as = "rose-pine",
 			config = function()
-				vim.g.rose_pine_variant = "moon"
-				vim.g.rose_pine_bold_vertical_split_line = true
-				vim.g.rose_pine_disable_float_background = true
+				require("rose-pine").setup({
+					dark_variant = "moon",
+					bold_vert_split = true,
+					disable_float_background = true,
+				})
 				vim.cmd([[ colorscheme rose-pine ]])
+			end,
+		})
+
+		use({
+			"mvllow/modes.nvim",
+			event = "BufRead", -- optional lazy loading
+			config = function()
+				vim.opt.cursorline = true
+				require("modes").setup()
 			end,
 		})
 
@@ -114,10 +114,8 @@ return require("packer").startup({
 			"danymat/neogen",
 			config = function()
 				require("neogen").setup({})
-				require("neogen").get_template("python"):config({ annotation_convention = "numpydoc" })
 			end,
 			requires = "nvim-treesitter/nvim-treesitter",
-			--tag = "*"
 		})
 
 		use({ "tpope/vim-surround", event = "BufRead" })
@@ -125,9 +123,8 @@ return require("packer").startup({
 		use({ "tpope/vim-repeat", event = "BufRead" })
 
 		use({
-			"Iron-E/nvim-cmp",
-			-- "hrsh7th/nvim-cmp",
-			branch = "feat/completion-menu-borders",
+			"hrsh7th/nvim-cmp",
+			branch = "dev",
 			event = { "InsertEnter", "CmdlineEnter" },
 			config = function()
 				local cmp = require("cmp")
@@ -161,6 +158,8 @@ return require("packer").startup({
 					},
 
 					mapping = {
+						["<C-b>"] = cmp.mapping(cmp.mapping.scroll_docs(-4), { "i", "c" }),
+						["<C-n>"] = cmp.mapping(cmp.mapping.scroll_docs(4), { "i", "c" }),
 						["<C-j>"] = cmp.mapping(
 							cmp.mapping.select_next_item({ behavior = cmp.SelectBehavior.Select }),
 							{ "i", "s", "c" }
@@ -313,6 +312,7 @@ return require("packer").startup({
 				end
 
 				-- See https://github.com/neovim/nvim-lspconfig/blob/master/doc/server_configurations.md for more lsp servers
+				lspconfig.rust_analyzer.setup(config)
 				lspconfig.bashls.setup(config)
 				lspconfig.pyright.setup(config)
 				lspconfig.vuels.setup(config)
@@ -408,6 +408,7 @@ return require("packer").startup({
 					sources = {
 						require("null-ls").builtins.formatting.stylua,
 						require("null-ls").builtins.formatting.prettier,
+						-- require("null-ls").builtins.formatting.rustfmt
 						require("null-ls").builtins.code_actions.gitsigns,
 					},
 				})
@@ -474,6 +475,9 @@ return require("packer").startup({
 					}),
 					extensions = {
 						["ui-select"] = require("telescope.themes").get_cursor(),
+						workspaces = {
+							keep_insert = true,
+						},
 					},
 				})
 
@@ -552,7 +556,9 @@ return require("packer").startup({
 								waiting_for_tag = "En attente",
 							},
 						},
-						["core.presenter"] = { config = { zen_mode = "truezen" } },
+						["core.presenter"] = {
+							config = { zen_mode = "truezen", slide_count = { position = "bottom" } },
+						},
 						["core.integrations.telescope"] = {},
 						["core.norg.completion"] = { config = { engine = "nvim-cmp" } },
 					},
@@ -585,7 +591,7 @@ return require("packer").startup({
 					picker = "telescope",
 					lsp = {
 						config = {
-							on_attach = function(_, buffer)
+							on_attach = function()
 								local zk_lsp_client = require("zk.lsp").client()
 								if zk_lsp_client then
 									local zk_diagnostic_namespace = vim.lsp.diagnostic.get_namespace(zk_lsp_client.id)
@@ -608,6 +614,13 @@ return require("packer").startup({
 			cmd = "TodoTelescope",
 			config = function()
 				require("todo-comments").setup({})
+			end,
+		})
+
+		use({
+			"j-hui/fidget.nvim",
+			config = function()
+				require("fidget").setup({})
 			end,
 		})
 

@@ -152,3 +152,6 @@ map("v", "<Leader>y", '"+y')
 map("n", "<Leader>y", '"+y')
 
 map("n", "<Leader>bd", ":bd<CR>")
+
+-- Delete word
+map("i", "<C-d>", "<C-w>")
