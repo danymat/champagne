@@ -1,5 +1,4 @@
 pcall(require, "impatient")
-
 pcall(require, "globals")
 pcall(require, "plugins")
 pcall(require, "configuration")

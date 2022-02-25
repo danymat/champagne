@@ -2,6 +2,7 @@
 local fn = vim.fn
 local install_path = fn.stdpath("data") .. "/site/pack/packer/start/packer.nvim"
 local packer_bootstrap
+
 if fn.empty(fn.glob(install_path)) > 0 then
 	packer_bootstrap = fn.system({
 		"git",
@@ -99,16 +100,16 @@ return require("packer").startup({
 			end,
 		})
 
-		use({
-			"windwp/nvim-autopairs",
-			event = "BufRead",
-			config = function()
-				require("nvim-autopairs").setup({
-					fast_wrap = { map = "€" },
-					map_cr = true,
-				})
-			end,
-		})
+		-- use({
+		-- 	"windwp/nvim-autopairs",
+		-- 	event = "BufRead",
+		-- 	config = function()
+		-- 		require("nvim-autopairs").setup({
+		-- 			fast_wrap = { map = "€" },
+		-- 			map_cr = true,
+		-- 		})
+		-- 	end,
+		-- })
 
 		use({
 			"danymat/neogen",
@@ -547,15 +548,20 @@ return require("packer").startup({
 						["core.keybinds"] = { config = { neorg_leader = "<Leader>o" } },
 						["core.norg.concealer"] = { config = { icon_preset = "diamond" } },
 						["core.norg.dirman"] = {
-							config = { workspaces = { main = "~/Documents/000 Meta/00.03 neorg/" } },
-						},
-						["core.gtd.base"] = { config = { workspace = "main", exclude = {} } },
-						["external.integrations.gtd-things"] = {
 							config = {
-								things_db_path = "/Users/danielmathiot/Library/Group Containers/JLMPQHK86H.com.culturedcode.ThingsMac.beta/Things Database.thingsdatabase/main.sqlite",
-								waiting_for_tag = "En attente",
+								workspaces = {
+									main = "~/Documents/000 Meta/00.03 neorg/",
+									test = "/tmp/test/",
+								},
 							},
 						},
+						["core.gtd.base"] = { config = { workspace = "test", exclude = {} } },
+						-- ["external.integrations.gtd-things"] = {
+						-- 	config = {
+						-- 		things_db_path = "/Users/danielmathiot/Library/Group Containers/JLMPQHK86H.com.culturedcode.ThingsMac.beta/Things Database.thingsdatabase/main.sqlite",
+						-- 		waiting_for_tag = "En attente",
+						-- 	},
+						-- },
 						["core.presenter"] = {
 							config = { zen_mode = "truezen", slide_count = { position = "bottom" } },
 						},
@@ -621,6 +627,19 @@ return require("packer").startup({
 			"j-hui/fidget.nvim",
 			config = function()
 				require("fidget").setup({})
+			end,
+		})
+
+		use({
+			"ZhiyuanLck/smart-pairs",
+			event = "InsertEnter",
+			config = function()
+				require("pairs"):setup({
+					mapping = {
+						jump_left_out_any = "<C-h>",
+						jump_right_out_any = "<C-l>",
+					},
+				})
 			end,
 		})
 
