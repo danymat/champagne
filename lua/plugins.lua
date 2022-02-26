@@ -100,21 +100,11 @@ return require("packer").startup({
 			end,
 		})
 
-		-- use({
-		-- 	"windwp/nvim-autopairs",
-		-- 	event = "BufRead",
-		-- 	config = function()
-		-- 		require("nvim-autopairs").setup({
-		-- 			fast_wrap = { map = "€" },
-		-- 			map_cr = true,
-		-- 		})
-		-- 	end,
-		-- })
 
 		use({
 			"danymat/neogen",
 			config = function()
-				require("neogen").setup({})
+				require("neogen").setup({ snippet_engine = "luasnip" })
 			end,
 			requires = "nvim-treesitter/nvim-treesitter",
 		})
@@ -131,7 +121,6 @@ return require("packer").startup({
 				local cmp = require("cmp")
 				local luasnip = Prequire("luasnip")
 				local lspkind = Prequire("lspkind")
-				local neogen = Prequire("neogen")
 
 				local t = function(str)
 					return vim.api.nvim_replace_termcodes(str, true, true, true)
@@ -188,8 +177,6 @@ return require("packer").startup({
 						["<C-l>"] = cmp.mapping(function(fallback)
 							if luasnip and luasnip.expand_or_jumpable() then
 								vim.fn.feedkeys(t("<Plug>luasnip-expand-or-jump"), "")
-							elseif neogen and neogen.jumpable() then
-								neogen.jump_next()
 							else
 								fallback()
 							end
@@ -200,8 +187,6 @@ return require("packer").startup({
 						["<C-h>"] = cmp.mapping(function(fallback)
 							if luasnip and luasnip.jumpable(-1) then
 								vim.fn.feedkeys(t("<Plug>luasnip-jump-prev"), "")
-							elseif neogen and neogen.jumpable(-1) then
-								neogen.jump_prev()
 							else
 								fallback()
 							end

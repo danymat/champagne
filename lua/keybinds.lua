@@ -97,7 +97,7 @@ map("n", "<Leader>t", ":NvimTreeFocus<CR>")
 -- Neogen
 ok, _ = Prequire("neogen")
 if ok then
-	map("n", "<Leader>nf", ':lua require("neogen").generate()<CR>')
+	map("n", "<Leader>nf", ':lua require("neogen").generate{ snippet_engine = "luasnip" }<CR>')
 	map("n", "<Leader>nc", ':lua require("neogen").generate { type = "class" }<CR>')
 	map("n", "<Leader>nt", ':lua require("neogen").generate { type = "type" }<CR>')
 	map("n", "<Leader>ez", ':lua R("neogen",{ setup = require("configs.neogen") })<CR>')
