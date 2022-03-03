@@ -63,7 +63,6 @@ return require("packer").startup({
 
 		use({
 			"mvllow/modes.nvim",
-			event = "BufRead", -- optional lazy loading
 			config = function()
 				vim.opt.cursorline = true
 				require("modes").setup()
@@ -100,9 +99,9 @@ return require("packer").startup({
 			end,
 		})
 
-
 		use({
-			"danymat/neogen",
+			-- "danymat/neogen",
+			"~/Developer/neogen/",
 			config = function()
 				require("neogen").setup({ snippet_engine = "luasnip" })
 			end,
@@ -525,11 +524,12 @@ return require("packer").startup({
 		use({ "nvim-treesitter/playground", after = "nvim-treesitter" })
 
 		use({
-			"nvim-neorg/neorg",
+			"~/Developer/neorg",
 			config = function()
 				require("neorg").setup({
 					load = {
 						["core.defaults"] = {},
+						["core.gtd.base"] = { config = { workspace = "test" } },
 						["core.keybinds"] = { config = { neorg_leader = "<Leader>o" } },
 						["core.norg.concealer"] = { config = { icon_preset = "diamond" } },
 						["core.norg.dirman"] = {
@@ -540,7 +540,6 @@ return require("packer").startup({
 								},
 							},
 						},
-						["core.gtd.base"] = { config = { workspace = "test", exclude = {} } },
 						-- ["external.integrations.gtd-things"] = {
 						-- 	config = {
 						-- 		things_db_path = "/Users/danielmathiot/Library/Group Containers/JLMPQHK86H.com.culturedcode.ThingsMac.beta/Things Database.thingsdatabase/main.sqlite",
