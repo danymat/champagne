@@ -13,6 +13,7 @@ if fn.empty(fn.glob(install_path)) > 0 then
 		install_path,
 	})
 end
+
 vim.cmd([[packadd packer.nvim]])
 
 return require("packer").startup({
@@ -114,7 +115,6 @@ return require("packer").startup({
 
 		use({
 			"hrsh7th/nvim-cmp",
-			branch = "dev",
 			event = { "InsertEnter", "CmdlineEnter" },
 			config = function()
 				local cmp = require("cmp")
@@ -124,6 +124,39 @@ return require("packer").startup({
 				local t = function(str)
 					return vim.api.nvim_replace_termcodes(str, true, true, true)
 				end
+
+				local mappings = {
+					["<C-b>"] = cmp.mapping.scroll_docs(-4),
+					["<C-n>"] = cmp.mapping.scroll_docs(4),
+					["<C-j>"] = cmp.mapping.select_next_item({ behavior = cmp.SelectBehavior.Select }),
+					["<C-k>"] = cmp.mapping.select_prev_item({ behavior = cmp.SelectBehavior.Select }),
+					["<Tab>"] = function(fallback)
+						-- This little snippet will confirm with tab, and if no entry is selected, will confirm the first item
+						if cmp.visible() then
+							local entry = cmp.get_selected_entry()
+							if not entry then
+								cmp.select_next_item({ behavior = cmp.SelectBehavior.Select })
+							end
+							cmp.confirm()
+						else
+							fallback()
+						end
+					end,
+					["<C-l>"] = function(fallback)
+						if luasnip and luasnip.expand_or_jumpable() then
+							vim.fn.feedkeys(t("<Plug>luasnip-expand-or-jump"), "")
+						else
+							fallback()
+						end
+					end,
+					["<C-h>"] = function(fallback)
+						if luasnip and luasnip.jumpable(-1) then
+							vim.fn.feedkeys(t("<Plug>luasnip-jump-prev"), "")
+						else
+							fallback()
+						end
+					end,
+				}
 
 				cmp.setup({
 					completion = {
@@ -146,54 +179,7 @@ return require("packer").startup({
 						end,
 					},
 
-					mapping = {
-						["<C-b>"] = cmp.mapping(cmp.mapping.scroll_docs(-4), { "i", "c" }),
-						["<C-n>"] = cmp.mapping(cmp.mapping.scroll_docs(4), { "i", "c" }),
-						["<C-j>"] = cmp.mapping(
-							cmp.mapping.select_next_item({ behavior = cmp.SelectBehavior.Select }),
-							{ "i", "s", "c" }
-						),
-						["<C-k>"] = cmp.mapping(
-							cmp.mapping.select_prev_item({ behavior = cmp.SelectBehavior.Select }),
-							{ "i", "s", "c" }
-						),
-						["<Tab>"] = cmp.mapping(function(fallback)
-							-- This little snippet will confirm with tab, and if no entry is selected, will confirm the first item
-							if cmp.visible() then
-								local entry = cmp.get_selected_entry()
-								if not entry then
-									cmp.select_next_item({ behavior = cmp.SelectBehavior.Select })
-								end
-								cmp.confirm()
-							else
-								fallback()
-							end
-						end, {
-							"i",
-							"s",
-							"c",
-						}),
-						["<C-l>"] = cmp.mapping(function(fallback)
-							if luasnip and luasnip.expand_or_jumpable() then
-								vim.fn.feedkeys(t("<Plug>luasnip-expand-or-jump"), "")
-							else
-								fallback()
-							end
-						end, {
-							"i",
-							"s",
-						}),
-						["<C-h>"] = cmp.mapping(function(fallback)
-							if luasnip and luasnip.jumpable(-1) then
-								vim.fn.feedkeys(t("<Plug>luasnip-jump-prev"), "")
-							else
-								fallback()
-							end
-						end, {
-							"i",
-							"s",
-						}),
-					},
+					mapping = mappings,
 
 					-- You should specify your *installed* sources.
 					sources = {
@@ -208,9 +194,10 @@ return require("packer").startup({
 					experimental = {
 						ghost_text = true,
 					},
-				})
+				}, { "i", "c", "s" })
 
 				cmp.setup.cmdline(":", {
+					mapping = cmp.mapping.preset.cmdline(),
 					sources = {
 						{ name = "cmdline", keyword_length = 2 },
 					},
@@ -258,6 +245,7 @@ return require("packer").startup({
 				local tailwindcss_colors = Prequire("tailwindcss-colors")
 				local schemastore = Prequire("schemastore")
 				local luadev = Prequire("lua-dev")
+				local zk = Prequire("zk")
 
 				local on_attach = function(_, bufnr)
 					local function buf_set_keymap(...)
@@ -273,7 +261,7 @@ return require("packer").startup({
 					buf_set_keymap("n", "<C-k>", "<cmd>lua vim.lsp.buf.signature_help()<CR>", opts)
 					buf_set_keymap("n", "<C-b>", "<cmd>lua vim.diagnostic.goto_prev()<CR>", opts)
 					buf_set_keymap("n", "<C-n>", "<cmd>lua vim.diagnostic.goto_next()<CR>", opts)
-					buf_set_keymap("n", "<Leader>fs", ":lua vim.lsp.buf.formatting_sync()<CR>", opts)
+					buf_set_keymap("n", "<Leader>fs", ":lua vim.lsp.buf.format()<CR>", opts)
 
 					if lsp_signature then
 						lsp_signature.on_attach({
@@ -294,6 +282,26 @@ return require("packer").startup({
 
 				local extend = function(lhs, rhs)
 					return vim.tbl_deep_extend("force", lhs, rhs)
+				end
+
+				if zk then
+					require("zk").setup({
+						picker = "telescope",
+						lsp = {
+							config = {
+								on_attach = function(_, bufnr)
+									local zk_lsp_client = require("zk.lsp").client()
+									on_attach(_, bufnr)
+									if zk_lsp_client then
+										local zk_diagnostic_namespace = vim.lsp.diagnostic.get_namespace(
+											zk_lsp_client.id
+										)
+										vim.diagnostic.config({ virtual_text = false }, zk_diagnostic_namespace)
+									end
+								end,
+							},
+						},
+					})
 				end
 
 				-- See https://github.com/neovim/nvim-lspconfig/blob/master/doc/server_configurations.md for more lsp servers
@@ -367,20 +375,21 @@ return require("packer").startup({
 						return _config
 					end)()
 				))
-				lspconfig.tailwindcss.setup(extend(config, {
-					on_attach = function(_, bufnr)
-						if tailwindcss_colors then
-							tailwindcss_colors.buf_attach(bufnr)
-						end
-						on_attach(_, bufnr)
-					end,
-				}))
+				-- lspconfig.tailwindcss.setup(extend(config, {
+				-- 	on_attach = function(_, bufnr)
+				-- 		if tailwindcss_colors then
+				-- 			tailwindcss_colors.buf_attach(bufnr)
+				-- 		end
+				-- 		on_attach(_, bufnr)
+				-- 	end,
+				-- }))
 			end,
 			after = "nvim-cmp",
 			requires = {
 				"folke/lua-dev.nvim",
 				"ray-x/lsp_signature.nvim",
 				"jose-elias-alvarez/null-ls.nvim",
+				"mickael-menu/zk-nvim",
 				"b0o/schemastore.nvim",
 			},
 		})
@@ -389,7 +398,6 @@ return require("packer").startup({
 			"jose-elias-alvarez/null-ls.nvim",
 			config = function()
 				require("null-ls").setup({
-					debug = true,
 					sources = {
 						require("null-ls").builtins.formatting.stylua,
 						require("null-ls").builtins.formatting.prettier,
@@ -577,21 +585,6 @@ return require("packer").startup({
 		use({
 			"mickael-menu/zk-nvim",
 			config = function()
-				require("zk").setup({
-					picker = "telescope",
-					lsp = {
-						config = {
-							on_attach = function()
-								local zk_lsp_client = require("zk.lsp").client()
-								if zk_lsp_client then
-									local zk_diagnostic_namespace = vim.lsp.diagnostic.get_namespace(zk_lsp_client.id)
-									vim.diagnostic.config({ virtual_text = false }, zk_diagnostic_namespace)
-								end
-							end,
-						},
-					},
-				})
-
 				require("zk.commands").add("ZkStartingPoint", function(options)
 					options = vim.tbl_extend("force", { match = "§§", exactMatch = true }, options or {})
 					require("zk").edit(options, { title = "§§" })
@@ -624,6 +617,13 @@ return require("packer").startup({
 						jump_right_out_any = "<C-l>",
 					},
 				})
+			end,
+		})
+
+		use({
+			"folke/zen-mode.nvim",
+			config = function()
+				require("zen-mode").setup({})
 			end,
 		})
 
