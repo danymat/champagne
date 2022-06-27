@@ -47,7 +47,7 @@ if ok then
 	map(
 		"n",
 		"<Leader>aa",
-		':lua require("telescope.builtin").lsp_code_actions(require("telescope.themes").get_cursor({}))<CR>'
+		':lua vim.lsp.buf.code_action()<CR>'
 	)
 	map("n", "<C-a>", ":Telescope lsp_document_symbols symbols=function,class<CR>")
 end
