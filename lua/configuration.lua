@@ -34,6 +34,7 @@ vim.o.showmatch = true -- show matching braces when selector is inside one of th
 vim.o.background = "dark"
 vim.o.encoding = "UTF-8"
 vim.o.smartindent = true -- auto indent lines if the previous line was indented
+vim.o.foldenable = false
 
 -- Basic Editing Config
 vim.o.visualbell = true
