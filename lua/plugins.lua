@@ -25,12 +25,12 @@ return require("packer").startup({
 
         use({
             "kyazdani42/nvim-tree.lua",
-            cmd = "NvimTreeFocus",
             config = function()
                 require("nvim-tree").setup({
                     update_cwd = true,
                 })
             end,
+            tag = "nightly",
         })
 
         use({
@@ -45,7 +45,9 @@ return require("packer").startup({
         use({
             "nacro90/numb.nvim",
             config = function()
-                require("numb").setup()
+                require("numb").setup({
+                    centered_peeking = true,
+                })
             end,
         })
 
@@ -94,17 +96,13 @@ return require("packer").startup({
         })
 
         use({
-            "rcarriga/nvim-notify",
-            config = function()
-                vim.notify = require("notify")
-            end,
-        })
-
-        use({
             -- "danymat/neogen",
             "~/Developer/neogen/",
             config = function()
-                require("neogen").setup({ snippet_engine = "luasnip" })
+                require("neogen").setup({
+                    snippet_engine = "luasnip",
+                    languages = { python = { template = { annotation_convention = "reST" } } },
+                })
             end,
             requires = "nvim-treesitter/nvim-treesitter",
         })
@@ -130,7 +128,7 @@ return require("packer").startup({
                     ["<C-n>"] = cmp.mapping.scroll_docs(4),
                     ["<C-j>"] = cmp.mapping.select_next_item({ behavior = cmp.SelectBehavior.Select }),
                     ["<C-k>"] = cmp.mapping.select_prev_item({ behavior = cmp.SelectBehavior.Select }),
-                    ["<Tab>"] = function(fallback)
+                    ["<Tab>"] = cmp.mapping(function(fallback)
                         -- This little snippet will confirm with tab, and if no entry is selected, will confirm the first item
                         if cmp.visible() then
                             local entry = cmp.get_selected_entry()
@@ -141,21 +139,21 @@ return require("packer").startup({
                         else
                             fallback()
                         end
-                    end,
-                    ["<C-l>"] = function(fallback)
+                    end, { "i", "n" }),
+                    ["<C-l>"] = cmp.mapping(function(fallback)
                         if luasnip and luasnip.expand_or_jumpable() then
                             vim.fn.feedkeys(t("<Plug>luasnip-expand-or-jump"), "")
                         else
                             fallback()
                         end
-                    end,
-                    ["<C-h>"] = function(fallback)
+                    end, { "i", "s" }),
+                    ["<C-h>"] = cmp.mapping(function(fallback)
                         if luasnip and luasnip.jumpable(-1) then
                             vim.fn.feedkeys(t("<Plug>luasnip-jump-prev"), "")
                         else
                             fallback()
                         end
-                    end,
+                    end, { "i", "s" }),
                 }
 
                 cmp.setup({
@@ -196,7 +194,7 @@ return require("packer").startup({
 
                 cmp.setup.filetype("gitcommit", {
                     sources = cmp.config.sources({
-                        { name = "cmp_git" },
+                        { name = "git" },
                     }, {
                         { name = "buffer" },
                     }),
@@ -248,9 +246,6 @@ return require("packer").startup({
                 local lspconfig = require("lspconfig")
                 local lsp_signature = Prequire("lsp_signature")
                 local cmp_nvim_lsp = Prequire("cmp_nvim_lsp")
-                local tailwindcss_colors = Prequire("tailwindcss-colors")
-                local schemastore = Prequire("schemastore")
-                local luadev = Prequire("lua-dev")
                 local zk = Prequire("zk")
 
                 local on_attach = function(_, bufnr)
@@ -282,7 +277,7 @@ return require("packer").startup({
                 -- Add completion capabilities (completion, snippets)
                 local capabilities = vim.lsp.protocol.make_client_capabilities()
                 if cmp_nvim_lsp then
-                    capabilities = cmp_nvim_lsp.update_capabilities(capabilities)
+                    capabilities = cmp_nvim_lsp.default_capabilities(capabilities)
                 end
                 capabilities.offsetEncoding = { "utf-16" }
                 local config = { on_attach = on_attach, capabilities = capabilities }
@@ -300,9 +295,8 @@ return require("packer").startup({
                                     local zk_lsp_client = require("zk.lsp").client()
                                     on_attach(_, bufnr)
                                     if zk_lsp_client then
-                                        local zk_diagnostic_namespace = vim.lsp.diagnostic.get_namespace(
-                                            zk_lsp_client.id
-                                        )
+                                        local zk_diagnostic_namespace =
+                                        vim.lsp.diagnostic.get_namespace(zk_lsp_client.id)
                                         vim.diagnostic.config({ virtual_text = false }, zk_diagnostic_namespace)
                                     end
                                 end,
@@ -311,31 +305,6 @@ return require("packer").startup({
                     })
                 end
 
-                -- See https://github.com/neovim/nvim-lspconfig/blob/master/doc/server_configurations.md for more lsp servers
-                lspconfig.rust_analyzer.setup(config)
-                lspconfig.bashls.setup(config)
-                lspconfig.pyright.setup(config)
-                lspconfig.vuels.setup(config)
-                lspconfig.tsserver.setup(config)
-                lspconfig.phpactor.setup(config)
-                lspconfig.clangd.setup(config)
-                lspconfig.html.setup(config)
-                lspconfig.yamlls.setup(extend(config, {
-                    settings = {
-                        yaml = {
-                            schemas = {
-                                ["https://raw.githubusercontent.com/compose-spec/compose-spec/master/schema/compose-spec.json"] = "/docker-compose.yml",
-                            },
-                        },
-                    },
-                }))
-                lspconfig.jsonls.setup(extend(config, {
-                    settings = {
-                        json = {
-                            schemas = schemastore and schemastore.json.schemas(),
-                        },
-                    },
-                }))
                 lspconfig.sumneko_lua.setup(extend(
                     config,
                     (function()
@@ -366,19 +335,6 @@ return require("packer").startup({
                                 },
                             },
                         }
-                        if luadev then
-                            local _luadev_config = luadev.setup({
-                                library = {
-                                    vimruntime = true,
-                                    types = true,
-                                    plugins = false,
-                                },
-                                lspconfig = lua_settings,
-                            })
-                            _config = vim.tbl_deep_extend("force", _config, _luadev_config)
-                        else
-                            _config = vim.tbl_deep_extend("force", _config, lua_settings)
-                        end
 
                         return _config
                     end)()
@@ -392,14 +348,24 @@ return require("packer").startup({
                 -- 	end,
                 -- }))
             end,
-            after = "nvim-cmp",
+            after = { "nvim-cmp", "neodev.nvim", "mason.nvim", "mason-lspconfig.nvim" },
             requires = {
-                "folke/lua-dev.nvim",
                 "ray-x/lsp_signature.nvim",
                 "jose-elias-alvarez/null-ls.nvim",
                 "mickael-menu/zk-nvim",
-                "b0o/schemastore.nvim",
             },
+        })
+
+        use({
+            "folke/neodev.nvim",
+            config = function()
+                require("neodev").setup({
+                    library = {
+                        types = true,
+                        plugins = false, -- NOTE: if you wanna have completion for your plugins
+                    },
+                })
+            end,
         })
 
         use({
@@ -545,14 +511,13 @@ return require("packer").startup({
                 require("neorg").setup({
                     load = {
                         ["core.defaults"] = {},
-                        ["core.gtd.base"] = { config = { workspace = "test" } },
+                        -- ["core.gtd.base"] = { config = { workspace = "test" } },
                         ["core.keybinds"] = { config = { neorg_leader = "<Leader>o" } },
                         ["core.norg.concealer"] = { config = { icon_preset = "diamond" } },
                         ["core.norg.dirman"] = {
                             config = {
                                 workspaces = {
                                     main = "~/Documents/000 Meta/00.03 neorg/",
-                                    test = "/tmp/test/",
                                 },
                             },
                         },
@@ -643,10 +608,55 @@ return require("packer").startup({
             end,
         })
 
+        use("Pocco81/TrueZen.nvim")
 
-        use "Pocco81/TrueZen.nvim"
+        use({
+            "anuvyklack/windows.nvim",
+            requires = {
+                "anuvyklack/middleclass",
+                "anuvyklack/animation.nvim",
+            },
+            config = function()
+                vim.o.winwidth = 10
+                vim.o.winminwidth = 10
+                vim.o.equalalways = false
+                require("windows").setup()
+            end,
+        })
 
+        use({
+            "folke/noice.nvim",
+            event = "VimEnter",
+            config = function()
+                require("noice").setup({
+                    cmdline = {
+                        view = "cmdline",
+                    },
+                    notify = {
+                        enabled = true,
+                    },
+                })
+            end,
+            requires = {
+                -- if you lazy-load any plugin below, make sure to add proper `module="..."` entries
+                "MunifTanjim/nui.nvim",
+                "rcarriga/nvim-notify",
+            },
+        })
 
+        use({
+            "williamboman/mason.nvim",
+            config = function()
+                require("mason").setup()
+            end,
+        })
+
+        use({
+            "williamboman/mason-lspconfig.nvim",
+            config = function()
+                require("mason-lspconfig").setup()
+            end,
+        })
         if packer_bootstrap then
             require("packer").sync()
         end

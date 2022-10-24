@@ -58,7 +58,6 @@ vim.o.incsearch = true --show search as characters entered
 
 -- Undo/Redo
 vim.o.undofile = true -- Maintain undo history between sessions
-vim.o.lazyredraw = true -- Do not redraw screen while processing macros
 
 vim.o.inccommand = "nosplit" -- Update the buffer automagically as you substitute
 
@@ -69,15 +68,6 @@ augroup highlight_yank
     autocmd TextYankPost * silent! lua vim.highlight.on_yank({timeout = 60})
 augroup END
 ]])
-
--- Change icons for Lsp Diagnostic
-local signs = { Error = "", Warn = "", Info = "כֿ", Hint = "" }
-for sign, icon in pairs(signs) do
-	vim.fn.sign_define(
-		"DiagnosticSign" .. sign,
-		{ text = icon, texthl = "Diagnostic" .. sign, linehl = false, numhl = "Diagnostic" .. sign }
-	)
-end
 
 -- Make hover borders rounded
 vim.lsp.handlers["textDocument/hover"] = vim.lsp.with(vim.lsp.handlers.hover, {

@@ -67,7 +67,7 @@ map("n", "<Leader>l", ":wincmd l<CR>")
 map("n", "<Leader>h", ":wincmd h<CR>")
 map("n", "<Leader>r", "<C-w>r<CR>")
 map("n", "<Leader>vs", "<C-w>v")
-map("n", "<Leader>zz", "<cmd>MaximizerToggle<CR>")
+map("n", "<Leader>zz", "<cmd>WindowsMaximize<CR>")
 
 -- Moving speed
 map("n", "÷", "<C-u>")
