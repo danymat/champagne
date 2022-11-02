@@ -347,6 +347,7 @@ return require("packer").startup({
                 -- 		on_attach(_, bufnr)
                 -- 	end,
                 -- }))
+                lspconfig.pyright.setup(config)
             end,
             after = { "nvim-cmp", "neodev.nvim", "mason.nvim", "mason-lspconfig.nvim" },
             requires = {
@@ -375,6 +376,8 @@ return require("packer").startup({
                     sources = {
                         require("null-ls").builtins.formatting.stylua,
                         require("null-ls").builtins.formatting.prettier,
+                        require("null-ls").builtins.formatting.black,
+                        require("null-ls").builtins.diagnostics.pylint,
                         -- require("null-ls").builtins.formatting.rustfmt
                         require("null-ls").builtins.code_actions.gitsigns,
                     },
@@ -656,6 +659,9 @@ return require("packer").startup({
             config = function()
                 require("mason-lspconfig").setup()
             end,
+            after = {
+                "mason.nvim",
+            },
         })
         if packer_bootstrap then
             require("packer").sync()
