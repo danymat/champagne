@@ -577,13 +577,6 @@ return require("packer").startup({
         })
 
         use({
-            "j-hui/fidget.nvim",
-            config = function()
-                require("fidget").setup({})
-            end,
-        })
-
-        use({
             "ZhiyuanLck/smart-pairs",
             event = "InsertEnter",
             config = function()
@@ -638,12 +631,18 @@ return require("packer").startup({
                     notify = {
                         enabled = true,
                     },
+                    lsp = {
+                        signature = {
+                            enabled = false,
+                        },
+                    },
                 })
             end,
             requires = {
                 -- if you lazy-load any plugin below, make sure to add proper `module="..."` entries
                 "MunifTanjim/nui.nvim",
                 "rcarriga/nvim-notify",
+                "neovim/nvim-lspconfig",
             },
         })
 
