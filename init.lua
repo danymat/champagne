@@ -7,6 +7,141 @@ vim.o.undofile = true
 vim.o.expandtab = true
 vim.o.shiftwidth = 4
 vim.o.completeopt = 'menu,menuone,noselect'
+vim.g.loaded_netrw = 1
+vim.g.loaded_netrwPlugin = 1
+vim.o.termguicolors = true
+
+local luasnip = require("luasnip")
+local cmp = require 'cmp'
+cmp.setup({
+    snippet = {
+        -- REQUIRED - you must specify a snippet engine
+        expand = function(args)
+            require('luasnip').lsp_expand(args.body) -- For `luasnip` users.
+        end,
+    },
+
+    window = {
+        completion = cmp.config.window.bordered(),
+        documentation = cmp.config.window.bordered(),
+    },
+
+    mapping = cmp.mapping.preset.insert({
+        ['<C-j>'] = cmp.mapping.select_next_item(),
+        ['<C-k>'] = cmp.mapping.select_prev_item(),
+        ['<Tab>'] = cmp.mapping.confirm({ select = true }), -- Accept currently selected item. Set `select` to `false` to only confirm explicitly selected items.
+        ["<C-l>"] = cmp.mapping(function(fallback)
+            if luasnip and luasnip.expand_or_jumpable() then
+                luasnip.expand_or_jump()
+            else
+                fallback()
+            end
+        end, { "i", "s" }),
+        ["<C-h>"] = cmp.mapping(function(fallback)
+            if luasnip and luasnip.jumpable(-1) then
+                luasnip.jump(-1)
+            else
+                fallback()
+            end
+        end, { "i", "s" }),
+
+    }),
+
+    sources = cmp.config.sources({
+        { name = 'nvim_lsp' },
+        { name = 'luasnip' }, -- For luasnip users.
+    }, {
+        { name = 'buffer' },
+    })
+})
+
+-- Set configuration for specific filetype.
+cmp.setup.filetype('gitcommit', {
+    sources = cmp.config.sources({
+        { name = 'cmp_git' }, -- You can specify the `cmp_git` source if you were installed it.
+    }, {
+        { name = 'buffer' },
+    })
+})
+
+-- Use buffer source for `/` and `?` (if you enabled `native_menu`, this won't work anymore).
+cmp.setup.cmdline({ '/', '?' }, {
+    mapping = cmp.mapping.preset.cmdline(),
+    sources = {
+        { name = 'buffer' }
+    }
+})
+
+-- Use cmdline & path source for ':' (if you enabled `native_menu`, this won't work anymore).
+cmp.setup.cmdline(':', {
+    mapping = cmp.mapping.preset.cmdline(),
+    sources = cmp.config.sources({
+        { name = 'path' }
+    }, {
+        { name = 'cmdline' }
+    })
+})
+
+-- Set up lspconfig.
+local capabilities = require('cmp_nvim_lsp').default_capabilities()
+local on_attach = function(_, bufnr)
+    require "lsp_signature".on_attach({
+        bind = true,
+        handler_opts = { border = "rounded" },
+        hint_prefix = "🧸 ",
+    }, bufnr)
+end
+
+require("mason").setup()
+require("mason-lspconfig").setup()
+require("mason-lspconfig").setup_handlers({
+    function(server_name)
+        require("lspconfig")[server_name].setup({
+            capabilities = capabilities,
+            on_attach = on_attach,
+        })
+    end,
+    ["sumneko_lua"] = function()
+        require("lspconfig").sumneko_lua.setup {
+            on_attach = on_attach,
+            capabilities = capabilities,
+            settings = {
+                Lua = {
+                    diagnostics = {
+                        globals = { "vim" }
+                    }
+                }
+            }
+        }
+    end,
+})
+require("mason-null-ls").setup({ automatic_setup = true })
+require("mason-null-ls").setup_handlers()
+require("null-ls").setup()
+require("nvim-autopairs").setup {}
+require('rose-pine').setup({
+    dark_variant = 'moon',
+})
+require('lualine').setup()
+require("indent_blankline").setup {
+    show_current_context = true,
+}
+require("Comment").setup({
+    toggler = {
+        line = "<Leader>cc",
+        block = "<Leader>bc",
+    },
+    opleader = {
+        line = "<Leader>c",
+        block = "<Leader>b",
+    },
+    extra = {
+        eol = "<Leader>ca",
+    },
+})
+require("nvim-tree").setup()
+require("lsp_signature").setup()
+
 
 vim.keymap.set("n", "<Leader>so", ":so %<CR>")
 vim.keymap.set("n", "<Leader>h", ":wincmd h<CR>")
@@ -40,8 +175,12 @@ if ok then
     vim.cmd("colorscheme rose-pine")
 end
 
-vim.cmd([[packadd packer.nvim]])
+local ok, nvim_tree = pcall(require, "nvim-tree.api")
+if ok then
+    vim.keymap.set("n", "<Leader>t", nvim_tree.tree.toggle)
+end
 
+vim.cmd([[packadd packer.nvim]])
 require("packer").startup(function(use)
     --
     -- MANDATORY
@@ -73,102 +212,11 @@ require("packer").startup(function(use)
     --
     use 'L3MON4D3/LuaSnip'
     use 'saadparwaiz1/cmp_luasnip'
-
-    local luasnip = require("luasnip")
-    local cmp = require 'cmp'
-    cmp.setup({
-        snippet = {
-            -- REQUIRED - you must specify a snippet engine
-            expand = function(args)
-                require('luasnip').lsp_expand(args.body) -- For `luasnip` users.
-            end,
-        },
-
-        window = {
-            completion = cmp.config.window.bordered(),
-            documentation = cmp.config.window.bordered(),
-        },
-
-        mapping = cmp.mapping.preset.insert({
-            ['<C-j>'] = cmp.mapping.select_next_item(),
-            ['<C-k>'] = cmp.mapping.select_prev_item(),
-            ['<Tab>'] = cmp.mapping.confirm({ select = true }), -- Accept currently selected item. Set `select` to `false` to only confirm explicitly selected items.
-            ["<C-l>"] = cmp.mapping(function(fallback)
-                if luasnip and luasnip.expand_or_jumpable() then
-                    luasnip.expand_or_jump()
-                else
-                    fallback()
-                end
-            end, { "i", "s" }),
-            ["<C-h>"] = cmp.mapping(function(fallback)
-                if luasnip and luasnip.jumpable(-1) then
-                    luasnip.jump(-1)
-                else
-                    fallback()
-                end
-            end, { "i", "s" }),
-
-        }),
-
-        sources = cmp.config.sources({
-            { name = 'nvim_lsp' },
-            { name = 'luasnip' }, -- For luasnip users.
-        }, {
-            { name = 'buffer' },
-        })
-    })
-
-    -- Set configuration for specific filetype.
-    cmp.setup.filetype('gitcommit', {
-        sources = cmp.config.sources({
-            { name = 'cmp_git' }, -- You can specify the `cmp_git` source if you were installed it.
-        }, {
-            { name = 'buffer' },
-        })
-    })
-
-    -- Use buffer source for `/` and `?` (if you enabled `native_menu`, this won't work anymore).
-    cmp.setup.cmdline({ '/', '?' }, {
-        mapping = cmp.mapping.preset.cmdline(),
-        sources = {
-            { name = 'buffer' }
-        }
-    })
-
-    -- Use cmdline & path source for ':' (if you enabled `native_menu`, this won't work anymore).
-    cmp.setup.cmdline(':', {
-        mapping = cmp.mapping.preset.cmdline(),
-        sources = cmp.config.sources({
-            { name = 'path' }
-        }, {
-            { name = 'cmdline' }
-        })
-    })
-
-    -- Set up lspconfig.
-    local capabilities = require('cmp_nvim_lsp').default_capabilities()
-    require("mason").setup()
-    require("mason-lspconfig").setup()
-    require("mason-lspconfig").setup_handlers({
-        function(server_name)
-            require("lspconfig")[server_name].setup({ capabilities = capabilities })
-        end,
-        ["sumneko_lua"] = function()
-            require("lspconfig").sumneko_lua.setup {
-                capabilities = capabilities,
-                settings = {
-                    Lua = {
-                        diagnostics = {
-                            globals = { "vim" }
-                        }
-                    }
-                }
-            }
-        end,
-    })
-    require("mason-null-ls").setup({ automatic_setup = true })
-    require("mason-null-ls").setup_handlers()
-    require("null-ls").setup()
-    require("nvim-autopairs").setup {}
-
+    use 'kyazdani42/nvim-web-devicons'
+    use 'nvim-lualine/lualine.nvim'
+    use 'lukas-reineke/indent-blankline.nvim'
+    use 'sindrets/diffview.nvim'
+    use 'numToStr/Comment.nvim'
+    use 'nvim-tree/nvim-tree.lua'
+    use 'ray-x/lsp_signature.nvim'
 end)
