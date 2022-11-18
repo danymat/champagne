@@ -13,6 +13,7 @@ vim.o.termguicolors = true
 
 local luasnip = require("luasnip")
 local cmp = require("cmp")
+local map = vim.keymap.set
 cmp.setup({
     snippet = {
         -- REQUIRED - you must specify a snippet engine
@@ -100,6 +101,11 @@ require("mason-lspconfig").setup_handlers({
             on_attach = on_attach,
         })
     end,
+    ["zk"] = function()
+        require("zk").setup({
+            picker = "telescope",
+        })
+    end,
     ["sumneko_lua"] = function()
         require("lspconfig").sumneko_lua.setup({
             on_attach = on_attach,
@@ -141,32 +147,36 @@ require("Comment").setup({
 require("nvim-tree").setup()
 require("lsp_signature").setup()
 require("nvim-surround").setup()
+require("zk.commands").add("ZkStartingPoint", function(options)
+    options = vim.tbl_extend("force", { match = "§§", matchStrategy = "exact" }, options or {})
+    require("zk").edit(options, { title = "§§" })
+end)
 
-vim.keymap.set("n", "<Leader>so", ":so %<CR>")
-vim.keymap.set("n", "<Leader>h", ":wincmd h<CR>")
-vim.keymap.set("n", "<Leader>j", ":wincmd j<CR>")
-vim.keymap.set("n", "<Leader>k", ":wincmd k<CR>")
-vim.keymap.set("n", "<Leader>l", ":wincmd l<CR>")
-vim.keymap.set("n", "<Leader>fs", vim.lsp.buf.format)
-vim.keymap.set("n", "K", vim.lsp.buf.hover)
-vim.keymap.set("n", "<leader>r", vim.lsp.buf.rename)
-vim.keymap.set("n", "<C-n>", vim.diagnostic.goto_next)
-vim.keymap.set("n", "<C-b>", vim.diagnostic.goto_prev)
+map("n", "<Leader>so", ":so %<CR>")
+map("n", "<Leader>h", ":wincmd h<CR>")
+map("n", "<Leader>j", ":wincmd j<CR>")
+map("n", "<Leader>k", ":wincmd k<CR>")
+map("n", "<Leader>l", ":wincmd l<CR>")
+map("n", "<Leader>fs", vim.lsp.buf.format)
+map("n", "K", vim.lsp.buf.hover)
+map("n", "<leader>r", vim.lsp.buf.rename)
+map("n", "<C-n>", vim.diagnostic.goto_next)
+map("n", "<C-b>", vim.diagnostic.goto_prev)
 
 local ok, builtin = pcall(require, "telescope.builtin")
 if ok then
-    vim.keymap.set("n", "<C-f>", builtin.find_files, {})
-    vim.keymap.set("n", "<leader>ff", builtin.live_grep, {})
-    vim.keymap.set("n", "<leader>fb", builtin.buffers, {})
-    vim.keymap.set("n", "<leader>fh", builtin.help_tags, {})
-    vim.keymap.set("n", "<leader>gr", ":Telescope lsp_references<CR>")
-    vim.keymap.set("n", "<leader>gd", ":Telescope lsp_definitions<CR>")
-    vim.keymap.set("n", "<C-a>", ":Telescope lsp_document_symbols symbols=func,class<CR>")
+    map("n", "<C-f>", builtin.find_files, {})
+    map("n", "<leader>ff", builtin.live_grep, {})
+    map("n", "<leader>fb", builtin.buffers, {})
+    map("n", "<leader>fh", builtin.help_tags, {})
+    map("n", "<leader>gr", ":Telescope lsp_references<CR>")
+    map("n", "<leader>gd", ":Telescope lsp_definitions<CR>")
+    map("n", "<C-a>", ":Telescope lsp_document_symbols symbols=func,class<CR>")
 end
 
 ok, _ = pcall(require, "packer")
 if ok then
-    vim.keymap.set("n", "<Leader>sc", ":so % | PackerCompile<CR>")
+    map("n", "<Leader>sc", ":so % | PackerCompile<CR>")
 end
 
 ok, _ = pcall(require, "rose-pine")
@@ -174,9 +184,20 @@ if ok then
     vim.cmd("colorscheme rose-pine")
 end
 
+local _ok, _ = pcall(require, "zk.commands")
+if _ok then
+    map("n", "<Leader>--", require("zk.commands").get("ZkStartingPoint"))
+    map("n", "<Leader>&&", require("zk.commands").get("ZkNotes"))
+    map("n", "<Leader>zk", require("zk.commands").get("ZkNotes"))
+    map("n", "<Leader>zb", require("zk.commands").get("ZkBacklinks"))
+    map("n", "<Leader>zi", require("zk.commands").get("ZkLinks"))
+    --map("n", "<Leader>zt", function ()require("zk.commands").get("ZkTags")({ sort = { "note-count" }) end )
+    --ap("n", "<Leader>zn", require("zk.commands").get("ZkNew")({ title = vim.fn.input("Title: "))
+end
+
 local ok, nvim_tree = pcall(require, "nvim-tree.api")
 if ok then
-    vim.keymap.set("n", "<Leader>t", nvim_tree.tree.toggle)
+    map("n", "<Leader>t", nvim_tree.tree.toggle)
 end
 
 vim.cmd([[packadd packer.nvim]])
@@ -219,4 +240,5 @@ require("packer").startup(function(use)
     use("nvim-tree/nvim-tree.lua")
     use("ray-x/lsp_signature.nvim")
     use("kylechui/nvim-surround")
+    use("mickael-menu/zk-nvim")
 end)
