@@ -46,7 +46,7 @@ if ok then
 	)
 	map(
 		"n",
-		"<Leader>aa",
+		"<Leader>ca",
 		':lua vim.lsp.buf.code_action()<CR>'
 	)
 	map("n", "<C-a>", ":Telescope lsp_document_symbols symbols=function,class<CR>")
