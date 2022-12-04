@@ -23,6 +23,10 @@ map("n", "K", vim.lsp.buf.hover)
 map("n", "<leader>r", vim.lsp.buf.rename)
 map("n", "<C-n>", vim.diagnostic.goto_next)
 map("n", "<C-b>", vim.diagnostic.goto_prev)
+map("n", "<C-j>", "<C-d>zz")
+map("n", "<C-k>", "<C-u>zz")
+map("t", "<Esc>", "<C-\\><C-n>")
+
 
 local ok, builtin = pcall(require, "telescope.builtin")
 if ok then
@@ -105,6 +109,8 @@ require("packer").startup(function(use)
     use("mickael-menu/zk-nvim")
     use("danymat/neogen")
     use("folke/todo-comments.nvim")
+    use("tpope/vim-repeat")
+    use("ggandor/leap.nvim")
 
 
     local luasnip = require("luasnip")
@@ -249,5 +255,6 @@ require("packer").startup(function(use)
     end)
     require('neogen').setup({ snippet_engine = "luasnip" })
     require("todo-comments").setup {}
+    require("leap").add_default_mappings()
 
 end)
