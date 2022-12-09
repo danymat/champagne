@@ -11,6 +11,7 @@ vim.g.loaded_netrw = 1
 vim.g.loaded_netrwPlugin = 1
 vim.o.termguicolors = true
 
+
 local map = vim.keymap.set
 
 map("n", "<Leader>so", ":so %<CR>")
@@ -26,6 +27,7 @@ map("n", "<C-b>", vim.diagnostic.goto_prev)
 map("n", "<C-j>", "<C-d>zz")
 map("n", "<C-k>", "<C-u>zz")
 map("t", "<Esc>", "<C-\\><C-n>")
+map("n", "<Leader>=", "<C-^>")
 
 
 local ok, builtin = pcall(require, "telescope.builtin")
@@ -47,13 +49,14 @@ end
 
 local _ok, _ = pcall(require, "zk.commands")
 if _ok then
-    --map("n", "<Leader>--", require("zk.commands").get("ZkStartingPoint"))
-    --map("n", "<Leader>&&", require("zk.commands").get("ZkNotes"))
-    --map("n", "<Leader>zk", require("zk.commands").get("ZkNotes"))
-    --map("n", "<Leader>zb", require("zk.commands").get("ZkBacklinks"))
-    --map("n", "<Leader>zi", require("zk.commands").get("ZkLinks"))
-    --map("n", "<Leader>zt", function ()require("zk.commands").get("ZkTags")({ sort = { "note-count" }) end )
-    --ap("n", "<Leader>zn", require("zk.commands").get("ZkNew")({ title = vim.fn.input("Title: "))
+    map("n", "<Leader>--", function() require("zk.commands").get("ZkStartingPoint")() end)
+    map("n", "<Leader>zk", function() require("zk.commands").get("ZkNotes")() end)
+    map("n", "<Leader>zb", function() require("zk.commands").get("ZkBacklinks")() end)
+    map("n", "<Leader>zi", function() require("zk.commands").get("ZkLinks")() end)
+    map("n", "<Leader>zt", function()
+        require("zk.commands").get("ZkTags") { sort = { "note-count" } }
+    end)
+    map("n", "<Leader>zn", function() require("zk.commands").get("ZkNew")({ title = vim.fn.input("Title: ") }) end)
 end
 
 local ok, nvim_tree = pcall(require, "nvim-tree.api")
@@ -82,22 +85,9 @@ require("packer").startup(function(use)
     })
     use({ "nvim-telescope/telescope.nvim" })
     use({ "jose-elias-alvarez/null-ls.nvim" })
-    use({ "williamboman/mason.nvim" })
-    use({ "williamboman/mason-lspconfig.nvim" })
-    use({ "neovim/nvim-lspconfig" })
     use({ "jayp0521/mason-null-ls.nvim" })
     use("windwp/nvim-autopairs")
-    use("hrsh7th/cmp-nvim-lsp")
-    use("hrsh7th/cmp-buffer")
-    use("hrsh7th/cmp-path")
-    use("hrsh7th/cmp-cmdline")
-    use("hrsh7th/nvim-cmp")
 
-    --
-    -- NICE TO HAVE
-    --
-    use("L3MON4D3/LuaSnip")
-    use("saadparwaiz1/cmp_luasnip")
     use("kyazdani42/nvim-web-devicons")
     use("nvim-lualine/lualine.nvim")
     use("lukas-reineke/indent-blankline.nvim")
@@ -111,6 +101,29 @@ require("packer").startup(function(use)
     use("folke/todo-comments.nvim")
     use("tpope/vim-repeat")
     use("ggandor/leap.nvim")
+    use("nvim-neorg/neorg")
+
+    use {
+  'VonHeikemen/lsp-zero.nvim',
+  requires = {
+    -- LSP Support
+    {'neovim/nvim-lspconfig'},
+    {'williamboman/mason.nvim'},
+    {'williamboman/mason-lspconfig.nvim'},
+
+    -- Autocompletion
+    {'hrsh7th/nvim-cmp'},
+    {'hrsh7th/cmp-buffer'},
+    {'hrsh7th/cmp-path'},
+    {'saadparwaiz1/cmp_luasnip'},
+    {'hrsh7th/cmp-nvim-lsp'},
+    {'hrsh7th/cmp-nvim-lua'},
+
+    -- Snippets
+    {'L3MON4D3/LuaSnip'},
+    {'rafamadriz/friendly-snippets'},
+  }
+}
 
 
     local luasnip = require("luasnip")
@@ -203,9 +216,6 @@ require("packer").startup(function(use)
             })
         end,
         ["zk"] = function()
-            require("zk").setup({
-                picker = "telescope",
-            })
         end,
         ["sumneko_lua"] = function()
             require("lspconfig").sumneko_lua.setup({
@@ -248,12 +258,15 @@ require("packer").startup(function(use)
     })
     require("nvim-tree").setup()
     require("lsp_signature").setup()
+    require("zk").setup({
+        picker = "telescope",
+    })
     require("nvim-surround").setup()
     require("zk.commands").add("ZkStartingPoint", function(options)
         options = vim.tbl_extend("force", { match = "§§", matchStrategy = "exact" }, options or {})
         require("zk").edit(options, { title = "§§" })
     end)
-    require('neogen').setup({ snippet_engine = "luasnip" })
+    require('neogen').setup({ snippet_engine = "luasnip", languages = { lua = { annotation_convention = "ldoc"}}})
     require("todo-comments").setup {}
     require("leap").add_default_mappings()
 
