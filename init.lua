@@ -64,35 +64,29 @@ require("lazy").setup({
     {
         "nvim-telescope/telescope.nvim",
         keys = {
-            {
-                "<C-f>",
-                function()
-                    require("telescope.builtin").find_files()
-                end,
-            },
-            {
-                "<leader>ff",
-                function()
-                    require("telescope.builtin").live_grep()
-                end,
-            },
-            {
-                "<leader>fb",
-                function()
-                    require("telescope.builtin").buffers()
-                end,
-            },
-            {
-                "<leader>fh",
-                function()
-                    require("telescope.builtin").help_tags()
-                end,
-            },
+            { "<C-f>", ":Telescope find_files<CR>" },
+            { "<Leader>ff", ":Telescope live_grep<CR>" },
+            { "<Leader>fb", ":Telescope buffers<CR>" },
+            { "<Leader>fh", ":Telescope help_tags<CR>" },
             { "<leader>gr", ":Telescope lsp_references<CR>" },
             { "<leader>gd", ":Telescope lsp_definitions<CR>" },
             { "<C-a>", ":Telescope lsp_document_symbols symbols=func,function,class<CR>" },
             { "<Leader>aa", ":lua vim.lsp.buf.code_action()<CR>" },
+            { "<Leader>p", ":Telescope workspaces<CR>" },
         },
+        dependencies = "natecraddock/workspaces.nvim",
+        config = function()
+            local telescope = require("telescope")
+            telescope.load_extension("workspaces")
+            telescope.setup({
+                extensions = {
+                    workspaces = {
+                        -- keep insert mode after selection in the picker, default is false
+                        keep_insert = true,
+                    },
+                },
+            })
+        end,
     },
     { "windwp/nvim-autopairs", config = true },
     "kyazdani42/nvim-web-devicons",
@@ -274,6 +268,14 @@ require("lazy").setup({
             --null-ls
             "jose-elias-alvarez/null-ls.nvim",
             "jayp0521/mason-null-ls.nvim",
+        },
+    },
+    {
+        "natecraddock/workspaces.nvim",
+        config = {
+            hooks = {
+                open = { "Telescope find_files" },
+            },
         },
     },
 })

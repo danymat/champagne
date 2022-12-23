@@ -33,5 +33,6 @@
   "telescope.nvim": { "branch": "master", "commit": "e960efa60e97df58e089b00270f09d60f27202c8" },
   "todo-comments.nvim": { "branch": "main", "commit": "c1760010f46992165995aaa52ca967f473a2e8e6" },
   "vim-repeat": { "branch": "master", "commit": "24afe922e6a05891756ecf331f39a1f6743d3d5a" },
+  "workspaces.nvim": { "branch": "master", "commit": "86fa201ecaf932358fb713c21b2078cdeb323dd1" },
   "zk": { "branch": "main", "commit": "2fd9f9f29270bb28477e000100625276ec2a2377" }
 }
