@@ -21,6 +21,7 @@ vim.o.completeopt = "menu,menuone,noselect"
 vim.g.loaded_netrw = 1
 vim.g.loaded_netrwPlugin = 1
 vim.o.termguicolors = true
+vim.o.conceallevel = 2
 
 local map = vim.keymap.set
 map("n", "<Leader>so", ":so %<CR>")
@@ -53,7 +54,13 @@ require("lazy").setup({
         build = function()
             require("nvim-treesitter.install").update({ with_sync = true })()
         end,
+        config = function()
+            require("nvim-treesitter.configs").setup({
+                highlight = { enable = true },
+            })
+        end,
     },
+    "nvim-treesitter/playground",
     {
         "nvim-telescope/telescope.nvim",
         keys = {
@@ -180,7 +187,11 @@ require("lazy").setup({
     },
     { "folke/todo-comments.nvim", config = true },
     "tpope/vim-repeat",
-    "nvim-neorg/neorg",
+    { "nvim-neorg/neorg", config = {
+        load = {
+            ["core.defaults"] = {},
+        },
+    } },
     {
         "shortcuts/no-neck-pain.nvim",
         version = "*",
