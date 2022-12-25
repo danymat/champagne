@@ -178,14 +178,18 @@ require("lazy").setup({
         keys = {
             { "<Leader>nf", ":Neogen func<CR>" },
         },
+        dev = true
     },
     { "folke/todo-comments.nvim", config = true },
-    "tpope/vim-repeat",
-    { "nvim-neorg/neorg", config = {
-        load = {
-            ["core.defaults"] = {},
+    { "tpope/vim-repeat" },
+    { "nvim-neorg/neorg",
+        config = {
+            load = {
+                ["core.defaults"] = {},
+            },
         },
-    } },
+        dev = true
+    },
     {
         "shortcuts/no-neck-pain.nvim",
         version = "*",
@@ -278,4 +282,7 @@ require("lazy").setup({
             },
         },
     },
-})
+},
+    { dev = { path = "~/Developer" } }
+)
+
