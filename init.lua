@@ -22,6 +22,8 @@ vim.g.loaded_netrw = 1
 vim.g.loaded_netrwPlugin = 1
 vim.o.termguicolors = true
 vim.o.conceallevel = 2
+vim.o.cmdheight = 0
+vim.o.foldenable = false
 
 local map = vim.keymap.set
 map("n", "<Leader>so", ":so %<CR>")
@@ -186,6 +188,7 @@ require("lazy").setup({
         config = {
             load = {
                 ["core.defaults"] = {},
+                ["core.norg.concealer"] = {},
             },
         },
         dev = true
@@ -282,7 +285,7 @@ require("lazy").setup({
             },
         },
     },
+    {"j-hui/fidget.nvim", config = true}
 },
     { dev = { path = "~/Developer" } }
 )
-
