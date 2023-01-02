@@ -197,7 +197,6 @@ require("lazy").setup({
         "shortcuts/no-neck-pain.nvim",
         version = "*",
         config = {
-            width = 150,
             buffers = {
                 background = { colorCode = "rose-pine-moon" },
             },
