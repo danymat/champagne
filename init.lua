@@ -40,6 +40,14 @@ map("n", "<C-j>", "<C-d>zz")
 map("n", "<C-k>", "<C-u>zz")
 map("t", "<Esc>", "<C-\\><C-n>")
 map("n", "<Leader>=", "<C-^>")
+map("n", "<Leader>gs", function()
+    require("lazy.util").open_cmd({ "lazygit" }, {
+        -- cwd = plugin.dir,
+        terminal = true,
+        close_on_exit = true,
+        enter = true,
+    })
+end)
 
 require("lazy").setup({
     "nvim-lua/plenary.nvim",
@@ -180,18 +188,19 @@ require("lazy").setup({
         keys = {
             { "<Leader>nf", ":Neogen func<CR>" },
         },
-        dev = true
+        dev = true,
     },
     { "folke/todo-comments.nvim", config = true },
     { "tpope/vim-repeat" },
-    { "nvim-neorg/neorg",
+    {
+        "nvim-neorg/neorg",
         config = {
             load = {
                 ["core.defaults"] = {},
                 ["core.norg.concealer"] = {},
             },
         },
-        dev = true
+        dev = true,
     },
     {
         "shortcuts/no-neck-pain.nvim",
@@ -284,7 +293,10 @@ require("lazy").setup({
             },
         },
     },
-    {"j-hui/fidget.nvim", config = true}
+    { "j-hui/fidget.nvim", config = true },
+    { "AckslD/nvim-neoclip.lua", dependencies = "nvim-telescope/telescope.nvim", config = true },
 },
-    { dev = { path = "~/Developer" } }
+    {
+        dev = { path = "~/Developer" },
+    }
 )
