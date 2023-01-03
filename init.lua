@@ -73,6 +73,7 @@ require("lazy").setup({
     "nvim-treesitter/playground",
     {
         "nvim-telescope/telescope.nvim",
+        cmd = "Telescope",
         keys = {
             { "<C-f>", ":Telescope find_files<CR>" },
             { "<Leader>ff", ":Telescope live_grep<CR>" },
