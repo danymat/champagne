@@ -295,7 +295,22 @@ require("lazy").setup({
         },
     },
     { "j-hui/fidget.nvim", config = true },
-    { "AckslD/nvim-neoclip.lua", dependencies = "nvim-telescope/telescope.nvim", config = true },
+    { "AckslD/nvim-neoclip.lua",
+        dependencies = {
+            { 'kkharji/sqlite.lua', as = 'sqlite' },
+            "nvim-telescope/telescope.nvim"
+        },
+        config = function()
+            require('neoclip').setup()
+            require('telescope').load_extension('neoclip')
+        end,
+        keys = {
+            { "<Leader>y", ":Telescope neoclip plus<CR>" },
+            { "<Leader>dy", function()
+                require('neoclip').clear_history()
+            end }
+        }
+    },
 },
     {
         dev = { path = "~/Developer" },
