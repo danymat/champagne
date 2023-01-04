@@ -316,4 +316,3 @@ require("lazy").setup({
         dev = { path = "~/Developer" },
     }
 )
-print("salut")
