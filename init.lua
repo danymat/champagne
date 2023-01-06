@@ -36,12 +36,14 @@ map("n", "K", vim.lsp.buf.hover)
 map("n", "<leader>r", vim.lsp.buf.rename)
 map("n", "<C-n>", vim.diagnostic.goto_next)
 map("n", "<C-b>", vim.diagnostic.goto_prev)
+map("n", "≠", "<C-d>zz")
+map("n", "÷", "<C-u>zz")
 map("n", "<C-j>", "<C-d>zz")
 map("n", "<C-k>", "<C-u>zz")
 map("t", "<Esc>", "<C-\\><C-n>")
 map("n", "<Leader>=", "<C-^>")
 map("n", "<Leader>gs", function()
-    require("lazy.util").open_cmd({ "lazygit" }, {
+    require("lazy.util").float_term({ "lazygit" }, {
         -- cwd = plugin.dir,
         terminal = true,
         close_on_exit = true,
@@ -146,7 +148,7 @@ require("lazy").setup({
         end,
         keys = {
             {
-                "<Leader>--",
+                "<Leader>§§",
                 function()
                     require("zk.commands").get("ZkStartingPoint")()
                 end,
