@@ -313,6 +313,7 @@ require("lazy").setup({
             end }
         }
     },
+    { 'stevearc/dressing.nvim' }
 },
     {
         dev = { path = "~/Developer" },
