@@ -225,6 +225,7 @@ require("lazy").setup({
             local luasnip = require("luasnip")
             lsp.preset("recommended")
             lsp.nvim_workspace()
+            lsp.skip_server_setup({ 'rust_analyzer' })
             lsp.setup()
 
             local cmp_config = lsp.defaults.cmp_config({
@@ -313,7 +314,19 @@ require("lazy").setup({
             end }
         }
     },
-    { 'stevearc/dressing.nvim' }
+    { 'stevearc/dressing.nvim' },
+    {
+        'simrat39/rust-tools.nvim',
+        config = true,
+        dependencies = {
+            'nvim-lua/plenary.nvim',
+            'mfussenegger/nvim-dap',
+            'neovim/nvim-lspconfig'
+        }
+    },
+    { 'ggandor/leap.nvim', config = function()
+        require('leap').add_default_mappings()
+    end }
 },
     {
         dev = { path = "~/Developer" },
