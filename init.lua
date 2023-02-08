@@ -191,7 +191,7 @@ require("lazy").setup({
         keys = {
             { "<Leader>nf", ":Neogen func<CR>" },
         },
-        dev = true,
+        -- dev = true,
     },
     { "folke/todo-comments.nvim", config = true },
     { "tpope/vim-repeat" },
@@ -203,7 +203,7 @@ require("lazy").setup({
                 ["core.norg.concealer"] = {},
             },
         },
-        dev = true,
+        -- dev = true,
     },
     {
         "shortcuts/no-neck-pain.nvim",
