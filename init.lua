@@ -68,7 +68,10 @@ require("lazy").setup({
         end,
         config = function()
             require("nvim-treesitter.configs").setup({
-                highlight = { enable = true },
+                highlight = {
+                    enable = true,
+                    additional_vim_regex_highlighting = { "markdown" }
+                },
             })
         end,
     },
@@ -183,6 +186,7 @@ require("lazy").setup({
                     require("zk.commands").get("ZkNew")({ title = vim.fn.input("Title: ") })
                 end,
             },
+            -- TODO: random note: :ZkNotes { sort = {"random"}, limit = 1 } (https://github.com/mickael-menu/zk-nvim/discussions/94)
         },
     },
     {
