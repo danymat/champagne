@@ -80,15 +80,15 @@ require("lazy").setup({
         "nvim-telescope/telescope.nvim",
         cmd = "Telescope",
         keys = {
-            { "<C-f>", ":Telescope find_files<CR>" },
+            { "<C-f>",      ":Telescope find_files<CR>" },
             { "<Leader>ff", ":Telescope live_grep<CR>" },
             { "<Leader>fb", ":Telescope buffers<CR>" },
             { "<Leader>fh", ":Telescope help_tags<CR>" },
             { "<leader>gr", ":Telescope lsp_references<CR>" },
             { "<leader>gd", ":Telescope lsp_definitions<CR>" },
-            { "<C-a>", ":Telescope lsp_document_symbols symbols=func,function,class<CR>" },
+            { "<C-a>",      ":Telescope lsp_document_symbols symbols=func,function,class<CR>" },
             { "<Leader>aa", ":lua vim.lsp.buf.code_action()<CR>" },
-            { "<Leader>p", ":Telescope workspaces<CR>" },
+            { "<Leader>p",  ":Telescope workspaces<CR>" },
         },
         dependencies = "natecraddock/workspaces.nvim",
         config = function()
@@ -104,9 +104,9 @@ require("lazy").setup({
             })
         end,
     },
-    { "windwp/nvim-autopairs", config = true },
+    { "windwp/nvim-autopairs",               config = true },
     "kyazdani42/nvim-web-devicons",
-    { "nvim-lualine/lualine.nvim", config = true },
+    { "nvim-lualine/lualine.nvim",           config = true },
     { "lukas-reineke/indent-blankline.nvim", config = { show_current_context = true } },
     "sindrets/diffview.nvim",
     {
@@ -138,7 +138,7 @@ require("lazy").setup({
         },
     },
     { "ray-x/lsp_signature.nvim", config = { hint_prefix = "🧸 " } },
-    { "kylechui/nvim-surround", config = true },
+    { "kylechui/nvim-surround",   config = true },
     {
         "mickael-menu/zk-nvim",
         name = "zk",
@@ -191,7 +191,12 @@ require("lazy").setup({
     },
     {
         "danymat/neogen",
-        config = { snippet_engine = "luasnip", languages = { lua = { annotation_convention = "ldoc" } } },
+        config = {
+            snippet_engine = "luasnip",
+            languages = {
+                python = { template = { annotation_convention = "numpydoc" } }
+            },
+        },
         keys = {
             { "<Leader>nf", ":Neogen func<CR>" },
         },
@@ -237,7 +242,6 @@ require("lazy").setup({
                     completion = cmp.config.window.bordered(),
                     documentation = cmp.config.window.bordered(),
                 },
-
                 mapping = cmp.mapping.preset.insert({
                     ["<C-j>"] = cmp.mapping.select_next_item(),
                     ["<C-k>"] = cmp.mapping.select_prev_item(),
@@ -250,14 +254,13 @@ require("lazy").setup({
                         end
                     end, { "i", "s" }),
                     ["<C-h>"] = cmp.mapping(function(fallback)
-                        if luasnip and luasnip.jumpable(-1) then
-                            luasnip.jump(-1)
+                        if luasnip and luasnip.jumpable( -1) then
+                            luasnip.jump( -1)
                         else
                             fallback()
                         end
                     end, { "i", "s" }),
                 }),
-
                 sources = cmp.config.sources({
                     { name = "nvim_lsp" },
                     { name = "luasnip" }, -- For luasnip users.
@@ -301,7 +304,7 @@ require("lazy").setup({
             },
         },
     },
-    { "j-hui/fidget.nvim", config = true },
+    { "j-hui/fidget.nvim",     config = true },
     { "AckslD/nvim-neoclip.lua",
         dependencies = {
             { 'kkharji/sqlite.lua', as = 'sqlite' },
