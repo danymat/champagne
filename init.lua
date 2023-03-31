@@ -75,43 +75,44 @@ require("lazy").setup({
                 },
             })
         end,
+        dependencies = "nvim-treesitter/nvim-treesitter-context"
     },
-    -- "nvim-treesitter/playground",
-    -- {
-    --     "nvim-telescope/telescope.nvim",
-    --     cmd = "Telescope",
-    --     keys = {
-    --         { "<C-f>",      ":Telescope find_files<CR>" },
-    --         { "<Leader>ff", ":Telescope live_grep<CR>" },
-    --         { "<Leader>fb", ":Telescope buffers<CR>" },
-    --         { "<Leader>fh", ":Telescope help_tags<CR>" },
-    --         { "<leader>gr", ":Telescope lsp_references<CR>" },
-    --         { "<leader>gd", ":Telescope lsp_definitions<CR>" },
-    --         { "<C-a>",      ":Telescope lsp_document_symbols symbols=func,function,class<CR>" },
-    --         { "<Leader>aa", ":lua vim.lsp.buf.code_action()<CR>" },
-    --         { "<Leader>p",  ":Telescope workspaces<CR>" },
-    --     },
-    --     dependencies = "natecraddock/workspaces.nvim",
-    --     config = function()
-    --         local telescope = require("telescope")
-    --         telescope.load_extension("workspaces")
-    --         telescope.setup({
-    --             extensions = {
-    --                 workspaces = {
-    --                     -- keep insert mode after selection in the picker, default is false
-    --                     keep_insert = true,
-    --                 },
-    --             },
-    --         })
-    --     end,
-    -- },
-    -- {
-    --     "windwp/nvim-autopairs",
-    --     config = true,
-    -- },
-    -- "kyazdani42/nvim-web-devicons",
-    -- { "nvim-lualine/lualine.nvim",           config = true },
-    -- { "lukas-reineke/indent-blankline.nvim", config = { show_current_context = true } },
+    "nvim-treesitter/playground",
+    {
+        "nvim-telescope/telescope.nvim",
+        cmd = "Telescope",
+        keys = {
+            { "<C-f>",      ":Telescope find_files<CR>" },
+            { "<Leader>ff", ":Telescope live_grep<CR>" },
+            { "<Leader>fb", ":Telescope buffers<CR>" },
+            { "<Leader>fh", ":Telescope help_tags<CR>" },
+            { "<leader>gr", ":Telescope lsp_references<CR>" },
+            { "<leader>gd", ":Telescope lsp_definitions<CR>" },
+            { "<Leader>ds", ":Telescope lsp_document_symbols symbols=func,function,class<CR>" },
+            { "<C-a>",      ":lua vim.lsp.buf.code_action()<CR>" },
+            { "<Leader>p",  ":Telescope workspaces<CR>" },
+        },
+        dependencies = "natecraddock/workspaces.nvim",
+        config = function()
+            local telescope = require("telescope")
+            telescope.load_extension("workspaces")
+            telescope.setup({
+                extensions = {
+                    workspaces = {
+                        -- keep insert mode after selection in the picker, default is false
+                        keep_insert = true,
+                    },
+                },
+            })
+        end,
+    },
+    {
+        "windwp/nvim-autopairs",
+        config = true,
+    },
+    "kyazdani42/nvim-web-devicons",
+    { "nvim-lualine/lualine.nvim",           config = true },
+    { "lukas-reineke/indent-blankline.nvim", config = { show_current_context = true } },
     {
         "sindrets/diffview.nvim",
         keys = {
@@ -322,7 +323,7 @@ require("lazy").setup({
             },
         },
     },
-    { "j-hui/fidget.nvim",     config = true },
+    { "j-hui/fidget.nvim", config = true },
     {
         "AckslD/nvim-neoclip.lua",
         dependencies = {
@@ -358,6 +359,18 @@ require("lazy").setup({
         config = function()
             require("leap").add_default_mappings()
         end,
+    },
+    {
+        "ThePrimeagen/harpoon",
+        keys = {
+            { "<Leader>a",  function() require("harpoon.mark").add_file() end },
+            { "<Leader>h",  function() require("harpoon.ui").toggle_quick_menu() end },
+            { "<Leader>&",  function() require("harpoon.ui").nav_file(1) end },
+            { "<Leader>é", function() require("harpoon.ui").nav_file(2) end },
+            { "<Leader>\"", function() require("harpoon.ui").nav_file(3) end },
+            { "<Leader>'",  function() require("harpoon.ui").nav_file(4) end },
+
+        }
     },
 }, {
     dev = { path = "~/Developer" },
