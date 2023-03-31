@@ -42,9 +42,9 @@ map({ "n", "v" }, "<C-j>", "<C-d>zz")
 map({ "n", "v" }, "<C-k>", "<C-u>zz")
 map("t", "<Esc>", "<C-\\><C-n>")
 map("n", "<Leader>=", "<C-^>")
+
 map("n", "<Leader>gs", function()
     require("lazy.util").float_term({ "lazygit" }, {
-        -- cwd = plugin.dir,
         terminal = true,
         close_on_exit = true,
         enter = true,
@@ -53,6 +53,7 @@ end)
 
 require("lazy").setup({
     "nvim-lua/plenary.nvim",
+
     {
         "rose-pine/neovim",
         name = "rose-pine",
@@ -70,45 +71,54 @@ require("lazy").setup({
             require("nvim-treesitter.configs").setup({
                 highlight = {
                     enable = true,
-                    additional_vim_regex_highlighting = { "markdown" }
+                    additional_vim_regex_highlighting = { "markdown" },
                 },
             })
         end,
     },
-    "nvim-treesitter/playground",
+    -- "nvim-treesitter/playground",
+    -- {
+    --     "nvim-telescope/telescope.nvim",
+    --     cmd = "Telescope",
+    --     keys = {
+    --         { "<C-f>",      ":Telescope find_files<CR>" },
+    --         { "<Leader>ff", ":Telescope live_grep<CR>" },
+    --         { "<Leader>fb", ":Telescope buffers<CR>" },
+    --         { "<Leader>fh", ":Telescope help_tags<CR>" },
+    --         { "<leader>gr", ":Telescope lsp_references<CR>" },
+    --         { "<leader>gd", ":Telescope lsp_definitions<CR>" },
+    --         { "<C-a>",      ":Telescope lsp_document_symbols symbols=func,function,class<CR>" },
+    --         { "<Leader>aa", ":lua vim.lsp.buf.code_action()<CR>" },
+    --         { "<Leader>p",  ":Telescope workspaces<CR>" },
+    --     },
+    --     dependencies = "natecraddock/workspaces.nvim",
+    --     config = function()
+    --         local telescope = require("telescope")
+    --         telescope.load_extension("workspaces")
+    --         telescope.setup({
+    --             extensions = {
+    --                 workspaces = {
+    --                     -- keep insert mode after selection in the picker, default is false
+    --                     keep_insert = true,
+    --                 },
+    --             },
+    --         })
+    --     end,
+    -- },
+    -- {
+    --     "windwp/nvim-autopairs",
+    --     config = true,
+    -- },
+    -- "kyazdani42/nvim-web-devicons",
+    -- { "nvim-lualine/lualine.nvim",           config = true },
+    -- { "lukas-reineke/indent-blankline.nvim", config = { show_current_context = true } },
     {
-        "nvim-telescope/telescope.nvim",
-        cmd = "Telescope",
+        "sindrets/diffview.nvim",
         keys = {
-            { "<C-f>",      ":Telescope find_files<CR>" },
-            { "<Leader>ff", ":Telescope live_grep<CR>" },
-            { "<Leader>fb", ":Telescope buffers<CR>" },
-            { "<Leader>fh", ":Telescope help_tags<CR>" },
-            { "<leader>gr", ":Telescope lsp_references<CR>" },
-            { "<leader>gd", ":Telescope lsp_definitions<CR>" },
-            { "<C-a>",      ":Telescope lsp_document_symbols symbols=func,function,class<CR>" },
-            { "<Leader>aa", ":lua vim.lsp.buf.code_action()<CR>" },
-            { "<Leader>p",  ":Telescope workspaces<CR>" },
+            { "<Leader>gt", ":DiffviewFileHistory<CR>" },
+            { "<Leader>gc", ":DiffviewClose<CR>" },
         },
-        dependencies = "natecraddock/workspaces.nvim",
-        config = function()
-            local telescope = require("telescope")
-            telescope.load_extension("workspaces")
-            telescope.setup({
-                extensions = {
-                    workspaces = {
-                        -- keep insert mode after selection in the picker, default is false
-                        keep_insert = true,
-                    },
-                },
-            })
-        end,
     },
-    { "windwp/nvim-autopairs",               config = true },
-    "kyazdani42/nvim-web-devicons",
-    { "nvim-lualine/lualine.nvim",           config = true },
-    { "lukas-reineke/indent-blankline.nvim", config = { show_current_context = true } },
-    "sindrets/diffview.nvim",
     {
         "numToStr/Comment.nvim",
         config = {
@@ -194,15 +204,15 @@ require("lazy").setup({
         config = {
             snippet_engine = "luasnip",
             languages = {
-                python = { template = { annotation_convention = "numpydoc" } }
+                python = { template = { annotation_convention = "numpydoc" } },
             },
         },
         keys = {
             { "<Leader>nf", ":Neogen func<CR>" },
         },
-        -- dev = true,
+        dev = true,
     },
-    { "folke/todo-comments.nvim", config = true },
+    -- { "folke/todo-comments.nvim", config = true },
     { "tpope/vim-repeat" },
     {
         "nvim-neorg/neorg",
@@ -210,9 +220,16 @@ require("lazy").setup({
             load = {
                 ["core.defaults"] = {},
                 ["core.norg.concealer"] = {},
+                ["core.norg.dirman"] = {
+                    config = {
+                        workspaces = {
+                            notes = "~/notes",
+                        },
+                    },
+                },
             },
+            dev = true,
         },
-        -- dev = true,
     },
     {
         "shortcuts/no-neck-pain.nvim",
@@ -234,7 +251,7 @@ require("lazy").setup({
             local luasnip = require("luasnip")
             lsp.preset("recommended")
             lsp.nvim_workspace()
-            lsp.skip_server_setup({ 'rust_analyzer' })
+            lsp.skip_server_setup({ "rust_analyzer" })
             lsp.setup()
 
             local cmp_config = lsp.defaults.cmp_config({
@@ -254,14 +271,15 @@ require("lazy").setup({
                         end
                     end, { "i", "s" }),
                     ["<C-h>"] = cmp.mapping(function(fallback)
-                        if luasnip and luasnip.jumpable( -1) then
-                            luasnip.jump( -1)
+                        if luasnip and luasnip.jumpable(-1) then
+                            luasnip.jump(-1)
                         else
                             fallback()
                         end
                     end, { "i", "s" }),
                 }),
                 sources = cmp.config.sources({
+
                     { name = "nvim_lsp" },
                     { name = "luasnip" }, -- For luasnip users.
                 }, {
@@ -305,37 +323,42 @@ require("lazy").setup({
         },
     },
     { "j-hui/fidget.nvim",     config = true },
-    { "AckslD/nvim-neoclip.lua",
+    {
+        "AckslD/nvim-neoclip.lua",
         dependencies = {
-            { 'kkharji/sqlite.lua', as = 'sqlite' },
-            "nvim-telescope/telescope.nvim"
+            { "kkharji/sqlite.lua", as = "sqlite" },
+            "nvim-telescope/telescope.nvim",
         },
         config = function()
-            require('neoclip').setup()
-            require('telescope').load_extension('neoclip')
+            require("neoclip").setup()
+            require("telescope").load_extension("neoclip")
         end,
         keys = {
             { "<Leader>y", ":Telescope neoclip plus<CR>" },
-            { "<Leader>dy", function()
-                require('neoclip').clear_history()
-            end }
-        }
+            {
+                "<Leader>dy",
+                function()
+                    require("neoclip").clear_history()
+                end,
+            },
+        },
     },
-    { 'stevearc/dressing.nvim' },
+    { "stevearc/dressing.nvim" },
     {
-        'simrat39/rust-tools.nvim',
+        "simrat39/rust-tools.nvim",
         config = true,
         dependencies = {
-            'nvim-lua/plenary.nvim',
-            'mfussenegger/nvim-dap',
-            'neovim/nvim-lspconfig'
-        }
+            "nvim-lua/plenary.nvim",
+            "mfussenegger/nvim-dap",
+            "neovim/nvim-lspconfig",
+        },
     },
-    { 'ggandor/leap.nvim', config = function()
-        require('leap').add_default_mappings()
-    end }
-},
     {
-        dev = { path = "~/Developer" },
-    }
-)
+        "ggandor/leap.nvim",
+        config = function()
+            require("leap").add_default_mappings()
+        end,
+    },
+}, {
+    dev = { path = "~/Developer" },
+})
