@@ -322,7 +322,11 @@ require("lazy").setup({
                 mapping = cmp.mapping.preset.insert({
                     ["<C-j>"] = cmp.mapping.select_next_item(),
                     ["<C-k>"] = cmp.mapping.select_prev_item(),
-                    ["<Tab>"] = cmp.mapping.confirm({ select = true }),
+                    ["<Tab>"] = cmp.mapping.confirm({
+                        -- this is the important line
+                        behavior = cmp.ConfirmBehavior.Replace,
+                        select = false,
+                    }),
                     ["<C-l>"] = cmp.mapping(function(fallback)
                         if luasnip and luasnip.expand_or_jumpable() then
                             luasnip.expand_or_jump()
@@ -353,10 +357,10 @@ require("lazy").setup({
                         cmp.ItemField.Menu,
                     },
                     format = lspkind.cmp_format({
-                        with_text = false,
-                        mode = 'symbol',       -- show only symbol annotations
-                        maxwidth = 40,         -- prevent the popup from showing more than provided characters (e.g 50 will not show more than 50 characters)
-                        ellipsis_char = '...', -- when popup menu exceed maxwidth, the truncated part would show ellipsis_char instead (must define maxwidth first)
+                        mode = 'symbol',
+                        maxwidth = 40,
+                        ellipsis_char = '...',
+                        symbol_map = { Copilot = "" }
                     }),
                 }
             })
