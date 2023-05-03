@@ -202,12 +202,18 @@ require("lazy").setup({
     },
     {
         "danymat/neogen",
-        config = {
-            snippet_engine = "luasnip",
-            languages = {
-                python = { template = { annotation_convention = "numpydoc" } },
-            },
-        },
+        config = function()
+            local i = require("neogen.types.template").item
+            local annotation = {
+                { i.Parameter, { "", "-@param %s $1|any", "" } },
+            }
+            require("neogen").setup {
+                snippet_engine = "luasnip",
+                languages = {
+                    python = { template = { annotation_convention = "numpydoc" } },
+                },
+            }
+        end,
         keys = {
             { "<Leader>nf", ":Neogen func<CR>" },
         },
@@ -221,6 +227,7 @@ require("lazy").setup({
             load = {
                 ["core.defaults"] = {},
                 ["core.norg.concealer"] = {},
+                ["core.presenter"] = { config = { zen_mode = "zen-mode" } },
                 ["core.norg.dirman"] = {
                     config = {
                         workspaces = {
@@ -228,9 +235,57 @@ require("lazy").setup({
                         },
                     },
                 },
+                ["core.norg.journal"] = {
+                    config = {
+                        toc_format = function(entries)
+                            local months_text = {
+                                "January",
+                                "February",
+                                "March",
+                                "April",
+                                "May",
+                                "June",
+                                "July",
+                                "August",
+                                "September",
+                                "October",
+                                "November",
+                                "December",
+                            }
+                            -- Convert the entries into a certain format to be written
+                            local output = {}
+                            local current_year
+                            local current_month
+                            for _, entry in ipairs(entries) do
+                                -- Don't print the year and month if they haven't changed
+                                if not current_year or current_year < entry[1] then
+                                    current_year = entry[1]
+                                    table.insert(output, "* " .. current_year)
+                                end
+                                if not current_month or current_month < entry[2] then
+                                    current_month = entry[2]
+                                    table.insert(output, "** " .. months_text[current_month])
+                                end
+
+                                -- Prints the file link
+                                print(vim.inspect(entry))
+                                table.insert(output, entry[4] .. string.format("[%s]", entry[5]))
+                            end
+
+                            return output
+                        end,
+                    },
+                },
+                ["core.export"] = {},
+                ["core.export.markdown"] = {
+                    config = {
+                        extensions = "all",
+                    },
+                },
             },
-            dev = true,
         },
+        dev = true,
+        dependencies = "folke/zen-mode.nvim",
     },
     {
         "shortcuts/no-neck-pain.nvim",
@@ -249,7 +304,11 @@ require("lazy").setup({
         config = function()
             local lsp = require("lsp-zero")
             local cmp = require("cmp")
+            local types = require("cmp.types")
+            local str = require("cmp.utils.str")
             local luasnip = require("luasnip")
+            local lspkind = require("lspkind")
+
             lsp.preset("recommended")
             lsp.nvim_workspace()
             lsp.skip_server_setup({ "rust_analyzer" })
@@ -281,16 +340,29 @@ require("lazy").setup({
                 }),
                 sources = cmp.config.sources({
 
+                    { name = "copilot", group_index = 2 },
                     { name = "nvim_lsp" },
                     { name = "luasnip" }, -- For luasnip users.
                 }, {
                     { name = "buffer" },
                 }),
+                formatting = {
+                    fields = {
+                        cmp.ItemField.Kind,
+                        cmp.ItemField.Abbr,
+                        cmp.ItemField.Menu,
+                    },
+                    format = lspkind.cmp_format({
+                        with_text = false,
+                        mode = 'symbol',       -- show only symbol annotations
+                        maxwidth = 40,         -- prevent the popup from showing more than provided characters (e.g 50 will not show more than 50 characters)
+                        ellipsis_char = '...', -- when popup menu exceed maxwidth, the truncated part would show ellipsis_char instead (must define maxwidth first)
+                    }),
+                }
             })
             cmp.setup(cmp_config)
 
             require("mason-null-ls").setup({ automatic_setup = true })
-            require("mason-null-ls").setup_handlers()
         end,
         dependencies = {
             -- LSP Support
@@ -305,6 +377,17 @@ require("lazy").setup({
             "saadparwaiz1/cmp_luasnip",
             "hrsh7th/cmp-nvim-lsp",
             "hrsh7th/cmp-nvim-lua",
+            {
+                "zbirenbaum/copilot-cmp",
+                dependencies = {
+                    "zbirenbaum/copilot.lua",
+                    config = {
+                        suggestion = { enabled = false },
+                        panel = { enabled = false },
+                    }
+                },
+                config = true
+            },
 
             -- Snippets
             "L3MON4D3/LuaSnip",
@@ -313,6 +396,9 @@ require("lazy").setup({
             --null-ls
             "jose-elias-alvarez/null-ls.nvim",
             "jayp0521/mason-null-ls.nvim",
+
+            -- lspkind
+            "onsails/lspkind.nvim"
         },
     },
     {
@@ -364,12 +450,11 @@ require("lazy").setup({
         "ThePrimeagen/harpoon",
         keys = {
             { "<Leader>a",  function() require("harpoon.mark").add_file() end },
-            { "<Leader>h",  function() require("harpoon.ui").toggle_quick_menu() end },
+            { "<Leader>o",  function() require("harpoon.ui").toggle_quick_menu() end },
             { "<Leader>&",  function() require("harpoon.ui").nav_file(1) end },
             { "<Leader>é", function() require("harpoon.ui").nav_file(2) end },
             { "<Leader>\"", function() require("harpoon.ui").nav_file(3) end },
             { "<Leader>'",  function() require("harpoon.ui").nav_file(4) end },
-
         }
     },
 }, {
