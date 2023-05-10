@@ -226,16 +226,16 @@ require("lazy").setup({
         config = {
             load = {
                 ["core.defaults"] = {},
-                ["core.norg.concealer"] = {},
+                ["core.concealer"] = {},
                 ["core.presenter"] = { config = { zen_mode = "zen-mode" } },
-                ["core.norg.dirman"] = {
+                ["core.dirman"] = {
                     config = {
                         workspaces = {
                             notes = "~/notes",
                         },
                     },
                 },
-                ["core.norg.journal"] = {
+                ["core.journal"] = {
                     config = {
                         toc_format = function(entries)
                             local months_text = {
@@ -461,6 +461,26 @@ require("lazy").setup({
             { "<Leader>'",  function() require("harpoon.ui").nav_file(4) end },
         }
     },
+    {
+        "jackMort/ChatGPT.nvim",
+        event = "VeryLazy",
+        config = function()
+            require("chatgpt").setup()
+        end,
+        keys = {
+            { "<Leader>g", function() require("chatgpt").edit_with_instructions() end, mode = "v" },
+        },
+        dependencies = {
+            "MunifTanjim/nui.nvim",
+            "nvim-lua/plenary.nvim",
+            "nvim-telescope/telescope.nvim"
+        }
+    },
+    {
+        "danymat/jarvis",
+        dev = true,
+        config = true
+    }
 }, {
     dev = { path = "~/Developer" },
 })
