@@ -73,11 +73,16 @@ require("lazy").setup({
                     enable = true,
                     additional_vim_regex_highlighting = { "markdown" },
                 },
+                playground = {
+                    enable = true,
+                }
             })
         end,
-        dependencies = "nvim-treesitter/nvim-treesitter-context"
+        dependencies = {
+            "nvim-treesitter/nvim-treesitter-context",
+            "nvim-treesitter/playground",
+        }
     },
-    "nvim-treesitter/playground",
     {
         "nvim-telescope/telescope.nvim",
         cmd = "Telescope",
@@ -216,6 +221,7 @@ require("lazy").setup({
         end,
         keys = {
             { "<Leader>nf", ":Neogen func<CR>" },
+            { "<Leader>nc", ":Neogen class<CR>" },
         },
         dev = true,
     },
@@ -476,11 +482,6 @@ require("lazy").setup({
             "nvim-telescope/telescope.nvim"
         }
     },
-    {
-        "danymat/jarvis",
-        dev = true,
-        config = true
-    }
 }, {
     dev = { path = "~/Developer" },
 })
