@@ -143,7 +143,7 @@ require("lazy").setup({
     },
     {
         "nvim-tree/nvim-tree.lua",
-        config = true,
+        config = { sync_root_with_cwd = true },
         keys = {
             {
                 "<Leader>t",
