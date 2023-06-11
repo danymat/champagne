@@ -24,6 +24,7 @@ vim.o.termguicolors = true
 vim.o.conceallevel = 2
 vim.o.cmdheight = 0
 vim.o.foldenable = false
+vim.o.mouse = ""
 
 local map = vim.keymap.set
 map("n", "<Leader>so", ":so %<CR>")
@@ -57,7 +58,10 @@ require("lazy").setup({
     {
         "rose-pine/neovim",
         name = "rose-pine",
-        config = { dark_variant = "moon" },
+        config = {
+            dark_variant = "moon",
+            disable_background = true -- In case of transparent terminals
+        },
         init = function()
             vim.cmd("colorscheme rose-pine")
         end,
@@ -118,13 +122,7 @@ require("lazy").setup({
     "kyazdani42/nvim-web-devicons",
     { "nvim-lualine/lualine.nvim",           config = true },
     { "lukas-reineke/indent-blankline.nvim", config = { show_current_context = true } },
-    {
-        "sindrets/diffview.nvim",
-        keys = {
-            { "<Leader>gt", ":DiffviewFileHistory<CR>" },
-            { "<Leader>gc", ":DiffviewClose<CR>" },
-        },
-    },
+    { "sindrets/diffview.nvim", },
     {
         "numToStr/Comment.nvim",
         config = {
@@ -207,31 +205,26 @@ require("lazy").setup({
     },
     {
         "danymat/neogen",
-        config = function()
-            local i = require("neogen.types.template").item
-            local annotation = {
-                { i.Parameter, { "", "-@param %s $1|any", "" } },
-            }
-            require("neogen").setup {
-                snippet_engine = "luasnip",
-                languages = {
-                    python = { template = { annotation_convention = "numpydoc" } },
-                },
-            }
-        end,
+        config = {
+            snippet_engine = "luasnip",
+            languages = {
+                python = { template = { annotation_convention = "reST" } },
+            },
+        },
         keys = {
             { "<Leader>nf", ":Neogen func<CR>" },
             { "<Leader>nc", ":Neogen class<CR>" },
         },
         dev = true,
     },
-    -- { "folke/todo-comments.nvim", config = true },
+    { "folke/todo-comments.nvim", config = true },
     { "tpope/vim-repeat" },
     {
         "nvim-neorg/neorg",
         config = {
             load = {
                 ["core.defaults"] = {},
+                ["core.ui.calendar"] = {},
                 ["core.concealer"] = {},
                 ["core.presenter"] = { config = { zen_mode = "zen-mode" } },
                 ["core.dirman"] = {
@@ -239,53 +232,6 @@ require("lazy").setup({
                         workspaces = {
                             notes = "~/notes",
                         },
-                    },
-                },
-                ["core.journal"] = {
-                    config = {
-                        toc_format = function(entries)
-                            local months_text = {
-                                "January",
-                                "February",
-                                "March",
-                                "April",
-                                "May",
-                                "June",
-                                "July",
-                                "August",
-                                "September",
-                                "October",
-                                "November",
-                                "December",
-                            }
-                            -- Convert the entries into a certain format to be written
-                            local output = {}
-                            local current_year
-                            local current_month
-                            for _, entry in ipairs(entries) do
-                                -- Don't print the year and month if they haven't changed
-                                if not current_year or current_year < entry[1] then
-                                    current_year = entry[1]
-                                    table.insert(output, "* " .. current_year)
-                                end
-                                if not current_month or current_month < entry[2] then
-                                    current_month = entry[2]
-                                    table.insert(output, "** " .. months_text[current_month])
-                                end
-
-                                -- Prints the file link
-                                print(vim.inspect(entry))
-                                table.insert(output, entry[4] .. string.format("[%s]", entry[5]))
-                            end
-
-                            return output
-                        end,
-                    },
-                },
-                ["core.export"] = {},
-                ["core.export.markdown"] = {
-                    config = {
-                        extensions = "all",
                     },
                 },
             },
@@ -419,7 +365,7 @@ require("lazy").setup({
             },
         },
     },
-    { "j-hui/fidget.nvim", config = true },
+    { "j-hui/fidget.nvim",     config = true },
     {
         "AckslD/nvim-neoclip.lua",
         dependencies = {
@@ -468,19 +414,11 @@ require("lazy").setup({
         }
     },
     {
-        "jackMort/ChatGPT.nvim",
-        event = "VeryLazy",
+        'echasnovski/mini.nvim',
+        version = '*',
         config = function()
-            require("chatgpt").setup()
-        end,
-        keys = {
-            { "<Leader>g", function() require("chatgpt").edit_with_instructions() end, mode = "v" },
-        },
-        dependencies = {
-            "MunifTanjim/nui.nvim",
-            "nvim-lua/plenary.nvim",
-            "nvim-telescope/telescope.nvim"
-        }
+            require('mini.test').setup()
+        end
     },
 }, {
     dev = { path = "~/Developer" },
