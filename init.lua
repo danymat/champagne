@@ -173,7 +173,7 @@ require("lazy").setup({
             {
                 "<Leader>zk",
                 function()
-                    require("zk.commands").get("ZkNotes")()
+                    require("zk.commands").get("ZkNotes")({ select = { "path" } })
                 end,
             },
             {
@@ -365,7 +365,11 @@ require("lazy").setup({
             },
         },
     },
-    { "j-hui/fidget.nvim",     config = true },
+    {
+        "j-hui/fidget.nvim",
+        tag = "legacy",
+        config = true
+    },
     {
         "AckslD/nvim-neoclip.lua",
         dependencies = {
