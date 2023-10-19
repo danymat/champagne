@@ -121,7 +121,7 @@ require("lazy").setup({
     },
     "kyazdani42/nvim-web-devicons",
     { "nvim-lualine/lualine.nvim",           config = true },
-    { "lukas-reineke/indent-blankline.nvim", config = { show_current_context = true } },
+    { "lukas-reineke/indent-blankline.nvim", config = true, main = "ibl" },
     { "sindrets/diffview.nvim", },
     {
         "numToStr/Comment.nvim",
@@ -152,7 +152,7 @@ require("lazy").setup({
         },
     },
     { "ray-x/lsp_signature.nvim", config = { hint_prefix = "🧸 " } },
-    { "kylechui/nvim-surround",   config = true },
+    { "kylechui/nvim-surround", config = true },
     {
         "mickael-menu/zk-nvim",
         name = "zk",
@@ -173,7 +173,7 @@ require("lazy").setup({
             {
                 "<Leader>zk",
                 function()
-                    require("zk.commands").get("ZkNotes")({ select = { "path" } })
+                    require("zk.commands").get("ZkNotes")({ select = { 'path', 'absPath' } })
                 end,
             },
             {
@@ -215,7 +215,7 @@ require("lazy").setup({
             { "<Leader>nf", ":Neogen func<CR>" },
             { "<Leader>nc", ":Neogen class<CR>" },
         },
-        dev = true,
+        -- dev = true,
     },
     { "folke/todo-comments.nvim", config = true },
     { "tpope/vim-repeat" },
@@ -236,7 +236,7 @@ require("lazy").setup({
                 },
             },
         },
-        dev = true,
+        -- dev = true,
         dependencies = "folke/zen-mode.nvim",
     },
     {
@@ -409,12 +409,12 @@ require("lazy").setup({
     {
         "ThePrimeagen/harpoon",
         keys = {
-            { "<Leader>a",  function() require("harpoon.mark").add_file() end },
-            { "<Leader>o",  function() require("harpoon.ui").toggle_quick_menu() end },
-            { "<Leader>&",  function() require("harpoon.ui").nav_file(1) end },
+            { "<Leader>a", function() require("harpoon.mark").add_file() end },
+            { "<Leader>o", function() require("harpoon.ui").toggle_quick_menu() end },
+            { "<Leader>&", function() require("harpoon.ui").nav_file(1) end },
             { "<Leader>é", function() require("harpoon.ui").nav_file(2) end },
             { "<Leader>\"", function() require("harpoon.ui").nav_file(3) end },
-            { "<Leader>'",  function() require("harpoon.ui").nav_file(4) end },
+            { "<Leader>'", function() require("harpoon.ui").nav_file(4) end },
         }
     },
     {
