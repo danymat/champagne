@@ -23,7 +23,7 @@ vim.g.loaded_netrwPlugin = 1
 vim.o.termguicolors = true
 vim.o.conceallevel = 2
 vim.o.cmdheight = 0
-vim.o.foldenable = false
+vim.o.foldenable = true
 vim.o.mouse = ""
 
 local map = vim.keymap.set
@@ -68,14 +68,16 @@ require("lazy").setup({
     },
     {
         "nvim-treesitter/nvim-treesitter",
-        build = function()
-            require("nvim-treesitter.install").update({ with_sync = true })()
-        end,
+        build = ":TSUpdate",
         config = function()
-            require("nvim-treesitter.configs").setup({
+            local configs = require("nvim-treesitter.configs")
+
+            configs.setup({
                 highlight = {
+                    ensure_installed = { "c", "lua", "python", "vim", "vimdoc", "html" },
                     enable = true,
                     additional_vim_regex_highlighting = { "markdown" },
+                    indent = { enable = true },
                 },
                 playground = {
                     enable = true,
@@ -154,7 +156,7 @@ require("lazy").setup({
     { "ray-x/lsp_signature.nvim", config = { hint_prefix = "🧸 " } },
     { "kylechui/nvim-surround", config = true },
     {
-        "mickael-menu/zk-nvim",
+        "zk-org/zk-nvim",
         name = "zk",
         config = function()
             require("zk").setup({ picker = "telescope" })
@@ -244,7 +246,11 @@ require("lazy").setup({
         version = "*",
         config = {
             buffers = {
-                background = { colorCode = "rose-pine-moon" },
+                scratchPad = {
+                    enabled = true,
+                    fileName = "scratchpad-buffer.norg",
+                    location = "~/notes",
+                },
             },
         },
         keys = {
@@ -409,12 +415,12 @@ require("lazy").setup({
     {
         "ThePrimeagen/harpoon",
         keys = {
-            { "<Leader>a", function() require("harpoon.mark").add_file() end },
-            { "<Leader>o", function() require("harpoon.ui").toggle_quick_menu() end },
-            { "<Leader>&", function() require("harpoon.ui").nav_file(1) end },
-            { "<Leader>é", function() require("harpoon.ui").nav_file(2) end },
+            { "<Leader>a",  function() require("harpoon.mark").add_file() end },
+            { "<Leader>o",  function() require("harpoon.ui").toggle_quick_menu() end },
+            { "<Leader>&",  function() require("harpoon.ui").nav_file(1) end },
+            { "<Leader>é",  function() require("harpoon.ui").nav_file(2) end },
             { "<Leader>\"", function() require("harpoon.ui").nav_file(3) end },
-            { "<Leader>'", function() require("harpoon.ui").nav_file(4) end },
+            { "<Leader>'",  function() require("harpoon.ui").nav_file(4) end },
         }
     },
     {
@@ -424,6 +430,16 @@ require("lazy").setup({
             require('mini.test').setup()
         end
     },
+    {
+        "oflisback/obsidian-bridge.nvim",
+        dependencies = { "nvim-telescope/telescope.nvim" },
+        config = function() require("obsidian-bridge").setup() end,
+        event = {
+            "BufReadPre *.md",
+            "BufNewFile *.md",
+        },
+        lazy = true,
+    }
 }, {
     dev = { path = "~/Developer" },
 })
