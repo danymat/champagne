@@ -222,7 +222,13 @@ require("lazy").setup({
     { "folke/todo-comments.nvim", config = true },
     { "tpope/vim-repeat" },
     {
+        "vhyrro/luarocks.nvim",
+        priority = 1000,
+        config = true
+    },
+    {
         "nvim-neorg/neorg",
+        dependencies = { "luarocks.nvim" },
         config = {
             load = {
                 ["core.defaults"] = {},
@@ -302,7 +308,6 @@ require("lazy").setup({
                 }),
                 sources = cmp.config.sources({
 
-                    { name = "copilot", group_index = 2 },
                     { name = "nvim_lsp" },
                     { name = "luasnip" }, -- For luasnip users.
                 }, {
@@ -339,17 +344,6 @@ require("lazy").setup({
             "saadparwaiz1/cmp_luasnip",
             "hrsh7th/cmp-nvim-lsp",
             "hrsh7th/cmp-nvim-lua",
-            {
-                "zbirenbaum/copilot-cmp",
-                dependencies = {
-                    "zbirenbaum/copilot.lua",
-                    config = {
-                        suggestion = { enabled = false },
-                        panel = { enabled = false },
-                    }
-                },
-                config = true
-            },
 
             -- Snippets
             "L3MON4D3/LuaSnip",
