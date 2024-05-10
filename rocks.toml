@@ -1,0 +1,66 @@
+# This is your rocks.nvim plugins declaration file.
+# Here is a small yet pretty detailed example on how to use it:
+#
+# [plugins]
+# nvim-treesitter = "semver_version"  # e.g. "1.0.0"
+
+[treesitter]
+auto_highlight = "all"
+auto_install = "prompt"
+
+# List of non-Neovim rocks.
+# This includes things like `toml` or other lua packages.
+[rocks]
+
+[config]
+# plugins_dir = "plugins/"
+# auto_setup = false
+
+# List of Neovim plugins to install alongside their versions.
+# If the plugin name contains a dot then you must add quotes to the key name!
+[plugins]
+# Rocks ones
+"rocks.nvim" = "2.27.0" # rocks.nvim can also manage itself :D
+"rocks-git.nvim" = "1.5.0"
+"rocks-config.nvim" = "1.5.0"
+"rocks-dev.nvim" = "1.2.1"
+"rocks-treesitter.nvim" = "scm"
+# Treesitter ones
+tree-sitter-toml = "scm"
+tree-sitter-lua = "scm"
+# Other plugins
+neorg = "8.4.0"
+"mini.nvim" = "0.9.0"
+"telescope.nvim" = "scm"
+rose-pine = "3.0.1"
+harpoon = "scm"
+
+[plugins.nvim-treesitter]
+git = "nvim-treesitter/nvim-treesitter"
+rev = "v0.9.2^{}"
+
+[plugins."workspaces.nvim"]
+git = "natecraddock/workspaces.nvim"
+rev = "v0.1"
+
+[plugins."workspaces.nvim".config]
+hooks = { open =  "Telescope find_files" }
+
+
+# TODO
+# Plugins 
+# - Rose pine config
+# - nvim-treesitter config
+# - nvim-autopairs ?
+# - lualine ?
+# - Comment.nvim
+# - nvim-tree
+# - lsp_signature
+# - nvim-surround
+# - zk.nvim ? 
+# - neogen dev
+# - neorg dev
+# - vim-repeat ?
+# - mason + lspconfig 
+# - leap.nvim
+#### - harpoon DONE

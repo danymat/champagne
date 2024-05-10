@@ -1,16 +1,59 @@
-local lazypath = vim.fn.stdpath("data") .. "/lazy/lazy.nvim"
-if not vim.loop.fs_stat(lazypath) then
-    vim.fn.system({
-        "git",
-        "clone",
-        "--filter=blob:none",
-        "--single-branch",
-        "https://github.com/folke/lazy.nvim.git",
-        lazypath,
-    })
-end
-vim.opt.runtimepath:prepend(lazypath)
+do
+    -- Specifies where to install/use rocks.nvim
+    local install_location = vim.fs.joinpath(vim.fn.stdpath("data"), "rocks")
 
+    -- Set up configuration options related to rocks.nvim (recommended to leave as default)
+    local rocks_config = {
+        rocks_path = vim.fs.normalize(install_location),
+        luarocks_binary = vim.fs.joinpath(install_location, "bin", "luarocks"),
+    }
+
+    vim.g.rocks_nvim = rocks_config
+
+    -- Configure the package path (so that plugin code can be found)
+    local luarocks_path = {
+        vim.fs.joinpath(rocks_config.rocks_path, "share", "lua", "5.1", "?.lua"),
+        vim.fs.joinpath(rocks_config.rocks_path, "share", "lua", "5.1", "?", "init.lua"),
+    }
+    package.path = package.path .. ";" .. table.concat(luarocks_path, ";")
+
+    -- Configure the C path (so that e.g. tree-sitter parsers can be found)
+    local luarocks_cpath = {
+        vim.fs.joinpath(rocks_config.rocks_path, "lib", "lua", "5.1", "?.so"),
+        vim.fs.joinpath(rocks_config.rocks_path, "lib64", "lua", "5.1", "?.so"),
+    }
+    package.cpath = package.cpath .. ";" .. table.concat(luarocks_cpath, ";")
+
+    -- Load all installed plugins, including rocks.nvim itself
+    vim.opt.runtimepath:append(vim.fs.joinpath(rocks_config.rocks_path, "lib", "luarocks", "rocks-5.1", "rocks.nvim", "*"))
+end
+
+-- If rocks.nvim is not installed then install it!
+if not pcall(require, "rocks") then
+    local rocks_location = vim.fs.joinpath(vim.fn.stdpath("cache"), "rocks.nvim")
+
+    if not vim.uv.fs_stat(rocks_location) then
+        -- Pull down rocks.nvim
+        vim.fn.system({
+            "git",
+            "clone",
+            "--filter=blob:none",
+            "https://github.com/nvim-neorocks/rocks.nvim",
+            rocks_location,
+        })
+    end
+
+    -- If the clone was successful then source the bootstrapping script
+    assert(vim.v.shell_error == 0, "rocks.nvim installation failed. Try exiting and re-entering Neovim!")
+
+    vim.cmd.source(vim.fs.joinpath(rocks_location, "bootstrap.lua"))
+
+    vim.fn.delete(rocks_location, "rf")
+end
+
+-- User options
+
+vim.cmd("colorscheme rose-pine-moon")
 vim.g.mapleader = " "
 vim.o.relativenumber = true
 vim.o.number = true
@@ -37,403 +80,12 @@ map("n", "K", vim.lsp.buf.hover)
 map("n", "<leader>r", vim.lsp.buf.rename)
 map("n", "<C-n>", vim.diagnostic.goto_next)
 map("n", "<C-b>", vim.diagnostic.goto_prev)
+map('i', '<C-Space>', '<C-x><C-o>') -- Force Trigger completion
+map('i', '<C-j>',   [[pumvisible() ? "\<C-n>" : "\<C-j>"]],   { expr = true })
+map('i', '<C-k>', [[pumvisible() ? "\<C-p>" : "\<C-k>"]], { expr = true })
 map({ "n", "v" }, "≠", "<C-d>zz")
 map({ "n", "v" }, "÷", "<C-u>zz")
 map({ "n", "v" }, "<C-j>", "<C-d>zz")
 map({ "n", "v" }, "<C-k>", "<C-u>zz")
 map("t", "<Esc>", "<C-\\><C-n>")
 map("n", "<Leader>=", "<C-^>")
-
-map("n", "<Leader>gs", function()
-    require("lazy.util").float_term({ "lazygit" }, {
-        terminal = true,
-        close_on_exit = true,
-        enter = true,
-    })
-end)
-
-require("lazy").setup({
-    "nvim-lua/plenary.nvim",
-
-    {
-        "rose-pine/neovim",
-        name = "rose-pine",
-        config = {
-            dark_variant = "moon",
-            disable_background = true -- In case of transparent terminals
-        },
-        init = function()
-            vim.cmd("colorscheme rose-pine")
-        end,
-    },
-    {
-        "nvim-treesitter/nvim-treesitter",
-        build = ":TSUpdate",
-        config = function()
-            local configs = require("nvim-treesitter.configs")
-
-            configs.setup({
-                highlight = {
-                    ensure_installed = { "c", "lua", "python", "vim", "vimdoc", "html" },
-                    enable = true,
-                    additional_vim_regex_highlighting = { "markdown" },
-                    indent = { enable = true },
-                },
-                playground = {
-                    enable = true,
-                }
-            })
-        end,
-        dependencies = {
-            "nvim-treesitter/nvim-treesitter-context",
-            "nvim-treesitter/playground",
-        }
-    },
-    {
-        "nvim-telescope/telescope.nvim",
-        cmd = "Telescope",
-        keys = {
-            { "<C-f>",      ":Telescope find_files<CR>" },
-            { "<Leader>ff", ":Telescope live_grep<CR>" },
-            { "<Leader>fb", ":Telescope buffers<CR>" },
-            { "<Leader>fh", ":Telescope help_tags<CR>" },
-            { "<leader>gr", ":Telescope lsp_references<CR>" },
-            { "<leader>gd", ":Telescope lsp_definitions<CR>" },
-            { "<Leader>ds", ":Telescope lsp_document_symbols symbols=func,function,class<CR>" },
-            { "<C-a>",      ":lua vim.lsp.buf.code_action()<CR>" },
-            { "<Leader>p",  ":Telescope workspaces<CR>" },
-        },
-        dependencies = "natecraddock/workspaces.nvim",
-        config = function()
-            local telescope = require("telescope")
-            telescope.load_extension("workspaces")
-            telescope.setup({
-                extensions = {
-                    workspaces = {
-                        -- keep insert mode after selection in the picker, default is false
-                        keep_insert = true,
-                    },
-                },
-            })
-        end,
-    },
-    {
-        "windwp/nvim-autopairs",
-        config = true,
-    },
-    "kyazdani42/nvim-web-devicons",
-    { "nvim-lualine/lualine.nvim",           config = true },
-    { "lukas-reineke/indent-blankline.nvim", config = true, main = "ibl" },
-    { "sindrets/diffview.nvim", },
-    {
-        "numToStr/Comment.nvim",
-        config = {
-            toggler = {
-                line = "<Leader>cc",
-                block = "<Leader>bc",
-            },
-            opleader = {
-                line = "<Leader>c",
-                block = "<Leader>b",
-            },
-            extra = {
-                eol = "<Leader>ca",
-            },
-        },
-    },
-    {
-        "nvim-tree/nvim-tree.lua",
-        config = { sync_root_with_cwd = true },
-        keys = {
-            {
-                "<Leader>t",
-                function()
-                    require("nvim-tree.api").tree.toggle()
-                end,
-            },
-        },
-    },
-    { "ray-x/lsp_signature.nvim", config = { hint_prefix = "🧸 " } },
-    { "kylechui/nvim-surround", config = true },
-    {
-        "zk-org/zk-nvim",
-        name = "zk",
-        config = function()
-            require("zk").setup({ picker = "telescope" })
-            require("zk.commands").add("ZkStartingPoint", function(options)
-                options = vim.tbl_extend("force", { match = "§§", matchStrategy = "exact" }, options or {})
-                require("zk").edit(options, { title = "§§" })
-            end)
-        end,
-        keys = {
-            {
-                "<Leader>§§",
-                function()
-                    require("zk.commands").get("ZkStartingPoint")()
-                end,
-            },
-            {
-                "<Leader>zk",
-                function()
-                    require("zk.commands").get("ZkNotes")({ select = { 'path', 'absPath' } })
-                end,
-            },
-            {
-                "<Leader>zb",
-                function()
-                    require("zk.commands").get("ZkBacklinks")()
-                end,
-            },
-            {
-                "<Leader>zi",
-                function()
-                    require("zk.commands").get("ZkLinks")()
-                end,
-            },
-            {
-                "<Leader>zt",
-                function()
-                    require("zk.commands").get("ZkTags")({ sort = { "note-count" } })
-                end,
-            },
-            {
-                "<Leader>zn",
-                function()
-                    require("zk.commands").get("ZkNew")({ title = vim.fn.input("Title: ") })
-                end,
-            },
-            -- TODO: random note: :ZkNotes { sort = {"random"}, limit = 1 } (https://github.com/mickael-menu/zk-nvim/discussions/94)
-        },
-    },
-    {
-        "danymat/neogen",
-        config = {
-            snippet_engine = "luasnip",
-            languages = {
-                python = { template = { annotation_convention = "reST" } },
-            },
-        },
-        keys = {
-            { "<Leader>nf", ":Neogen func<CR>" },
-            { "<Leader>nc", ":Neogen class<CR>" },
-        },
-        -- dev = true,
-    },
-    { "folke/todo-comments.nvim", config = true },
-    { "tpope/vim-repeat" },
-    {
-        "vhyrro/luarocks.nvim",
-        priority = 1000,
-        config = true
-    },
-    {
-        "nvim-neorg/neorg",
-        dependencies = { "luarocks.nvim" },
-        config = {
-            load = {
-                ["core.defaults"] = {},
-                ["core.ui.calendar"] = {},
-                ["core.concealer"] = {},
-                ["core.presenter"] = { config = { zen_mode = "zen-mode" } },
-                ["core.dirman"] = {
-                    config = {
-                        workspaces = {
-                            notes = "~/notes",
-                        },
-                    },
-                },
-            },
-        },
-        -- dev = true,
-        dependencies = "folke/zen-mode.nvim",
-    },
-    {
-        "shortcuts/no-neck-pain.nvim",
-        version = "*",
-        config = {
-            buffers = {
-                scratchPad = {
-                    enabled = true,
-                    fileName = "scratchpad-buffer.norg",
-                    location = "~/notes",
-                },
-            },
-        },
-        keys = {
-            { "<Leader>zz", ":NoNeckPain<CR>" },
-        },
-    },
-    {
-        "VonHeikemen/lsp-zero.nvim",
-        config = function()
-            local lsp = require("lsp-zero")
-            local cmp = require("cmp")
-            local types = require("cmp.types")
-            local str = require("cmp.utils.str")
-            local luasnip = require("luasnip")
-            local lspkind = require("lspkind")
-
-            lsp.preset("recommended")
-            lsp.nvim_workspace()
-            lsp.skip_server_setup({ "rust_analyzer" })
-            lsp.setup()
-
-            local cmp_config = lsp.defaults.cmp_config({
-                window = {
-                    completion = cmp.config.window.bordered(),
-                    documentation = cmp.config.window.bordered(),
-                },
-                mapping = cmp.mapping.preset.insert({
-                    ["<C-j>"] = cmp.mapping.select_next_item(),
-                    ["<C-k>"] = cmp.mapping.select_prev_item(),
-                    ["<Tab>"] = cmp.mapping.confirm({
-                        -- this is the important line
-                        behavior = cmp.ConfirmBehavior.Replace,
-                        select = false,
-                    }),
-                    ["<C-l>"] = cmp.mapping(function(fallback)
-                        if luasnip and luasnip.expand_or_jumpable() then
-                            luasnip.expand_or_jump()
-                        else
-                            fallback()
-                        end
-                    end, { "i", "s" }),
-                    ["<C-h>"] = cmp.mapping(function(fallback)
-                        if luasnip and luasnip.jumpable(-1) then
-                            luasnip.jump(-1)
-                        else
-                            fallback()
-                        end
-                    end, { "i", "s" }),
-                }),
-                sources = cmp.config.sources({
-
-                    { name = "nvim_lsp" },
-                    { name = "luasnip" }, -- For luasnip users.
-                }, {
-                    { name = "buffer" },
-                }),
-                formatting = {
-                    fields = {
-                        cmp.ItemField.Kind,
-                        cmp.ItemField.Abbr,
-                        cmp.ItemField.Menu,
-                    },
-                    format = lspkind.cmp_format({
-                        mode = 'symbol',
-                        maxwidth = 40,
-                        ellipsis_char = '...',
-                        symbol_map = { Copilot = "" }
-                    }),
-                }
-            })
-            cmp.setup(cmp_config)
-
-            require("mason-null-ls").setup({ automatic_setup = true })
-        end,
-        dependencies = {
-            -- LSP Support
-            "neovim/nvim-lspconfig",
-            "williamboman/mason.nvim",
-            "williamboman/mason-lspconfig.nvim",
-
-            -- Autocompletion
-            "hrsh7th/nvim-cmp",
-            "hrsh7th/cmp-buffer",
-            "hrsh7th/cmp-path",
-            "saadparwaiz1/cmp_luasnip",
-            "hrsh7th/cmp-nvim-lsp",
-            "hrsh7th/cmp-nvim-lua",
-
-            -- Snippets
-            "L3MON4D3/LuaSnip",
-            "rafamadriz/friendly-snippets",
-
-            --null-ls
-            "jose-elias-alvarez/null-ls.nvim",
-            "jayp0521/mason-null-ls.nvim",
-
-            -- lspkind
-            "onsails/lspkind.nvim"
-        },
-    },
-    {
-        "natecraddock/workspaces.nvim",
-        config = {
-            hooks = {
-                open = { "Telescope find_files" },
-            },
-        },
-    },
-    {
-        "j-hui/fidget.nvim",
-        tag = "legacy",
-        config = true
-    },
-    {
-        "AckslD/nvim-neoclip.lua",
-        dependencies = {
-            { "kkharji/sqlite.lua", as = "sqlite" },
-            "nvim-telescope/telescope.nvim",
-        },
-        config = function()
-            require("neoclip").setup()
-            require("telescope").load_extension("neoclip")
-        end,
-        keys = {
-            { "<Leader>y", ":Telescope neoclip plus<CR>" },
-            {
-                "<Leader>dy",
-                function()
-                    require("neoclip").clear_history()
-                end,
-            },
-        },
-    },
-    { "stevearc/dressing.nvim" },
-    {
-        "simrat39/rust-tools.nvim",
-        config = true,
-        dependencies = {
-            "nvim-lua/plenary.nvim",
-            "mfussenegger/nvim-dap",
-            "neovim/nvim-lspconfig",
-        },
-    },
-    {
-        "ggandor/leap.nvim",
-        config = function()
-            require("leap").add_default_mappings()
-        end,
-    },
-    {
-        "ThePrimeagen/harpoon",
-        keys = {
-            { "<Leader>a",  function() require("harpoon.mark").add_file() end },
-            { "<Leader>o",  function() require("harpoon.ui").toggle_quick_menu() end },
-            { "<Leader>&",  function() require("harpoon.ui").nav_file(1) end },
-            { "<Leader>é",  function() require("harpoon.ui").nav_file(2) end },
-            { "<Leader>\"", function() require("harpoon.ui").nav_file(3) end },
-            { "<Leader>'",  function() require("harpoon.ui").nav_file(4) end },
-        }
-    },
-    {
-        'echasnovski/mini.nvim',
-        version = '*',
-        config = function()
-            require('mini.test').setup()
-        end
-    },
-    {
-        "oflisback/obsidian-bridge.nvim",
-        dependencies = { "nvim-telescope/telescope.nvim" },
-        config = function() require("obsidian-bridge").setup() end,
-        event = {
-            "BufReadPre *.md",
-            "BufNewFile *.md",
-        },
-        lazy = true,
-    }
-}, {
-    dev = { path = "~/Developer" },
-})
