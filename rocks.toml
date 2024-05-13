@@ -20,7 +20,7 @@ auto_install = "prompt"
 # If the plugin name contains a dot then you must add quotes to the key name!
 [plugins]
 # Rocks ones
-"rocks.nvim" = "2.27.0" # rocks.nvim can also manage itself :D
+"rocks.nvim" = "2.27.1"
 "rocks-git.nvim" = "1.5.0"
 "rocks-config.nvim" = "1.5.0"
 "rocks-dev.nvim" = "1.2.1"
@@ -29,7 +29,6 @@ auto_install = "prompt"
 tree-sitter-toml = "scm"
 tree-sitter-lua = "scm"
 # Other plugins
-neorg = "8.4.0"
 "mini.nvim" = "0.9.0"
 "telescope.nvim" = "scm"
 rose-pine = "3.0.1"
@@ -55,6 +54,12 @@ git = "ggandor/leap.nvim"
 git = "tpope/vim-repeat"
 rev = "v1.2^{}"
 
+[plugins.neogen]
+dir = "~/Developer/neogen"
+
+[plugins.neorg]
+dir = "~/Developer/neorg"
+
 # TODO
 # - nvim-treesitter config
 # - nvim-autopairs ?
@@ -62,7 +67,6 @@ rev = "v1.2^{}"
 # - lsp_signature
 # - nvim-surround
 # - zk.nvim ? 
-# - neogen dev
 # - neorg dev
 # - mason + lspconfig 
 # mini.nvim
