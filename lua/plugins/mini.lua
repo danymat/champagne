@@ -5,3 +5,5 @@ require("mini.completion").setup({
     signature = { border = "single" },
   },
 })
+
+require("mini.pairs").setup()
