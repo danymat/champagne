@@ -34,6 +34,8 @@ neorg = "8.4.0"
 "telescope.nvim" = "scm"
 rose-pine = "3.0.1"
 harpoon = "scm"
+"lualine.nvim" = "scm"
+"comment.nvim" = "0.8.0"
 
 [plugins.nvim-treesitter]
 git = "nvim-treesitter/nvim-treesitter"
@@ -46,21 +48,21 @@ rev = "v0.1"
 [plugins."workspaces.nvim".config]
 hooks = { open =  "Telescope find_files" }
 
+[plugins."leap.nvim"]
+git = "ggandor/leap.nvim"
+
+[plugins.vim-repeat]
+git = "tpope/vim-repeat"
+rev = "v1.2^{}"
 
 # TODO
-# Plugins 
-# - Rose pine config
 # - nvim-treesitter config
 # - nvim-autopairs ?
-# - lualine ?
-# - Comment.nvim
 # - nvim-tree
 # - lsp_signature
 # - nvim-surround
 # - zk.nvim ? 
 # - neogen dev
 # - neorg dev
-# - vim-repeat ?
 # - mason + lspconfig 
-# - leap.nvim
-#### - harpoon DONE
+# mini.nvim

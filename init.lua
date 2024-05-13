@@ -53,7 +53,6 @@ end
 
 -- User options
 
-vim.cmd("colorscheme rose-pine-moon")
 vim.g.mapleader = " "
 vim.o.relativenumber = true
 vim.o.number = true
