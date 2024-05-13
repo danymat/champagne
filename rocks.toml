@@ -35,6 +35,9 @@ rose-pine = "3.0.1"
 harpoon = "scm"
 "lualine.nvim" = "scm"
 "comment.nvim" = "0.8.0"
+nvim-surround = "2.1.5"
+nvim-treesitter-context = "scm"
+"nvim-tree.lua" = "1.3.2"
 
 [plugins.nvim-treesitter]
 git = "nvim-treesitter/nvim-treesitter"
@@ -54,19 +57,17 @@ git = "ggandor/leap.nvim"
 git = "tpope/vim-repeat"
 rev = "v1.2^{}"
 
-[plugins.neogen]
-dir = "~/Developer/neogen"
+[plugins.playground]
+git = "nvim-treesitter/playground"
 
-[plugins.neorg]
-dir = "~/Developer/neorg"
+#[plugins.neogen]
+#dir = "~/Developer/neogen"
+
+#[plugins.neorg]
+#dir = "~/Developer/neorg"
 
 # TODO
-# - nvim-treesitter config
-# - nvim-autopairs ?
 # - nvim-tree
+# - nvim-autopairs ?
 # - lsp_signature
-# - nvim-surround
-# - zk.nvim ? 
-# - neorg dev
 # - mason + lspconfig 
-# mini.nvim
