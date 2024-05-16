@@ -66,12 +66,11 @@ git = "nvim-treesitter/playground"
 git = "nvim-tree/nvim-tree.lua"
 rev = "v1.3.2"
 
-#[plugins.neogen]
-#dir = "~/Developer/neogen"
+[plugins.neogen]
+dir = "~/Developer/neogen"
 
 #[plugins.neorg]
 #dir = "~/Developer/neorg"
 
 # TODO
 # - lsp_signature
-# - mason + lspconfig 

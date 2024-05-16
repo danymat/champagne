@@ -52,7 +52,6 @@ if not pcall(require, "rocks") then
 end
 
 -- User options
-
 vim.g.mapleader = " "
 vim.o.relativenumber = true
 vim.o.number = true
@@ -88,3 +87,5 @@ map({ "n", "v" }, "<C-j>", "<C-d>zz")
 map({ "n", "v" }, "<C-k>", "<C-u>zz")
 map("t", "<Esc>", "<C-\\><C-n>")
 map("n", "<Leader>=", "<C-^>")
+
+vim.cmd([[packadd rocks-dev.nvim]])
