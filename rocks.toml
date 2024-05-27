@@ -63,9 +63,9 @@ rev = "v1.2^{}"
 [plugins.playground]
 git = "nvim-treesitter/playground"
 
-[plugins."nvim-tree.lua"]
-git = "nvim-tree/nvim-tree.lua"
-rev = "v1.3.2"
+# [plugins."nvim-tree.lua"]
+# git = "nvim-tree/nvim-tree.lua"
+# rev = "v1.3.2"
 
 [plugins.neogen]
 dir = "~/Developer/neogen"

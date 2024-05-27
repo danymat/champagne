@@ -79,7 +79,7 @@ map("n", "<leader>r", vim.lsp.buf.rename)
 map("n", "<C-n>", vim.diagnostic.goto_next)
 map("n", "<C-b>", vim.diagnostic.goto_prev)
 map('i', '<C-Space>', '<C-x><C-o>') -- Force Trigger completion
-map('i', '<C-j>',   [[pumvisible() ? "\<C-n>" : "\<C-j>"]],   { expr = true })
+map('i', '<C-j>', [[pumvisible() ? "\<C-n>" : "\<C-j>"]], { expr = true })
 map('i', '<C-k>', [[pumvisible() ? "\<C-p>" : "\<C-k>"]], { expr = true })
 map({ "n", "v" }, "≠", "<C-d>zz")
 map({ "n", "v" }, "÷", "<C-u>zz")
