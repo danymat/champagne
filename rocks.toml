@@ -29,7 +29,7 @@ auto_install = "prompt"
 tree-sitter-toml = "scm"
 tree-sitter-lua = "scm"
 # Other plugins
-"mini.nvim" = "0.9.0"
+"mini.nvim" = "scm"
 "telescope.nvim" = "scm"
 rose-pine = "3.0.1"
 harpoon = "scm"
@@ -40,6 +40,7 @@ nvim-treesitter-context = "scm"
 "mason.nvim" = "1.10.0"
 "mason-lspconfig.nvim" = "1.29.0"
 nvim-lspconfig = "0.1.7"
+"oil.nvim" = "2.9.0"
 
 [plugins.nvim-treesitter]
 git = "nvim-treesitter/nvim-treesitter"
