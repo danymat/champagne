@@ -78,6 +78,7 @@ map("n", "K", vim.lsp.buf.hover)
 map("n", "<leader>r", vim.lsp.buf.rename)
 map("n", "<C-n>", vim.diagnostic.goto_next)
 map("n", "<C-b>", vim.diagnostic.goto_prev)
+-- map("i", "<Tab>", function() if vim.snippet.active() then vim.snippet.expand() end end)
 map('i', '<C-Space>', '<C-x><C-o>') -- Force Trigger completion
 map('i', '<C-j>', [[pumvisible() ? "\<C-n>" : "\<C-j>"]], { expr = true })
 map('i', '<C-k>', [[pumvisible() ? "\<C-p>" : "\<C-k>"]], { expr = true })
