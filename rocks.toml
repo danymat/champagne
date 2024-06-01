@@ -22,14 +22,12 @@ auto_install = "prompt"
 # If the plugin name contains a dot then you must add quotes to the key name!
 [plugins]
 # Rocks ones
-"rocks.nvim" = "2.27.1"
-"rocks-git.nvim" = "1.5.0"
-"rocks-config.nvim" = "1.5.0"
+"rocks.nvim" = "2.29.2"
+"rocks-git.nvim" = "1.5.1"
+"rocks-config.nvim" = "1.6.0"
 "rocks-dev.nvim" = "1.2.1"
 "rocks-treesitter.nvim" = "scm"
 # Treesitter ones
-tree-sitter-toml = "scm"
-tree-sitter-lua = "scm"
 # Other plugins
 "mini.nvim" = "scm"
 "telescope.nvim" = "scm"
@@ -41,10 +39,12 @@ nvim-surround = "2.1.5"
 nvim-treesitter-context = "scm"
 "mason.nvim" = "1.10.0"
 "mason-lspconfig.nvim" = "1.29.0"
-nvim-lspconfig = "0.1.7"
+nvim-lspconfig = "0.1.8"
 "oil.nvim" = "2.9.0"
 zk-nvim = "scm"
-tree-sitter-markdown = "scm"
+tree-sitter-toml = "scm"
+tree-sitter-json = "scm"
+tree-sitter-python = "scm"
 
 [plugins."workspaces.nvim"]
 git = "natecraddock/workspaces.nvim"
@@ -60,9 +60,6 @@ git = "ggandor/leap.nvim"
 git = "tpope/vim-repeat"
 rev = "v1.2^{}"
 
-[plugins.playground]
-git = "nvim-treesitter/playground"
-
 # [plugins."nvim-tree.lua"]
 # git = "nvim-tree/nvim-tree.lua"
 # rev = "v1.3.2"
@@ -70,8 +67,8 @@ git = "nvim-treesitter/playground"
 [plugins.neogen]
 dir = "~/Developer/neogen"
 
-[plugins.neorg]
-dir = "~/Developer/neorg"
+# [plugins.neorg]
+# dir = "~/Developer/neorg"
 
 # Still TODO
 # - Use neovim stable for treesitter use
