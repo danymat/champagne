@@ -47,7 +47,14 @@ map({ "n", "v" }, "÷", "<C-u>zz")
 map({ "n", "v" }, "<C-j>", "<C-d>zz")
 map({ "n", "v" }, "<C-k>", "<C-u>zz")
 map("t", "<Esc>", "<C-\\><C-n>")
-map("n", "<Leader>=", "<C-^>")
+
+
+-- export NVIM_WORK=1 at work and it will apply custom keybinds
+local at_work = vim.env.NVIM_WORK and true
+
+if at_work then
+    map("n", "<Leader>=", "<C-^>")
+end
 
 require("lazy").setup({
     {
@@ -60,7 +67,7 @@ require("lazy").setup({
                 natural_order = true,
 
             })
-            vim.keymap.set("n", "-", "<CMD>Oil --float<CR>", { desc = "Open parent directory" })
+            vim.keymap.set("n", at_work and "=" or "-", "<CMD>Oil --float<CR>", { desc = "Open parent directory" })
         end
     },
 
