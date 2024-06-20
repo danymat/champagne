@@ -1,55 +1,15 @@
-do
-    -- Specifies where to install/use rocks.nvim
-    local install_location = vim.fs.joinpath(vim.fn.stdpath("data"), "rocks")
-
-    -- Set up configuration options related to rocks.nvim (recommended to leave as default)
-    local rocks_config = {
-        rocks_path = vim.fs.normalize(install_location),
-        luarocks_binary = vim.fs.joinpath(install_location, "bin", "luarocks"),
-    }
-
-    vim.g.rocks_nvim = rocks_config
-
-    -- Configure the package path (so that plugin code can be found)
-    local luarocks_path = {
-        vim.fs.joinpath(rocks_config.rocks_path, "share", "lua", "5.1", "?.lua"),
-        vim.fs.joinpath(rocks_config.rocks_path, "share", "lua", "5.1", "?", "init.lua"),
-    }
-    package.path = package.path .. ";" .. table.concat(luarocks_path, ";")
-
-    -- Configure the C path (so that e.g. tree-sitter parsers can be found)
-    local luarocks_cpath = {
-        vim.fs.joinpath(rocks_config.rocks_path, "lib", "lua", "5.1", "?.so"),
-        vim.fs.joinpath(rocks_config.rocks_path, "lib64", "lua", "5.1", "?.so"),
-    }
-    package.cpath = package.cpath .. ";" .. table.concat(luarocks_cpath, ";")
-
-    -- Load all installed plugins, including rocks.nvim itself
-    vim.opt.runtimepath:append(vim.fs.joinpath(rocks_config.rocks_path, "lib", "luarocks", "rocks-5.1", "rocks.nvim", "*"))
+local lazypath = vim.fn.stdpath("data") .. "/lazy/lazy.nvim"
+if not (vim.uv or vim.loop).fs_stat(lazypath) then
+    vim.fn.system({
+        "git",
+        "clone",
+        "--filter=blob:none",
+        "https://github.com/folke/lazy.nvim.git",
+        "--branch=stable", -- latest stable release
+        lazypath,
+    })
 end
-
--- If rocks.nvim is not installed then install it!
-if not pcall(require, "rocks") then
-    local rocks_location = vim.fs.joinpath(vim.fn.stdpath("cache"), "rocks.nvim")
-
-    if not vim.uv.fs_stat(rocks_location) then
-        -- Pull down rocks.nvim
-        vim.fn.system({
-            "git",
-            "clone",
-            "--filter=blob:none",
-            "https://github.com/nvim-neorocks/rocks.nvim",
-            rocks_location,
-        })
-    end
-
-    -- If the clone was successful then source the bootstrapping script
-    assert(vim.v.shell_error == 0, "rocks.nvim installation failed. Try exiting and re-entering Neovim!")
-
-    vim.cmd.source(vim.fs.joinpath(rocks_location, "bootstrap.lua"))
-
-    vim.fn.delete(rocks_location, "rf")
-end
+vim.opt.rtp:prepend(lazypath)
 
 -- User options
 vim.g.mapleader = " "
@@ -89,4 +49,213 @@ map({ "n", "v" }, "<C-k>", "<C-u>zz")
 map("t", "<Esc>", "<C-\\><C-n>")
 map("n", "<Leader>=", "<C-^>")
 
-vim.cmd([[packadd rocks-dev.nvim]])
+require("lazy").setup({
+    {
+        "stevearc/oil.nvim",
+        config = function()
+            require("oil").setup({
+                view_options = {
+                    show_hidden = true,
+                },
+                natural_order = true,
+
+            })
+            vim.keymap.set("n", "-", "<CMD>Oil --float<CR>", { desc = "Open parent directory" })
+        end
+    },
+
+    {
+        "danymat/neogen",
+        dev = true,
+        config = function()
+            require("neogen").setup({
+                --snippet_engine = "luasnip",
+                languages = {
+                    python = { template = { annotation_convention = "reST" } },
+                }
+            })
+
+            vim.keymap.set("n", "<Leader>nf", ":Neogen func<CR>")
+            vim.keymap.set("n", "<Leader>nc", ":Neogen class<CR>")
+        end
+    },
+    {
+        "nvim-neorg/neorg",
+        dev = true
+    },
+    {
+        "numToStr/Comment.nvim",
+        config = function()
+            require("Comment").setup({
+                toggler = {
+                    line = "<Leader>cc",
+                    block = "<Leader>bc",
+                },
+                opleader = {
+                    line = "<Leader>c",
+                    block = "<Leader>b",
+                },
+                extra = {
+                    eol = "<Leader>ca",
+                },
+            })
+        end
+    },
+    {
+        "ThePrimeagen/harpoon",
+        config = function()
+            vim.keymap.set("n", "<Leader>a", function() require("harpoon.mark").add_file() end)
+            vim.keymap.set("n", "<Leader>o", function() require("harpoon.ui").toggle_quick_menu() end)
+            vim.keymap.set("n", "<Leader>&", function() require("harpoon.ui").nav_file(1) end)
+            vim.keymap.set("n", "<Leader>é", function() require("harpoon.ui").nav_file(2) end)
+            vim.keymap.set("n", "<Leader>\"", function() require("harpoon.ui").nav_file(3) end)
+            vim.keymap.set("n", "<Leader>'", function() require("harpoon.ui").nav_file(4) end)
+        end
+    },
+    {
+        "ggandor/leap.nvim",
+        config = function()
+            require('leap').add_default_mappings()
+        end
+    },
+    {
+        "nvim-lualine/lualine.nvim",
+        config = function()
+            require('lualine').setup {
+                options = {
+                    icons_enabled = true,
+                    theme = 'auto',
+                },
+            }
+        end
+    },
+    { "williamboman/mason.nvim" },
+    {
+        "williamboman/mason-lspconfig.nvim",
+        config = function()
+            require("mason").setup()
+            require("mason-lspconfig").setup()
+
+            require("mason-lspconfig").setup_handlers({
+                -- The first entry (without a key) will be the default handler
+                -- and will be called for each installed server that doesn't have
+                -- a dedicated handler.
+                function(server_name) -- default handler (optional)
+                    require("lspconfig")[server_name].setup {}
+                end,
+                ["lua_ls"] = function()
+                    require("lspconfig").lua_ls.setup {
+                        settings = {
+                            Lua = {
+                                diagnostics = {
+                                    globals = { "vim" }
+                                }
+                            }
+                        }
+                    }
+                end
+            })
+        end
+    },
+    { "neovim/nvim-lspconfig" },
+    {
+        "echasnovski/mini.nvim",
+        config = function()
+            --- Completion
+            require("mini.completion").setup({
+                window = {
+                    info = { border = "single" },
+                    signature = { border = "single" },
+                },
+            })
+
+            require("mini.pairs").setup()
+        end
+    },
+    { 'kylechui/nvim-surround', config = true },
+    {
+        "nvim-treesitter/nvim-treesitter",
+        config = function()
+            local configs = require("nvim-treesitter.configs")
+
+            configs.setup({
+                highlight = {
+                    ensure_installed = { "c", "lua", "python", "vim", "vimdoc", "html" },
+                    enable = true,
+                    additional_vim_regex_highlighting = { "markdown" },
+                    indent = { enable = true },
+                },
+                playground = {
+                    enable = true,
+                }
+            })
+        end
+    },
+    {
+        "rose-pine/neovim",
+        name = "rose-pine",
+        config = function()
+            require("rose-pine").setup({
+                dark_variant = "moon",
+                disable_background = true,
+                --extend_background_behind_borders = true,
+                styles = { transparency = true },
+            })
+            vim.cmd("colorscheme rose-pine-moon")
+        end
+    },
+    {
+        'nvim-telescope/telescope.nvim',
+        branch = '0.1.x',
+        dependencies = { 'nvim-lua/plenary.nvim' },
+        config = function()
+            local telescope = require("telescope")
+            telescope.load_extension("workspaces")
+            telescope.setup({
+                extensions = {
+                    workspaces = {
+                        -- keep insert mode after selection in the picker, default is false
+                        keep_insert = true,
+                    },
+                },
+            })
+
+            vim.keymap.set("n", "<C-f>", ":Telescope find_files<CR>")
+            vim.keymap.set("n", "<Leader>ff", ":Telescope live_grep<CR>")
+            vim.keymap.set("n", "<Leader>fb", ":Telescope buffers<CR>")
+            vim.keymap.set("n", "<Leader>fh", ":Telescope help_tags<CR>")
+            vim.keymap.set("n", "<Leader>gr", ":Telescope lsp_references<CR>")
+            vim.keymap.set("n", "<Leader>gd", ":Telescope lsp_definitions<CR>")
+            vim.keymap.set("n", "<Leader>ds", ":Telescope lsp_document_symbols symbols=func,function,class<CR>")
+            vim.keymap.set("n", "<C-a>", ":lua vim.lsp.buf.code-action()<CR>")
+            vim.keymap.set("n", "<Leader>p", ":Telescope workspaces<CR>")
+        end
+    },
+    "natecraddock/workspaces.nvim",
+    {
+        "zk-org/zk-nvim",
+        config = function()
+            local zk = require("zk")
+            local commands = require("zk.commands")
+
+            zk.setup({
+                picker = "telescope",
+            })
+
+            commands.add("ZkStart", function()
+                zk.edit({ matchStrategy = "re", match = { "§§" } }, { title = "Starting Points" })
+            end)
+
+            vim.keymap.set("n", "<Leader>za", "<CMD>:ZkStart<CR>", { desc = "Open Starting Point Notes" })
+            vim.keymap.set("n", "<Leader>zf", "<CMD>ZkNotes {sort = {'modified'}}<CR>", { desc = "Open Zk Notes" })
+            vim.keymap.set("n", "<Leader>zt", "<CMD>:ZkTags {sort= {'note-count'} }<CR>", { desc = "Open Zk Notes" })
+            vim.keymap.set("n", "<leader>zn",
+                "<Cmd>ZkNew { dir = vim.fn.expand('%:p:h'), title = vim.fn.input('Title: ') }<CR>")
+        end
+    },
+}, {
+    dev = {
+        path = "~/Developer/",
+        fallback = true
+    }
+})
