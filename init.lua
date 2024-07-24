@@ -238,7 +238,16 @@ require("lazy").setup({
             vim.keymap.set("n", "<Leader>p", ":Telescope workspaces<CR>")
         end
     },
-    "natecraddock/workspaces.nvim",
+    {
+        "natecraddock/workspaces.nvim",
+        config = function()
+            require("workspaces").setup({
+                hooks = {
+                    open = { "Telescope find_files" },
+                }
+            })
+        end
+    },
     {
         "zk-org/zk-nvim",
         config = function()
@@ -271,7 +280,8 @@ require("lazy").setup({
                 },
             })
         end
-    }
+    },
+    "sindrets/diffview.nvim"
 }, {
     dev = {
         path = "~/Developer/",
