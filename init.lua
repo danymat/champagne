@@ -281,7 +281,8 @@ require("lazy").setup({
             })
         end
     },
-    "sindrets/diffview.nvim"
+    "sindrets/diffview.nvim",
+    "nvim-treesitter/nvim-treesitter-context"
 }, {
     dev = {
         path = "~/Developer/",
