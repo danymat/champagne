@@ -136,9 +136,11 @@ require("lazy").setup({
             }
         end
     },
-    { "williamboman/mason.nvim" },
     {
-        "williamboman/mason-lspconfig.nvim",
+        "neovim/nvim-lspconfig",
+        dependencies = {
+            { 'williamboman/mason-lspconfig.nvim' },
+        },
         config = function()
             require("mason").setup()
             require("mason-lspconfig").setup()
@@ -164,20 +166,92 @@ require("lazy").setup({
             })
         end
     },
-    { "neovim/nvim-lspconfig" },
     {
-        "echasnovski/mini.nvim",
+        "VonHeikemen/lsp-zero.nvim",
+        branch = 'v4.x',
         config = function()
-            --- Completion
-            require("mini.completion").setup({
-                window = {
-                    info = { border = "single" },
-                    signature = { border = "single" },
-                },
-            })
+            local cmp = require("cmp")
+            local luasnip = require("luasnip")
+            local lspkind = require("lspkind")
 
-            require("mini.pairs").setup()
-        end
+            local cmp_config = {
+                window = {
+                    completion = cmp.config.window.bordered(),
+                    documentation = cmp.config.window.bordered(),
+                },
+                mapping = cmp.mapping.preset.insert({
+                    ["<C-j>"] = cmp.mapping.select_next_item(),
+                    ["<C-k>"] = cmp.mapping.select_prev_item(),
+                    ["<Tab>"] = cmp.mapping.confirm({
+                        -- this is the important line
+                        behavior = cmp.ConfirmBehavior.Replace,
+                        select = true,
+                    }),
+                    ["<C-l>"] = cmp.mapping(function(fallback)
+                        if luasnip and luasnip.expand_or_jumpable() then
+                            luasnip.expand_or_jump()
+                        else
+                            fallback()
+                        end
+                    end, { "i", "s" }),
+                    ["<C-h>"] = cmp.mapping(function(fallback)
+                        if luasnip and luasnip.jumpable(-1) then
+                            luasnip.jump(-1)
+                        else
+                            fallback()
+                        end
+                    end, { "i", "s" }),
+                }),
+                sources = cmp.config.sources({
+
+                    { name = "nvim_lsp" },
+                    { name = "luasnip" }, -- For luasnip users.
+                }, {
+                    { name = "buffer" },
+                }),
+                formatting = {
+                    fields = {
+                        cmp.ItemField.Kind,
+                        cmp.ItemField.Abbr,
+                        cmp.ItemField.Menu,
+                    },
+                    format = lspkind.cmp_format({
+                        mode = 'symbol',
+                        maxwidth = 40,
+                        ellipsis_char = '...',
+                        symbol_map = { Copilot = "" }
+                    }),
+                }
+            }
+            cmp.setup(cmp_config)
+
+            require("mason-null-ls").setup({ automatic_setup = true })
+        end,
+        dependencies = {
+            -- LSP Support
+            "neovim/nvim-lspconfig",
+            "williamboman/mason.nvim",
+            "williamboman/mason-lspconfig.nvim",
+
+            -- Autocompletion
+            "hrsh7th/nvim-cmp",
+            "hrsh7th/cmp-buffer",
+            "hrsh7th/cmp-path",
+            "saadparwaiz1/cmp_luasnip",
+            "hrsh7th/cmp-nvim-lsp",
+            "hrsh7th/cmp-nvim-lua",
+
+            -- Snippets
+            "L3MON4D3/LuaSnip",
+            "rafamadriz/friendly-snippets",
+
+            --null-ls
+            "jose-elias-alvarez/null-ls.nvim",
+            "jayp0521/mason-null-ls.nvim",
+
+            -- lspkind
+            "onsails/lspkind.nvim"
+        },
     },
     { 'kylechui/nvim-surround', config = true },
     {
