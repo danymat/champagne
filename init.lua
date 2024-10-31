@@ -137,10 +137,18 @@ require("lazy").setup({
         end
     },
     {
-        "neovim/nvim-lspconfig",
-        dependencies = {
-            { 'williamboman/mason-lspconfig.nvim' },
+        "ray-x/lsp_signature.nvim",
+        event = "InsertEnter",
+        opts = {
+            bind = true,
+            handler_opts = {
+                border = "rounded"
+            }
         },
+        config = function(_, opts) require 'lsp_signature'.setup(opts) end
+    },
+    {
+        "neovim/nvim-lspconfig",
         config = function()
             require("mason").setup()
             require("mason-lspconfig").setup()
@@ -158,30 +166,44 @@ require("lazy").setup({
                             Lua = {
                                 diagnostics = {
                                     globals = { "vim" }
-                                }
+                                },
                             }
-                        }
+                        },
                     }
                 end
             })
-        end
-    },
-    {
-        "VonHeikemen/lsp-zero.nvim",
-        branch = 'v4.x',
-        config = function()
             local cmp = require("cmp")
             local luasnip = require("luasnip")
             local lspkind = require("lspkind")
+            local cmp_autopairs = require('nvim-autopairs.completion.cmp')
+
+            cmp.event:on(
+                'confirm_done',
+                cmp_autopairs.on_confirm_done()
+            )
+
+            require('luasnip.loaders.from_vscode').lazy_load()
 
             local cmp_config = {
+                experimental = {
+                    ghost_text = true
+                },
+                preselect = 'item',
+                completion = {
+                    completeopt = 'menu,menuone,noinsert'
+                },
+                snippet = {
+                    expand = function(args)
+                        require('luasnip').lsp_expand(args.body)
+                    end,
+                },
                 window = {
                     completion = cmp.config.window.bordered(),
                     documentation = cmp.config.window.bordered(),
                 },
                 mapping = cmp.mapping.preset.insert({
-                    ["<C-j>"] = cmp.mapping.select_next_item(),
-                    ["<C-k>"] = cmp.mapping.select_prev_item(),
+                    ["<C-j>"] = cmp.mapping.select_next_item({behavior = cmp.SelectBehavior.Select}),
+                    ["<C-k>"] = cmp.mapping.select_prev_item({behavior = cmp.SelectBehavior.Select}),
                     ["<Tab>"] = cmp.mapping.confirm({
                         -- this is the important line
                         behavior = cmp.ConfirmBehavior.Replace,
@@ -221,7 +243,7 @@ require("lazy").setup({
                         ellipsis_char = '...',
                         symbol_map = { Copilot = "" }
                     }),
-                }
+                },
             }
             cmp.setup(cmp_config)
 
@@ -229,7 +251,6 @@ require("lazy").setup({
         end,
         dependencies = {
             -- LSP Support
-            "neovim/nvim-lspconfig",
             "williamboman/mason.nvim",
             "williamboman/mason-lspconfig.nvim",
 
@@ -242,15 +263,24 @@ require("lazy").setup({
             "hrsh7th/cmp-nvim-lua",
 
             -- Snippets
-            "L3MON4D3/LuaSnip",
+            { "L3MON4D3/LuaSnip", version = "v2.*", },
             "rafamadriz/friendly-snippets",
 
             --null-ls
+            -- TODO: check here, maybe null-ls is not to be used anymore
             "jose-elias-alvarez/null-ls.nvim",
             "jayp0521/mason-null-ls.nvim",
 
-            -- lspkind
-            "onsails/lspkind.nvim"
+            "onsails/lspkind.nvim",
+            "ray-x/lsp_signature.nvim",
+            {
+                'windwp/nvim-autopairs',
+                event = "InsertEnter",
+                config = true
+                -- use opts = {} for passing setup options
+                -- this is equivalent to setup({}) function
+            }
+
         },
     },
     { 'kylechui/nvim-surround', config = true },
