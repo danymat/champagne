@@ -202,8 +202,8 @@ require("lazy").setup({
                     documentation = cmp.config.window.bordered(),
                 },
                 mapping = cmp.mapping.preset.insert({
-                    ["<C-j>"] = cmp.mapping.select_next_item({behavior = cmp.SelectBehavior.Select}),
-                    ["<C-k>"] = cmp.mapping.select_prev_item({behavior = cmp.SelectBehavior.Select}),
+                    ["<C-j>"] = cmp.mapping.select_next_item({ behavior = cmp.SelectBehavior.Select }),
+                    ["<C-k>"] = cmp.mapping.select_prev_item({ behavior = cmp.SelectBehavior.Select }),
                     ["<Tab>"] = cmp.mapping.confirm({
                         -- this is the important line
                         behavior = cmp.ConfirmBehavior.Replace,
@@ -352,25 +352,65 @@ require("lazy").setup({
             })
         end
     },
+    -- {
+    --     "zk-org/zk-nvim",
+    --     enabled = false,
+    --     config = function()
+    --         local zk = require("zk")
+    --         local commands = require("zk.commands")
+    --
+    --         zk.setup({
+    --             picker = "telescope",
+    --         })
+    --
+    --         commands.add("ZkStart", function()
+    --             zk.edit({ matchStrategy = "re", match = { "§§" } }, { title = "Starting Points" })
+    --         end)
+    --
+    --         vim.keymap.set("n", "<Leader>za", "<CMD>:ZkStart<CR>", { desc = "Open Starting Point Notes" })
+    --         vim.keymap.set("n", "<Leader>zf", "<CMD>ZkNotes {sort = {'modified'}}<CR>", { desc = "Open Zk Notes" })
+    --         vim.keymap.set("n", "<Leader>zt", "<CMD>:ZkTags {sort= {'note-count'} }<CR>", { desc = "Open Zk Notes" })
+    --         vim.keymap.set("n", "<leader>zn",
+    --             "<Cmd>ZkNew { dir = vim.fn.expand('%:p:h'), title = vim.fn.input('Title: ') }<CR>")
+    --     end
+    -- },
     {
-        "zk-org/zk-nvim",
+        "epwalsh/obsidian.nvim",
+        version = "*", -- recommended, use latest release instead of latest commit
+        -- ft = "markdown",
+        -- Replace the above line with this if you only want to load obsidian.nvim for markdown files in your vault:
+        -- event = {
+        --   -- If you want to use the home shortcut '~' here you need to call 'vim.fn.expand'.
+        --   -- E.g. "BufReadPre " .. vim.fn.expand "~" .. "/my-vault/*.md"
+        --   -- refer to `:h file-pattern` for more examples
+        --   "BufReadPre path/to/my-vault/*.md",
+        --   "BufNewFile path/to/my-vault/*.md",
+        -- },
+        dependencies = {
+            -- Required.
+            "nvim-lua/plenary.nvim",
+
+            -- see below for full list of optional dependencies 👇
+        },
         config = function()
-            local zk = require("zk")
-            local commands = require("zk.commands")
-
-            zk.setup({
-                picker = "telescope",
-            })
-
-            commands.add("ZkStart", function()
-                zk.edit({ matchStrategy = "re", match = { "§§" } }, { title = "Starting Points" })
-            end)
-
-            vim.keymap.set("n", "<Leader>za", "<CMD>:ZkStart<CR>", { desc = "Open Starting Point Notes" })
-            vim.keymap.set("n", "<Leader>zf", "<CMD>ZkNotes {sort = {'modified'}}<CR>", { desc = "Open Zk Notes" })
-            vim.keymap.set("n", "<Leader>zt", "<CMD>:ZkTags {sort= {'note-count'} }<CR>", { desc = "Open Zk Notes" })
-            vim.keymap.set("n", "<leader>zn",
-                "<Cmd>ZkNew { dir = vim.fn.expand('%:p:h'), title = vim.fn.input('Title: ') }<CR>")
+            require("obsidian").setup {
+                workspaces = {
+                    {
+                        name = "personal",
+                        path = "~/Developer/Brain",
+                    },
+                },
+                -- Optional, completion of wiki links, local markdown links, and tags using nvim-cmp.
+            }
+            vim.keymap.set("n", "<Leader>za", "<CMD>:ObsidianSearch §§<CR>", { desc = "Open Starting Point Notes" })
+            vim.keymap.set("n", "<Leader>zf", "<CMD>:ObsidianQuickSwitch<CR>", { desc = "Open Starting Point Notes" })
+            vim.keymap.set("n", "<Leader>zt", "<CMD>:ObsidianTags<CR>", { desc = "Open Starting Point Notes" })
+            -- TODO: here
+            --         vim.keymap.set("n", "<Leader>zf", "<CMD>ZkNotes {sort = {'modified'}}<CR>", { desc = "Open Zk Notes" })
+            --         vim.keymap.set("n", "<Leader>zt", "<CMD>:ZkTags {sort= {'note-count'} }<CR>", { desc = "Open Zk Notes" })
+            --         vim.keymap.set("n", "<leader>zn",
+            --             "<Cmd>ZkNew { dir = vim.fn.expand('%:p:h'), title = vim.fn.input('Title: ') }<CR>")
+            --     end
         end
     },
     {
@@ -386,7 +426,22 @@ require("lazy").setup({
         end
     },
     "sindrets/diffview.nvim",
-    "nvim-treesitter/nvim-treesitter-context"
+    "nvim-treesitter/nvim-treesitter-context",
+    {
+        "folke/zen-mode.nvim",
+        config = function()
+            require("zen-mode").setup {
+                plugins = {
+                    wezterm = {
+                        enabled = true,
+                        -- can be either an absolute font size or the number of incremental steps
+                        font = "+4", -- (10% increase per step)
+                    },
+                }
+            }
+            vim.keymap.set("n", "<Leader>zz", "<CMD>:ZenMode<CR>")
+        end
+    }
 }, {
     dev = {
         path = "~/Developer/",
