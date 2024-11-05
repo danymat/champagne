@@ -400,6 +400,9 @@ require("lazy").setup({
                         path = "~/Developer/Brain",
                     },
                 },
+                daily_notes = {
+                    folder = "Daily",
+                }
                 -- Optional, completion of wiki links, local markdown links, and tags using nvim-cmp.
             }
             vim.keymap.set("n", "<Leader>za", "<CMD>:ObsidianSearch §§<CR>", { desc = "Open Starting Point Notes" })
