@@ -271,7 +271,7 @@ require("lazy").setup({
 
             --null-ls
             -- TODO: check here, maybe null-ls is not to be used anymore
-            "jose-elias-alvarez/null-ls.nvim",
+            "nvimtools/none-ls.nvim",
             "jayp0521/mason-null-ls.nvim",
 
             "onsails/lspkind.nvim",
