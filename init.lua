@@ -154,27 +154,24 @@ require("lazy").setup({
         "neovim/nvim-lspconfig",
         config = function()
             require("mason").setup()
+            -- Configure a server via `vim.lsp.config()` or `{after/}lsp/lua_ls.lua`
+            vim.lsp.config('lua_ls', {
+                settings = {
+                    Lua = {
+                        runtime = {
+                            version = 'LuaJIT',
+                        },
+                        diagnostics = {
+                            globals = {
+                                'vim',
+                                'require',
+                            },
+                        },
+                    },
+                },
+            })
             require("mason-lspconfig").setup()
 
-            require("mason-lspconfig").setup_handlers({
-                -- The first entry (without a key) will be the default handler
-                -- and will be called for each installed server that doesn't have
-                -- a dedicated handler.
-                function(server_name) -- default handler (optional)
-                    require("lspconfig")[server_name].setup {}
-                end,
-                ["lua_ls"] = function()
-                    require("lspconfig").lua_ls.setup {
-                        settings = {
-                            Lua = {
-                                diagnostics = {
-                                    globals = { "vim" }
-                                },
-                            }
-                        },
-                    }
-                end
-            })
             local cmp = require("cmp")
             local luasnip = require("luasnip")
             local lspkind = require("lspkind")
@@ -407,6 +404,7 @@ require("lazy").setup({
                 daily_notes = {
                     folder = "Daily",
                 },
+                legacy_commands = false,
                 wiki_link_func = "use_alias_only",
                 preferred_link_style = "markdown",
                 disable_frontmatter = true,
@@ -414,12 +412,12 @@ require("lazy").setup({
                     return tostring(os.date("%Y%m%d%H%M"))
                 end,
             }
-            vim.keymap.set("n", "<Leader>za", "<CMD>:ObsidianSearch §§<CR>")
-            vim.keymap.set("n", "<Leader>zb", "<CMD>:ObsidianBacklinks<CR>")
-            vim.keymap.set("n", "<Leader>zf", "<CMD>:ObsidianSearch<CR>")
-            vim.keymap.set("n", "<Leader>fz", "<CMD>:ObsidianQuickSwitch<CR>")
-            vim.keymap.set("n", "<Leader>zn", "<CMD>:ObsidianNew<CR>")
-            vim.keymap.set("n", "<Leader>zt", "<CMD>:ObsidianTags<CR>")
+            vim.keymap.set("n", "<Leader>za", "<CMD>:Obsidian search §§<CR>")
+            vim.keymap.set("n", "<Leader>zb", "<CMD>:Obsidian backlinks<CR>")
+            vim.keymap.set("n", "<Leader>zf", "<CMD>:Obsidian search<CR>")
+            vim.keymap.set("n", "<Leader>fz", "<CMD>:Obsidian quick_switch<CR>")
+            vim.keymap.set("n", "<Leader>zn", "<CMD>:Obsidian new<CR>")
+            vim.keymap.set("n", "<Leader>zt", "<CMD>:Obsidian tags<CR>")
         end
     },
     {
