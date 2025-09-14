@@ -5,6 +5,7 @@ vim.g.mapleader = " "
 vim.o.winborder = "rounded"
 vim.o.tabstop = 4
 vim.o.completeopt = "menu,menuone,noselect,fuzzy,nosort"
+vim.o.conceallevel = 1
 
 
 vim.pack.add({
@@ -116,6 +117,7 @@ end, { expr = true, silent = true })
 map("n", "<leader>so", ":w<CR> :source<CR>")
 map("n", "<leader>fs", vim.lsp.buf.format)
 map("n", "<leader>r", vim.lsp.buf.rename)
+map("n", "<leader>fd", vim.lsp.buf.definition)
 map("n", "<C-n>", function() vim.diagnostic.jump({ count = 1 }) end)
 map("n", "<C-b>", function() vim.diagnostic.jump({ count = -1 }) end)
 map({ "n", "v" }, "≠", "<C-d>zz")
