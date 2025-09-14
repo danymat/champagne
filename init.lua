@@ -6,6 +6,8 @@ vim.o.winborder = "rounded"
 vim.o.tabstop = 4
 vim.o.completeopt = "menu,menuone,noselect,fuzzy,nosort"
 vim.o.conceallevel = 1
+vim.o.ignorecase = true
+vim.o.smartcase = true
 
 
 vim.pack.add({
@@ -18,6 +20,7 @@ vim.pack.add({
 	"https://github.com/nvim-treesitter/nvim-treesitter",
 	"https://github.com/mason-org/mason.nvim",
 	"https://github.com/danymat/neogen",
+	"https://github.com/zk-org/zk-nvim",
 })
 
 -- Plugins
@@ -51,14 +54,14 @@ require("neogen").setup({
 	--     python = { template = { annotation_convention = "reST" } },
 	-- }
 })
-
-vim.keymap.set("n", "<Leader>nf", ":Neogen func<CR>")
-vim.keymap.set("n", "<Leader>nc", ":Neogen class<CR>")
-
--- local map_multistep = require('mini.keymap').map_multistep
--- map_multistep('i', '<C-j>', { 'pmenu_next' })
--- map_multistep('i', '<C-k>', { 'pmenu_prev' })
--- map_multistep('i', '<Tab>', { 'pmenu_accept', 'minipairs_cr' })
+require("zk").setup({ picker = "minipick" })
+require("zk.commands").add("ZkStart", function()
+	zk.edit({ matchStrategy = "re", match = { "§§" } }, { title = "Starting Points" })
+end)
+require("zk.commands").add("ZkGrep", function()
+	require("mini.pick").builtin.grep_live(nil,
+		{ tool = "rg", source = { cwd = os.getenv("ZK_NOTEBOOK_DIR"), name = "dotfiles" } })
+end)
 
 vim.lsp.enable({ "lua_ls", "pyright", "marksman" })
 vim.lsp.config("lua_ls", {
@@ -117,7 +120,7 @@ end, { expr = true, silent = true })
 map("n", "<leader>so", ":w<CR> :source<CR>")
 map("n", "<leader>fs", vim.lsp.buf.format)
 map("n", "<leader>r", vim.lsp.buf.rename)
-map("n", "<leader>fd", vim.lsp.buf.definition)
+map("n", "<leader>gd", vim.lsp.buf.definition)
 map("n", "<C-n>", function() vim.diagnostic.jump({ count = 1 }) end)
 map("n", "<C-b>", function() vim.diagnostic.jump({ count = -1 }) end)
 map({ "n", "v" }, "≠", "<C-d>zz")
@@ -140,5 +143,13 @@ map("n", "<Leader>\"", function() require("harpoon.ui").nav_file(3) end)
 map("n", "<Leader>'", function() require("harpoon.ui").nav_file(4) end)
 map('i', '<C-j>', [[pumvisible() ? "\<C-n>" : "\<C-j>"]], { expr = true })
 map('i', '<C-k>', [[pumvisible() ? "\<C-p>" : "\<C-k>"]], { expr = true })
+map("n", "<Leader>za", "<CMD>:ZkStart<CR>", { desc = "Open Starting Point Notes" })
+map("n", "<Leader>zf", "<CMD>ZkNotes {sort = {'modified'}}<CR>", { desc = "Open Zk Notes" })
+map("n", "<Leader>zt", "<CMD>:ZkTags {sort= {'note-count'} }<CR>", { desc = "Open Zk Notes" })
+map("n", "<leader>zn",
+	"<Cmd>ZkNew { dir = vim.fn.expand('%:p:h'), title = vim.fn.input('Title: ') }<CR>")
+map("n", "<Leader>nf", ":Neogen func<CR>")
+map("n", "<Leader>nc", ":Neogen class<CR>")
+map("n", "<Leader>fz", "<CMD>:ZkGrep<CR>")
 
 vim.cmd("colorscheme rose-pine")
