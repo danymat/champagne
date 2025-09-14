@@ -1,457 +1,142 @@
-local lazypath = vim.fn.stdpath("data") .. "/lazy/lazy.nvim"
-if not (vim.uv or vim.loop).fs_stat(lazypath) then
-    vim.fn.system({
-        "git",
-        "clone",
-        "--filter=blob:none",
-        "https://github.com/folke/lazy.nvim.git",
-        "--branch=stable", -- latest stable release
-        lazypath,
-    })
-end
-vim.opt.rtp:prepend(lazypath)
-
--- User options
-vim.g.mapleader = " "
-vim.o.relativenumber = true
 vim.o.number = true
-vim.o.undofile = true
-vim.o.expandtab = true
-vim.o.shiftwidth = 4
-vim.o.completeopt = "menu,menuone,noselect"
-vim.g.loaded_netrw = 1
-vim.g.loaded_netrwPlugin = 1
-vim.o.termguicolors = true
-vim.o.conceallevel = 2
-vim.o.cmdheight = 0
-vim.o.foldenable = true
-vim.o.mouse = ""
+vim.o.rnu = true
+--vim.o.autocomplete = true
+vim.g.mapleader = " "
+vim.o.winborder = "rounded"
+vim.o.tabstop = 4
+vim.o.completeopt = "menu,menuone,noselect,fuzzy,nosort"
+
+
+vim.pack.add({
+	{ src = "https://github.com/rose-pine/neovim", name = "rosepine" },
+	"https://github.com/stevearc/oil.nvim",
+	"https://github.com/neovim/nvim-lspconfig",
+	"https://github.com/nvim-mini/mini.nvim",
+	"https://github.com/ThePrimeagen/harpoon",
+	"https://github.com/nvim-lua/plenary.nvim",
+	"https://github.com/nvim-treesitter/nvim-treesitter",
+	"https://github.com/mason-org/mason.nvim",
+	"https://github.com/danymat/neogen",
+})
+
+-- Plugins
+
+require("rose-pine").setup({
+	variant = "moon",
+	disable_background = true,
+	styles = { transparency = true }
+})
+require("oil").setup({
+	view_options = { show_hidden = true },
+	natural_order = true
+
+})
+require('mini.pick').setup()
+-- require('mini.completion').setup()
+require('mini.keymap').setup({})
+require('mini.pairs').setup()
+require('mini.icons').setup()
+require('mini.comment').setup()
+require('mini.comment').setup()
+require("mason").setup()
+require("nvim-treesitter.configs").setup({
+	ensure_installed = { "lua" },
+	highlight = { enable = true }
+})
+
+require("neogen").setup({
+	snippet_engine = "luasnip",
+	-- languages = {
+	--     python = { template = { annotation_convention = "reST" } },
+	-- }
+})
+
+vim.keymap.set("n", "<Leader>nf", ":Neogen func<CR>")
+vim.keymap.set("n", "<Leader>nc", ":Neogen class<CR>")
+
+-- local map_multistep = require('mini.keymap').map_multistep
+-- map_multistep('i', '<C-j>', { 'pmenu_next' })
+-- map_multistep('i', '<C-k>', { 'pmenu_prev' })
+-- map_multistep('i', '<Tab>', { 'pmenu_accept', 'minipairs_cr' })
+
+vim.lsp.enable({ "lua_ls", "pyright", "marksman" })
+vim.lsp.config("lua_ls", {
+	settings = {
+		Lua = {
+			workspace = {
+				library = vim.api.nvim_get_runtime_file("", true)
+			}
+		}
+	}
+})
+
+vim.api.nvim_create_autocmd('LspAttach', {
+	callback = function(ev)
+		local client = vim.lsp.get_client_by_id(ev.data.client_id)
+		if client and client:supports_method('textDocument/completion') then
+			vim.lsp.completion.enable(true, client.id, ev.buf, { autotrigger = true })
+		end
+	end,
+})
+
+
+vim.diagnostic.config({
+	virtual_text = { current_line = true }
+})
 
 local map = vim.keymap.set
-map("n", "<Leader>so", ":so %<CR>")
-map("n", "<Leader>h", ":wincmd h<CR>")
-map("n", "<Leader>j", ":wincmd j<CR>")
-map("n", "<Leader>k", ":wincmd k<CR>")
-map("n", "<Leader>l", ":wincmd l<CR>")
-map("n", "<Leader>fs", vim.lsp.buf.format)
-map("n", "K", vim.lsp.buf.hover)
+
+map({ 'i', 's' }, '<C-l>', function()
+	if vim.snippet.active({ direction = 1 }) then
+		return '<Cmd>lua vim.snippet.jump(1)<CR>'
+	else
+		retufn '<C-l>'
+	end
+end, { expr = true, silent = true })
+map({ 'i', 's' }, '<c-h>', function()
+	if vim.snippet.active({ direction = -1 }) then
+		return '<cmd>lua vim.snippet.jump(-1)<cr>'
+	else
+		return '<c-h>'
+	end
+end, { expr = true, silent = true })
+map({ 'i', 's' }, '<Tab>', function()
+	if vim.fn.pumvisible() == 1 then
+		local selected = vim.fn.complete_info({ 'selected' }).selected
+		if selected ~= -1 then
+			return '<C-y>' -- confirm selection
+		else
+			return '<C-n><C-y>' -- select next item and confirm
+		end
+	else
+		return vim.lsp.completion.get()
+	end
+end, { expr = true, silent = true })
+
+map("n", "<leader>so", ":w<CR> :source<CR>")
+map("n", "<leader>fs", vim.lsp.buf.format)
 map("n", "<leader>r", vim.lsp.buf.rename)
-map("n", "<C-n>", vim.diagnostic.goto_next)
-map("n", "<C-b>", vim.diagnostic.goto_prev)
--- map("i", "<Tab>", function() if vim.snippet.active() then vim.snippet.expand() end end)
-map('i', '<C-Space>', '<C-x><C-o>') -- Force Trigger completion
-map('i', '<C-j>', [[pumvisible() ? "\<C-n>" : "\<C-j>"]], { expr = true })
-map('i', '<C-k>', [[pumvisible() ? "\<C-p>" : "\<C-k>"]], { expr = true })
+map("n", "<C-n>", function() vim.diagnostic.jump({ count = 1 }) end)
+map("n", "<C-b>", function() vim.diagnostic.jump({ count = -1 }) end)
 map({ "n", "v" }, "≠", "<C-d>zz")
 map({ "n", "v" }, "÷", "<C-u>zz")
-map({ "n", "v" }, "<C-j>", "<C-d>zz")
-map({ "n", "v" }, "<C-k>", "<C-u>zz")
 map({ "n", "v" }, "µ", "{")
 map({ "n", "v" }, "Ù", "}")
-map({ "n", "v" }, "÷", "<C-u>zz")
-map("t", "<Esc>", "<C-\\><C-n>")
+map({ "n", "v" }, "<C-j>", "<C-d>zz")
+map({ "n", "v" }, "<C-k>", "<C-u>zz")
+map({ "n", "v", "x" }, "<Leader>y", '"+y<CR>')
+map({ "n", "v", "x" }, "<Leader>d", '"+d<CR>')
+map("n", "<C-f>", ":Pick files<CR>")
+map("n", "<C-h>", ":Pick help<CR>")
+map("n", "<Leader>ff", ":Pick grep_live<CR>")
+map("n", "-", ":Oil --float<CR>")
+map("n", "<Leader>a", function() require("harpoon.mark").add_file() end)
+map("n", "<Leader>o", function() require("harpoon.ui").toggle_quick_menu() end)
+map("n", "<Leader>&", function() require("harpoon.ui").nav_file(1) end)
+map("n", "<Leader>é", function() require("harpoon.ui").nav_file(2) end)
+map("n", "<Leader>\"", function() require("harpoon.ui").nav_file(3) end)
+map("n", "<Leader>'", function() require("harpoon.ui").nav_file(4) end)
+map('i', '<C-j>', [[pumvisible() ? "\<C-n>" : "\<C-j>"]], { expr = true })
+map('i', '<C-k>', [[pumvisible() ? "\<C-p>" : "\<C-k>"]], { expr = true })
 
-
--- export NVIM_WORK=1 at work and it will apply custom keybinds
-local at_work = vim.env.NVIM_WORK and true
-
-if at_work then
-    map("n", "<Leader>=", "<C-^>")
-end
-
-require("lazy").setup({
-    {
-        "stevearc/oil.nvim",
-        config = function()
-            require("oil").setup({
-                view_options = {
-                    show_hidden = true,
-                },
-                natural_order = true,
-
-            })
-            vim.keymap.set("n", at_work and "=" or "-", "<CMD>Oil --float<CR>", { desc = "Open parent directory" })
-        end
-    },
-
-    {
-        "danymat/neogen",
-        dev = true,
-        config = function()
-            require("neogen").setup({
-                snippet_engine = "luasnip",
-                -- languages = {
-                --     python = { template = { annotation_convention = "reST" } },
-                -- }
-            })
-
-            vim.keymap.set("n", "<Leader>nf", ":Neogen func<CR>")
-            vim.keymap.set("n", "<Leader>nc", ":Neogen class<CR>")
-        end
-    },
-    {
-        "nvim-neorg/neorg",
-        dev = true
-    },
-    {
-        "numToStr/Comment.nvim",
-        config = function()
-            require("Comment").setup({
-                toggler = {
-                    line = "<Leader>cc",
-                    block = "<Leader>bc",
-                },
-                opleader = {
-                    line = "<Leader>c",
-                    block = "<Leader>b",
-                },
-                extra = {
-                    eol = "<Leader>ca",
-                },
-            })
-        end
-    },
-    {
-        "ThePrimeagen/harpoon",
-        config = function()
-            vim.keymap.set("n", "<Leader>a", function() require("harpoon.mark").add_file() end)
-            vim.keymap.set("n", "<Leader>o", function() require("harpoon.ui").toggle_quick_menu() end)
-            vim.keymap.set("n", "<Leader>&", function() require("harpoon.ui").nav_file(1) end)
-            vim.keymap.set("n", "<Leader>é", function() require("harpoon.ui").nav_file(2) end)
-            vim.keymap.set("n", "<Leader>\"", function() require("harpoon.ui").nav_file(3) end)
-            vim.keymap.set("n", "<Leader>'", function() require("harpoon.ui").nav_file(4) end)
-        end
-    },
-    {
-        "ggandor/leap.nvim",
-        config = function()
-            require('leap').add_default_mappings()
-        end
-    },
-    {
-        "nvim-lualine/lualine.nvim",
-        config = function()
-            require('lualine').setup {
-                options = {
-                    icons_enabled = true,
-                    theme = 'auto',
-                },
-            }
-        end
-    },
-    {
-        "ray-x/lsp_signature.nvim",
-        event = "InsertEnter",
-        opts = {
-            bind = true,
-            handler_opts = {
-                border = "rounded"
-            }
-        },
-        config = function(_, opts) require 'lsp_signature'.setup(opts) end
-    },
-    {
-        "neovim/nvim-lspconfig",
-        config = function()
-            require("mason").setup()
-            -- Configure a server via `vim.lsp.config()` or `{after/}lsp/lua_ls.lua`
-            vim.lsp.config('lua_ls', {
-                settings = {
-                    Lua = {
-                        runtime = {
-                            version = 'LuaJIT',
-                        },
-                        diagnostics = {
-                            globals = {
-                                'vim',
-                                'require',
-                            },
-                        },
-                    },
-                },
-            })
-            require("mason-lspconfig").setup()
-
-            local cmp = require("cmp")
-            local luasnip = require("luasnip")
-            local lspkind = require("lspkind")
-            local cmp_autopairs = require('nvim-autopairs.completion.cmp')
-
-            cmp.event:on(
-                'confirm_done',
-                cmp_autopairs.on_confirm_done()
-            )
-
-            require('luasnip.loaders.from_vscode').lazy_load()
-
-            local cmp_config = {
-                experimental = {
-                    ghost_text = true
-                },
-                preselect = 'item',
-                completion = {
-                    completeopt = 'menu,menuone,noinsert'
-                },
-                snippet = {
-                    expand = function(args)
-                        require('luasnip').lsp_expand(args.body)
-                    end,
-                },
-                window = {
-                    completion = cmp.config.window.bordered(),
-                    documentation = cmp.config.window.bordered(),
-                },
-                mapping = cmp.mapping.preset.insert({
-                    ["<C-j>"] = cmp.mapping.select_next_item({ behavior = cmp.SelectBehavior.Select }),
-                    ["<C-k>"] = cmp.mapping.select_prev_item({ behavior = cmp.SelectBehavior.Select }),
-                    ["<Tab>"] = cmp.mapping.confirm({
-                        -- this is the important line
-                        behavior = cmp.ConfirmBehavior.Replace,
-                        select = true,
-                    }),
-                    ["<C-l>"] = cmp.mapping(function(fallback)
-                        if luasnip and luasnip.expand_or_jumpable() then
-                            luasnip.expand_or_jump()
-                        else
-                            fallback()
-                        end
-                    end, { "i", "s" }),
-                    ["<C-h>"] = cmp.mapping(function(fallback)
-                        if luasnip and luasnip.jumpable(-1) then
-                            luasnip.jump(-1)
-                        else
-                            fallback()
-                        end
-                    end, { "i", "s" }),
-                }),
-                sources = cmp.config.sources({
-
-                    { name = "nvim_lsp" },
-                    { name = "luasnip" }, -- For luasnip users.
-                }, {
-                    { name = "buffer" },
-                }),
-                formatting = {
-                    fields = {
-                        cmp.ItemField.Kind,
-                        cmp.ItemField.Abbr,
-                        cmp.ItemField.Menu,
-                    },
-                    format = lspkind.cmp_format({
-                        mode = 'symbol',
-                        maxwidth = 40,
-                        ellipsis_char = '...',
-                        symbol_map = { Copilot = "" }
-                    }),
-                },
-            }
-            cmp.setup(cmp_config)
-
-            require("mason-null-ls").setup({ automatic_setup = true })
-        end,
-        dependencies = {
-            -- LSP Support
-            "williamboman/mason.nvim",
-            "williamboman/mason-lspconfig.nvim",
-
-            -- Autocompletion
-            "hrsh7th/nvim-cmp",
-            "hrsh7th/cmp-buffer",
-            "hrsh7th/cmp-path",
-            "saadparwaiz1/cmp_luasnip",
-            "hrsh7th/cmp-nvim-lsp",
-            "hrsh7th/cmp-nvim-lua",
-
-            -- Snippets
-            { "L3MON4D3/LuaSnip", version = "v2.*", },
-            "rafamadriz/friendly-snippets",
-
-            --null-ls
-            -- TODO: check here, maybe null-ls is not to be used anymore
-            "nvimtools/none-ls.nvim",
-            "jayp0521/mason-null-ls.nvim",
-
-            "onsails/lspkind.nvim",
-            "ray-x/lsp_signature.nvim",
-            {
-                'windwp/nvim-autopairs',
-                event = "InsertEnter",
-                config = true
-                -- use opts = {} for passing setup options
-                -- this is equivalent to setup({}) function
-            }
-
-        },
-    },
-    { 'kylechui/nvim-surround', config = true },
-    {
-        "nvim-treesitter/nvim-treesitter",
-        config = function()
-            local configs = require("nvim-treesitter.configs")
-
-            configs.setup({
-                highlight = {
-                    ensure_installed = { "c", "lua", "python", "vim", "vimdoc", "html" },
-                    enable = true,
-                    additional_vim_regex_highlighting = { "markdown" },
-                    indent = { enable = true },
-                },
-                playground = {
-                    enable = true,
-                }
-            })
-        end
-    },
-    {
-        "rose-pine/neovim",
-        name = "rose-pine",
-        config = function()
-            require("rose-pine").setup({
-                dark_variant = "moon",
-                disable_background = true,
-                --extend_background_behind_borders = true,
-                styles = { transparency = true },
-            })
-            vim.cmd("colorscheme rose-pine-moon")
-        end
-    },
-    {
-        'nvim-telescope/telescope.nvim',
-        branch = '0.1.x',
-        dependencies = { 'nvim-lua/plenary.nvim' },
-        config = function()
-            local telescope = require("telescope")
-            telescope.load_extension("workspaces")
-            telescope.setup({
-                extensions = {
-                    workspaces = {
-                        -- keep insert mode after selection in the picker, default is false
-                        keep_insert = true,
-                    },
-                },
-            })
-
-            vim.keymap.set("n", "<C-f>", ":Telescope find_files hidden=true<CR>")
-            vim.keymap.set("n", "<Leader>gg", ":Telescope git_files use_git_root=true show_untracked=true<CR>")
-            vim.keymap.set("n", "<Leader>ff", ":Telescope live_grep<CR>")
-            vim.keymap.set("n", "<Leader>fb", ":Telescope buffers<CR>")
-            vim.keymap.set("n", "<Leader>fh", ":Telescope help_tags<CR>")
-            vim.keymap.set("n", "<Leader>gr", ":Telescope lsp_references<CR>")
-            vim.keymap.set("n", "<Leader>gd", ":Telescope lsp_definitions<CR>")
-            vim.keymap.set("n", "<Leader>ds", ":Telescope lsp_document_symbols symbols=func,function,class<CR>")
-            vim.keymap.set("n", "<C-a>", ":lua vim.lsp.buf.code-action()<CR>")
-            vim.keymap.set("n", "<Leader>p", ":Telescope workspaces<CR>")
-        end
-    },
-    {
-        "natecraddock/workspaces.nvim",
-        config = function()
-            require("workspaces").setup({
-                hooks = {
-                    open = { "Telescope find_files hidden=true" },
-                }
-            })
-        end
-    },
-    -- {
-    --     "zk-org/zk-nvim",
-    --     enabled = false,
-    --     config = function()
-    --         local zk = require("zk")
-    --         local commands = require("zk.commands")
-    --
-    --         zk.setup({
-    --             picker = "telescope",
-    --         })
-    --
-    --         commands.add("ZkStart", function()
-    --             zk.edit({ matchStrategy = "re", match = { "§§" } }, { title = "Starting Points" })
-    --         end)
-    --
-    --         vim.keymap.set("n", "<Leader>za", "<CMD>:ZkStart<CR>", { desc = "Open Starting Point Notes" })
-    --         vim.keymap.set("n", "<Leader>zf", "<CMD>ZkNotes {sort = {'modified'}}<CR>", { desc = "Open Zk Notes" })
-    --         vim.keymap.set("n", "<Leader>zt", "<CMD>:ZkTags {sort= {'note-count'} }<CR>", { desc = "Open Zk Notes" })
-    --         vim.keymap.set("n", "<leader>zn",
-    --             "<Cmd>ZkNew { dir = vim.fn.expand('%:p:h'), title = vim.fn.input('Title: ') }<CR>")
-    --     end
-    -- },
-    {
-        "obsidian-nvim/obsidian.nvim",
-        version = "*", -- recommended, use latest release instead of latest commit
-        -- ft = "markdown",
-        -- Replace the above line with this if you only want to load obsidian.nvim for markdown files in your vault:
-        -- event = {
-        --   -- If you want to use the home shortcut '~' here you need to call 'vim.fn.expand'.
-        --   -- E.g. "BufReadPre " .. vim.fn.expand "~" .. "/my-vault/*.md"
-        --   -- refer to `:h file-pattern` for more examples
-        --   "BufReadPre path/to/my-vault/*.md",
-        --   "BufNewFile path/to/my-vault/*.md",
-        -- },
-        dependencies = {
-            -- Required.
-            "nvim-lua/plenary.nvim",
-
-            -- see below for full list of optional dependencies 👇
-        },
-        config = function()
-            require("obsidian").setup {
-                workspaces = {
-                    {
-                        name = "personal",
-                        path = "~/Developer/Brain",
-                    },
-                },
-                daily_notes = {
-                    folder = "Daily",
-                },
-                legacy_commands = false,
-                wiki_link_func = "use_alias_only",
-                preferred_link_style = "markdown",
-                disable_frontmatter = true,
-                note_id_func = function()
-                    return tostring(os.date("%Y%m%d%H%M"))
-                end,
-            }
-            vim.keymap.set("n", "<Leader>za", "<CMD>:Obsidian search §§<CR>")
-            vim.keymap.set("n", "<Leader>zb", "<CMD>:Obsidian backlinks<CR>")
-            vim.keymap.set("n", "<Leader>zf", "<CMD>:Obsidian search<CR>")
-            vim.keymap.set("n", "<Leader>fz", "<CMD>:Obsidian quick_switch<CR>")
-            vim.keymap.set("n", "<Leader>zn", "<CMD>:Obsidian new<CR>")
-            vim.keymap.set("n", "<Leader>zt", "<CMD>:Obsidian tags<CR>")
-        end
-    },
-    {
-        "nvimtools/none-ls.nvim",
-        config = function()
-            local null_ls = require("null-ls")
-
-            null_ls.setup({
-                sources = {
-                    null_ls.builtins.formatting.black,
-                },
-            })
-        end
-    },
-    "sindrets/diffview.nvim",
-    "nvim-treesitter/nvim-treesitter-context",
-    {
-        "folke/zen-mode.nvim",
-        config = function()
-            require("zen-mode").setup {
-                plugins = {
-                    wezterm = {
-                        enabled = true,
-                        -- can be either an absolute font size or the number of incremental steps
-                        font = "+4", -- (10% increase per step)
-                    },
-                }
-            }
-            vim.keymap.set("n", "<Leader>zz", "<CMD>:ZenMode<CR>")
-        end
-    }
-}, {
-    dev = {
-        path = "~/Developer/",
-        fallback = true
-    }
-})
+vim.cmd("colorscheme rose-pine")
