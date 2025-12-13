@@ -1,14 +1,12 @@
 vim.o.number = true
 vim.o.rnu = true
---vim.o.autocomplete = true
 vim.g.mapleader = " "
 vim.o.winborder = "rounded"
 vim.o.tabstop = 4
-vim.o.completeopt = "menu,menuone,noselect,fuzzy,nosort"
+vim.o.completeopt = "menuone,noselect,fuzzy,nosort"
 vim.o.conceallevel = 1
 vim.o.ignorecase = true
 vim.o.smartcase = true
-
 
 vim.pack.add({
 	{ src = "https://github.com/rose-pine/neovim", name = "rosepine" },
@@ -21,6 +19,7 @@ vim.pack.add({
 	"https://github.com/mason-org/mason.nvim",
 	"https://github.com/danymat/neogen",
 	"https://github.com/zk-org/zk-nvim",
+	"https://github.com/saghen/blink.cmp"
 })
 
 -- Plugins
@@ -36,16 +35,32 @@ require("oil").setup({
 
 })
 require('mini.pick').setup()
--- require('mini.completion').setup()
+--require('mini.completion').setup()
+require('mini.snippets').setup()
 require('mini.keymap').setup({})
 require('mini.pairs').setup()
 require('mini.icons').setup()
 require('mini.comment').setup()
-require('mini.comment').setup()
 require("mason").setup()
+require("blink.cmp").setup({
+	keymap = {
+		preset = 'none',
+		['<C-k>'] = { 'select_prev', 'fallback' },
+		['<C-j>'] = { 'select_next', 'fallback' },
+		['<Tab>'] = { 'select_and_accept', 'fallback' },
+		['<C-l>'] = { 'snippet_forward', 'fallback' },
+		['<C-h>'] = { 'snippet_backward', 'fallback' },
+		['<C-s>'] = { 'show_signature', 'hide_signature', 'fallback' },
+
+	},
+	fuzzy = { implementation = "lua" }
+
+})
+
 require("nvim-treesitter.configs").setup({
 	ensure_installed = { "lua" },
-	highlight = { enable = true }
+	highlight = { enable = true, additional_vim_regex_highlighting = { "markdown" }
+	}
 })
 
 require("neogen").setup({
@@ -54,7 +69,11 @@ require("neogen").setup({
 	--     python = { template = { annotation_convention = "reST" } },
 	-- }
 })
-require("zk").setup({ picker = "minipick" })
+local zk = require("zk")
+zk.setup({ picker = "minipick" })
+require("zk.commands").add("ZkFocus", function()
+	zk.edit({ matchStrategy = "re", match = { "#focus" } }, { title = "Currently in focus" })
+end)
 require("zk.commands").add("ZkStart", function()
 	zk.edit({ matchStrategy = "re", match = { "§§" } }, { title = "Starting Points" })
 end)
@@ -66,22 +85,22 @@ end)
 vim.lsp.enable({ "lua_ls", "pyright", "marksman" })
 vim.lsp.config("lua_ls", {
 	settings = {
-		Lua = {
-			workspace = {
-				library = vim.api.nvim_get_runtime_file("", true)
-			}
-		}
+		-- Lua = {
+		-- 	workspace = {
+		-- 		library = vim.api.nvim_get_runtime_file("", true)
+		-- 	}
+		-- }
 	}
 })
 
-vim.api.nvim_create_autocmd('LspAttach', {
-	callback = function(ev)
-		local client = vim.lsp.get_client_by_id(ev.data.client_id)
-		if client and client:supports_method('textDocument/completion') then
-			vim.lsp.completion.enable(true, client.id, ev.buf, { autotrigger = true })
-		end
-	end,
-})
+-- vim.api.nvim_create_autocmd('LspAttach', {
+-- 	callback = function(ev)
+-- 		local client = vim.lsp.get_client_by_id(ev.data.client_id)
+-- 		if client and client:supports_method('textDocument/completion') then
+-- 			vim.lsp.completion.enable(true, client.id, ev.buf, { autotrigger = true })
+-- 		end
+-- 	end,
+-- })
 
 
 vim.diagnostic.config({
@@ -89,33 +108,6 @@ vim.diagnostic.config({
 })
 
 local map = vim.keymap.set
-
-map({ 'i', 's' }, '<C-l>', function()
-	if vim.snippet.active({ direction = 1 }) then
-		return '<Cmd>lua vim.snippet.jump(1)<CR>'
-	else
-		retufn '<C-l>'
-	end
-end, { expr = true, silent = true })
-map({ 'i', 's' }, '<c-h>', function()
-	if vim.snippet.active({ direction = -1 }) then
-		return '<cmd>lua vim.snippet.jump(-1)<cr>'
-	else
-		return '<c-h>'
-	end
-end, { expr = true, silent = true })
-map({ 'i', 's' }, '<Tab>', function()
-	if vim.fn.pumvisible() == 1 then
-		local selected = vim.fn.complete_info({ 'selected' }).selected
-		if selected ~= -1 then
-			return '<C-y>' -- confirm selection
-		else
-			return '<C-n><C-y>' -- select next item and confirm
-		end
-	else
-		return vim.lsp.completion.get()
-	end
-end, { expr = true, silent = true })
 
 map("n", "<leader>so", ":w<CR> :source<CR>")
 map("n", "<leader>fs", vim.lsp.buf.format)
@@ -143,11 +135,12 @@ map("n", "<Leader>\"", function() require("harpoon.ui").nav_file(3) end)
 map("n", "<Leader>'", function() require("harpoon.ui").nav_file(4) end)
 map('i', '<C-j>', [[pumvisible() ? "\<C-n>" : "\<C-j>"]], { expr = true })
 map('i', '<C-k>', [[pumvisible() ? "\<C-p>" : "\<C-k>"]], { expr = true })
+map("n", "<Leader>zz", "<CMD>:ZkFocus<CR>", { desc = "Open Focus notes" })
 map("n", "<Leader>za", "<CMD>:ZkStart<CR>", { desc = "Open Starting Point Notes" })
 map("n", "<Leader>zf", "<CMD>ZkNotes {sort = {'modified'}}<CR>", { desc = "Open Zk Notes" })
 map("n", "<Leader>zt", "<CMD>:ZkTags {sort= {'note-count'} }<CR>", { desc = "Open Zk Notes" })
 map("n", "<leader>zn",
-	"<Cmd>ZkNew { dir = vim.fn.expand('%:p:h'), title = vim.fn.input('Title: ') }<CR>")
+	"<Cmd>ZkNew { }<CR>")
 map("n", "<Leader>nf", ":Neogen func<CR>")
 map("n", "<Leader>nc", ":Neogen class<CR>")
 map("n", "<Leader>fz", "<CMD>:ZkGrep<CR>")
