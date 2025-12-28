@@ -19,7 +19,8 @@ vim.pack.add({
 	"https://github.com/mason-org/mason.nvim",
 	"https://github.com/danymat/neogen",
 	"https://github.com/zk-org/zk-nvim",
-	"https://github.com/saghen/blink.cmp"
+	"https://github.com/saghen/blink.cmp",
+	"https://github.com/MeanderingProgrammer/render-markdown.nvim"
 })
 
 -- Plugins
@@ -57,6 +58,8 @@ require("blink.cmp").setup({
 
 })
 
+
+
 require("nvim-treesitter.configs").setup({
 	ensure_installed = { "lua" },
 	highlight = { enable = true, additional_vim_regex_highlighting = { "markdown" }
@@ -69,6 +72,12 @@ require("neogen").setup({
 	--     python = { template = { annotation_convention = "reST" } },
 	-- }
 })
+require('render-markdown').setup({
+	heading = {
+		enabled = false
+	}
+})
+
 local zk = require("zk")
 zk.setup({ picker = "minipick" })
 require("zk.commands").add("ZkFocus", function()
@@ -82,7 +91,6 @@ require("zk.commands").add("ZkGrep", function()
 		{ tool = "rg", source = { cwd = os.getenv("ZK_NOTEBOOK_DIR"), name = "dotfiles" } })
 end)
 
-vim.lsp.enable({ "lua_ls", "pyright", "marksman" })
 vim.lsp.config("lua_ls", {
 	settings = {
 		-- Lua = {
@@ -92,21 +100,12 @@ vim.lsp.config("lua_ls", {
 		-- }
 	}
 })
-
--- vim.api.nvim_create_autocmd('LspAttach', {
--- 	callback = function(ev)
--- 		local client = vim.lsp.get_client_by_id(ev.data.client_id)
--- 		if client and client:supports_method('textDocument/completion') then
--- 			vim.lsp.completion.enable(true, client.id, ev.buf, { autotrigger = true })
--- 		end
--- 	end,
--- })
+vim.lsp.enable({ "lua_ls", "pyright", "csharp_ls" })
 
 
 vim.diagnostic.config({
 	virtual_text = { current_line = true }
 })
-
 local map = vim.keymap.set
 
 map("n", "<leader>so", ":w<CR> :source<CR>")
