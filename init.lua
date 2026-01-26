@@ -100,7 +100,7 @@ vim.lsp.config("lua_ls", {
 		-- }
 	}
 })
-vim.lsp.enable({ "lua_ls", "pyright", "csharp_ls" })
+vim.lsp.enable({ "lua_ls", "ty", "ruff", "csharp_ls" })
 
 
 vim.diagnostic.config({
@@ -136,6 +136,7 @@ map('i', '<C-j>', [[pumvisible() ? "\<C-n>" : "\<C-j>"]], { expr = true })
 map('i', '<C-k>', [[pumvisible() ? "\<C-p>" : "\<C-k>"]], { expr = true })
 map("n", "<Leader>zz", "<CMD>:ZkFocus<CR>", { desc = "Open Focus notes" })
 map("n", "<Leader>za", "<CMD>:ZkStart<CR>", { desc = "Open Starting Point Notes" })
+map("n", "<Leader>§§", "<CMD>:ZkStart<CR>", { desc = "Open Starting Point Notes" })
 map("n", "<Leader>zf", "<CMD>ZkNotes {sort = {'modified'}}<CR>", { desc = "Open Zk Notes" })
 map("n", "<Leader>zt", "<CMD>:ZkTags {sort= {'note-count'} }<CR>", { desc = "Open Zk Notes" })
 map("n", "<leader>zn",
