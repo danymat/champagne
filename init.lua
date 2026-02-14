@@ -20,7 +20,8 @@ vim.pack.add({
 	"https://github.com/danymat/neogen",
 	"https://github.com/zk-org/zk-nvim",
 	"https://github.com/saghen/blink.cmp",
-	"https://github.com/MeanderingProgrammer/render-markdown.nvim"
+	"https://github.com/MeanderingProgrammer/render-markdown.nvim",
+	"https://github.com/folke/zen-mode.nvim"
 })
 
 -- Plugins
@@ -134,7 +135,8 @@ map("n", "<Leader>\"", function() require("harpoon.ui").nav_file(3) end)
 map("n", "<Leader>'", function() require("harpoon.ui").nav_file(4) end)
 map('i', '<C-j>', [[pumvisible() ? "\<C-n>" : "\<C-j>"]], { expr = true })
 map('i', '<C-k>', [[pumvisible() ? "\<C-p>" : "\<C-k>"]], { expr = true })
-map("n", "<Leader>zz", "<CMD>:ZkFocus<CR>", { desc = "Open Focus notes" })
+map("n", "<Leader>zo", "<CMD>:ZkFocus<CR>", { desc = "Open Focus notes" })
+map("n", "<Leader>zz", "<CMD>:ZenMode<CR>")
 map("n", "<Leader>za", "<CMD>:ZkStart<CR>", { desc = "Open Starting Point Notes" })
 map("n", "<Leader>zb", "<CMD>:ZkBacklinks<CR>", { desc = "Open Backlinks" })
 map("n", "<Leader>§§", "<CMD>:ZkStart<CR>", { desc = "Open Starting Point Notes" })
