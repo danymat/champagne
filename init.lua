@@ -17,6 +17,7 @@ vim.pack.add({
 	"https://github.com/nvim-lua/plenary.nvim",
 	"https://github.com/nvim-treesitter/nvim-treesitter",
 	"https://github.com/mason-org/mason.nvim",
+	"https://github.com/mason-org/mason-lspconfig.nvim",
 	"https://github.com/danymat/neogen",
 	"https://github.com/zk-org/zk-nvim",
 	"https://github.com/saghen/blink.cmp",
@@ -44,6 +45,7 @@ require('mini.pairs').setup()
 require('mini.icons').setup()
 require('mini.comment').setup()
 require("mason").setup()
+require("mason-lspconfig").setup()
 require("blink.cmp").setup({
 	keymap = {
 		preset = 'none',
@@ -101,7 +103,7 @@ vim.lsp.config("lua_ls", {
 		-- }
 	}
 })
-vim.lsp.enable({ "lua_ls", "ty", "ruff", "csharp_ls" })
+--vim.lsp.enable({ "lua_ls", "ty", "ruff", "csharp_ls", "powershell_es" })
 
 
 vim.diagnostic.config({
@@ -135,9 +137,8 @@ map("n", "<Leader>\"", function() require("harpoon.ui").nav_file(3) end)
 map("n", "<Leader>'", function() require("harpoon.ui").nav_file(4) end)
 map('i', '<C-j>', [[pumvisible() ? "\<C-n>" : "\<C-j>"]], { expr = true })
 map('i', '<C-k>', [[pumvisible() ? "\<C-p>" : "\<C-k>"]], { expr = true })
-map("n", "<Leader>zo", "<CMD>:ZkFocus<CR>", { desc = "Open Focus notes" })
-map("n", "<Leader>zz", "<CMD>:ZenMode<CR>")
-map("n", "<Leader>za", "<CMD>:ZkStart<CR>", { desc = "Open Starting Point Notes" })
+map("n", "<Leader>zz", "<CMD>:ZenFocus<CR>")
+map("n", "<Leader>za", "<CMD>:ZkFocus<CR>")
 map("n", "<Leader>zb", "<CMD>:ZkBacklinks<CR>", { desc = "Open Backlinks" })
 map("n", "<Leader>§§", "<CMD>:ZkStart<CR>", { desc = "Open Starting Point Notes" })
 map("n", "<Leader>zf", "<CMD>ZkNotes {sort = {'modified'}}<CR>", { desc = "Open Zk Notes" })
