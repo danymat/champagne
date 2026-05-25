@@ -13,6 +13,7 @@ vim.pack.add({
 	"https://github.com/stevearc/oil.nvim",
 	"https://github.com/neovim/nvim-lspconfig",
 	"https://github.com/nvim-mini/mini.nvim",
+	"https://github.com/rafamadriz/friendly-snippets",
 	"https://github.com/ThePrimeagen/harpoon",
 	"https://github.com/nvim-lua/plenary.nvim",
 	"https://github.com/nvim-treesitter/nvim-treesitter",
@@ -125,6 +126,7 @@ map({ "n", "v" }, "<C-j>", "<C-d>zz")
 map({ "n", "v" }, "<C-k>", "<C-u>zz")
 map({ "n", "v", "x" }, "<Leader>y", '"+y<CR>')
 map({ "n", "v", "x" }, "<Leader>d", '"+d<CR>')
+map('n', '<leader>y', '"+y')
 map("n", "<C-f>", ":Pick files<CR>")
 map("n", "<C-h>", ":Pick help<CR>")
 map("n", "<Leader>ff", ":Pick grep_live<CR>")
@@ -137,7 +139,7 @@ map("n", "<Leader>\"", function() require("harpoon.ui").nav_file(3) end)
 map("n", "<Leader>'", function() require("harpoon.ui").nav_file(4) end)
 map('i', '<C-j>', [[pumvisible() ? "\<C-n>" : "\<C-j>"]], { expr = true })
 map('i', '<C-k>', [[pumvisible() ? "\<C-p>" : "\<C-k>"]], { expr = true })
-map("n", "<Leader>zz", "<CMD>:ZenFocus<CR>")
+map("n", "<Leader>zz", "<CMD>:ZenMode<CR>")
 map("n", "<Leader>za", "<CMD>:ZkFocus<CR>")
 map("n", "<Leader>zb", "<CMD>:ZkBacklinks<CR>", { desc = "Open Backlinks" })
 map("n", "<Leader>§§", "<CMD>:ZkStart<CR>", { desc = "Open Starting Point Notes" })
